@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import shutil
 
-
+# TODO check if all functions are using detination_folder
 def write_into_report(text_to_append, report_name='report.txt', destination_folder=None):
     """
     Writes text to a report file.
@@ -42,6 +42,7 @@ def copy_files_with_parent_folder_to_another(source_dir, project_output_dir, pre
     Outputs:
         This function does not return any value. It copies files from the source directory to the project output directory, maintaining the parent folder structure.
     """
+
     if not Path(source_dir).exists():
         write_into_report(f'Source path {source_dir} does not exists.', destination_folder=project_output_dir)
         return
