@@ -2,8 +2,11 @@
 # pylint: disable=line-too-long
 # pylint: disable=invalid-name
 
-"""This code will runn all the analysis based on the parameters.txt file which must be located in the same folder as this code CRISPRlysis.py"""
-
+"""
+This code will runn all the analysis based on the parameters.txt file which must be located in the same folder as this code CRISPRlysis.py
+Output files will be stored in the 'project_output_dir' which is defined in the parameters.txt
+Example: 'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022'
+"""
 # %%
 import ast
 import csv
@@ -11,11 +14,12 @@ from datetime import datetime
 from pathlib import Path
 import os
 from os.path import dirname, split, basename
+import sys
 import more_itertools as mit
 import pandas as pd
-from functions.general_functions import write_into_report, copy_files_with_parent_folder_to_another, find_files_paths_with_criteria, check_if_path_exist_create_if_not
+from scripts.general_functions import write_into_report, copy_files_with_parent_folder_to_another, find_files_paths_with_criteria, check_if_path_exist_create_if_not
 
-from functions.make_mastertables import filter_out_values_from_df, clasify_INDELSUB_from_columns, change_Event_based_on_mut_position, find_ranges, count_no_of_gaps, find_DEL_closest_to_cut, find_min_and_max_gap_ranges, find_DEL_around_cut_range, gap_span_analysed_window, find_microhomology, get_insertion_event, gap_in_aligned_seq, gap_in_range, find_difference, mutation_in_distance, make_original_seq_dic, make_seq_around_optimum_cut, size_of_del_around_the_cut, no_of_gRNA_samples_txt, return_shifted_DEL_range, return_category_of_DEL, return_cut_type_based_on_cut_categories, process_table, create_mastertable, add_columns_to_df, make_subtables_df
+# from scripts.make_mastertables import filter_out_values_from_df, clasify_INDELSUB_from_columns, change_Event_based_on_mut_position, find_ranges, count_no_of_gaps, find_DEL_closest_to_cut, find_min_and_max_gap_ranges, find_DEL_around_cut_range, gap_span_analysed_window, find_microhomology, get_insertion_event, gap_in_aligned_seq, gap_in_range, find_difference, mutation_in_distance, make_original_seq_dic, make_seq_around_optimum_cut, size_of_del_around_the_cut, no_of_gRNA_samples_txt, return_shifted_DEL_range, return_category_of_DEL, return_cut_type_based_on_cut_categories, process_table, create_mastertable, add_columns_to_df, make_subtables_df
 
 
 # Get current date and time
@@ -58,8 +62,15 @@ sort_alphabetically = parameters['sort_alphabetically']
 
 # Make a report.txt file
 write_into_report(f'Report from {data_source_original} from date {date}.')
-write_into_report(f'Report from {data_source_original} from date {date}.')
-write_into_report(f'Project output dir is {project_output_dir}.')
+
+# Check if project_output_dir exists, if not, create it
+if not os.path.exists(project_output_dir):
+    os.makedirs(project_output_dir)
+    write_into_report(f'Project output dir was created and is {project_output_dir}.')
+else:
+    write_into_report(f'Project output dir already exists and is {project_output_dir}.')
+
+# TODO delete in the final version of the code
 write_into_report(f'Cut position is set to location: {cut_position}')
 
 # Check if project output dir exists, create it if not

@@ -46,7 +46,7 @@ from os.path import dirname, split, basename
 import more_itertools as mit
 import pandas as pd
 
-from .general_functions import write_into_report, find_files_paths_with_criteria
+from general_functions import write_into_report, find_files_paths_with_criteria
 
 def filter_out_values_from_df(df, dict_to_filter, project_output_dir='./report.txt'):
     """
