@@ -221,6 +221,22 @@ for key, value in tables_dic.items():
         stat_info = df_INDELSUB_summ.groupby('Event_around_cut').value.describe().unstack()
         save_stat(stat_info, name_to_save, project_output_subdir)
         counter+=1
+        ##########################################################################################
+        # plot HORIZONTAL BAR PLOT for individual samples
+        ##########################################################################################
+        # title = 'INDELSUB analysis not normalised'
+        # xlabel = 'Average of %Reads from individual samples'
+        # name_to_save = f'{file_number}_{counter}_INDELSUB_horizontal_barchart_all_samples_not_normalised'
+        # text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around the cut.\
+        #                 \nOTHERS are combinations of INs, DELs and SUBs (INDELs etc.).\
+        #                 \nIN+DEL+SUB+OTHERS+no_mutation = 100%.\
+        #                 \n{no_of_gRNA_samples}'
+        # INDELSUB_color_dic=  {'IN':'#091f92'\
+        #                     ,'DEL':'#ba8759'\
+        #                     ,'SUB':'#ffcc33'\
+        #                     ,'OTHERS':'#808080'}
+        # plot = plot_general_stacked_horizontal_barchart(df=df_INDELSUB_summ, x='Event_around_cut', y='sample', values='value', project_output_subdir=project_output_subdir, data_source=data_source, title=title, name_to_save=name_to_save, output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False, palette=INDELSUB_color_dic, x_as_perc=True, text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default', xaxis_formater=100, decimals=0, xlim=(0,100), bars_order=['IN', 'DEL', 'SUB', 'OTHERS'])
+        # counter+=1
 # %%
 
 # TODO make color_dic for all charts

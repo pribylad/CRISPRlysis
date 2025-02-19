@@ -151,14 +151,14 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         , show_hue_medians=True\
         , transparency = 0.8 \
         , clip_right=False\
-        , yaxis_formater=1, name_to_save="Boxplot", data_source = None\
+        , yaxis_formater=1, name_to_save='Boxplot', data_source = None\
         , y_min=None, y_max=None\
         , x_min=None, x_max=None\
         , plot_vertical_line_middle=False, middle_line_position=1\
         , plot_legend=False\
-        , add_stat=False, stat_pairs=None, stat_test="t-test_ind"\
+        , add_stat=False, stat_pairs=None, stat_test='t-test_ind'\
         , text_bellow_chart=None, y_legend_coordinate=0\
-        , output_format="png", dpi=200, show_plots=False):
+        , output_format='png', dpi=200, show_plots=False):
     """Plots violinplot and saves it.
     data: DataFrame
     x: x to plot
@@ -187,7 +187,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     clip_right: True/False removes right part of the violine plot, default False
     yaxis_formater: usually 1 of 100, to make yaxis in %, default 1
     name_to_save: hae to contain full path with name of the boxplot (date and format is added automatialy)
-    data_source: like "Přibylová et al., (2021)"
+    data_source: like 'Přibylová et al., (2021)'
     y_min: int(), default None
     y_max: int(), default None
     x_min: int(), default None
@@ -196,143 +196,145 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     middle_line_position: int(), default 1
     plot_legend: True/False, default False
     add_stat: add t-test_ind statistic annotation, default False
-    stat_pairs: [(("pairs"), ("to compare")), (("pairs"), ("to compare")), ...]
+    stat_pairs: [(('pairs'), ('to compare')), (('pairs'), ('to compare')), ...]
     stat_test: t-test_ind, t-test_welch, t-test_paired, Mann-Whitney, Mann-Whitney-gt, Mann-Whitney-ls, Levene, Wilcoxon, Kruskal, default t-test_ind
     text_bellow_chart: str() to comment chart bellow, default None
     y_legend_coordinate: int() coordinates of figure are 0-1, default 0
-    output_format: png, svg,..., default "png"
+    output_format: png, svg,..., default 'png'
     dpi: int(), default 200
     report_dir: where should be the report, default os.getcwd()
     show_plots: True/False, default False"""
+    # Define the custom exception class within the function
+    class PlotSnsViolinPlotError(Exception):
+        pass
 
-    properties_dic = {"stagg2nt":{"color":"#E890B8","edge_color":"gray", "hatch":""}\
-        ,"stagg2nt_likely":{"color":"#E890B8","edge_color":"gray", "hatch":"//"}\
-        ,"stagg1nt":{"color":"#ffaaaa","edge_color":"gray", "hatch":""}\
-        ,"stagg1nt_likely":{"color":"#ffaaaa","edge_color":"gray", "hatch":"////"}\
-        ,"blunt":{"color":"#6ea7ff","edge_color":"gray", "hatch":""}\
-        ,"blunt_likely":{"color":"#6ea7ff","edge_color":"gray", "hatch":"\\\\"}\
-        ,"cannot_be_determined":{"color":"white","edge_color":"gray", "hatch":""}\
-        ,"can_not_be_determined":{"color":"white","edge_color":"gray", "hatch":""}\
-        ,'distal_stagg2nt_likely':{"color":"#E890B8","edge_color":"gray", "hatch":"\\\\"}\
-        ,'distal_stagg2nt':{"color":"#E890B8","edge_color":"gray", "hatch":""}\
-        ,'distal_stagg1nt_likely':{"color":"#ffaaaa","edge_color":"gray", "hatch":"\\\\"}\
-        ,'distal_stagg1nt':{"color":"#ffaaaa","edge_color":"gray", "hatch":""}\
-        ,'distal_blunt_likely':{"color":"#6ea7ff","edge_color":"gray", "hatch":"\\\\"}\
-        ,'distal_blunt':{"color":"#6ea7ff","edge_color":"gray", "hatch":""}\
-        ,'proximal_blunt':{"color":"#6ea7ff","edge_color":"gray", "hatch":""}\
-        ,'proximal_blunt_likely':{"color":"#6ea7ff","edge_color":"gray", "hatch":"//"}\
-        ,'proximal_stagg1nt':{"color":"#ffaaaa","edge_color":"gray", "hatch":""}\
-        ,'proximal_stagg1nt_likely':{"color":"#ffaaaa","edge_color":"gray", "hatch":"//"}\
-        ,'proximal_stagg2nt':{"color":"#E890B8","edge_color":"gray", "hatch":""}\
-        ,'proximal_stagg2nt_likely':{"color":"#E890B8","edge_color":"gray", "hatch":"//"}\
-        ,"gap_out_of_cut":{"color":"gray","edge_color":"gray", "hatch":""}\
-        ,"IN":{"color":"#091f92","edge_color":"gray", "hatch":""}\
-        ,"INs":{"color":"#091f92","edge_color":"gray", "hatch":""}\
-        ,"DEL":{"color":"#ba8759","edge_color":"gray", "hatch":""}\
-        ,"DELs":{"color":"#ba8759","edge_color":"gray", "hatch":""}\
-        ,"SUB":{"color":"#ffcc33","edge_color":"gray", "hatch":""}\
-        ,"OTHERS":{"color":"#808080","edge_color":"gray", "hatch":""}\
-        ,"no_mutation":{"color":"#111111","edge_color":"gray", "hatch":""}\
-        ,"distal":{"color":"#f0d271","edge_color":"gray", "hatch":""}\
-        ,"distal_both":{"color":"#C4C4C4","edge_color":"#f0d271", "hatch":"\\\\\\"}\
-        ,"distal_both_proximal":{"color":"#979797","edge_color":"black", "hatch":"xx"}\
-        ,"both":{"color":"#808080","edge_color":"black", "hatch":""}\
-        ,"both_proximal":{"color":"#C4C4C4","edge_color":"#f5ad62", "hatch":"////"}\
-        ,"proximal":{"color":"#f5ad62","edge_color":"gray", "hatch":""}\
-        ,"PAM_distal_nt_in_MH":{"color":"#52D8FF","edge_color":"gray", "hatch":""}\
-        ,"PAM_proximal_nt_in_MH":{"color":"#FADA52","edge_color":"gray", "hatch":""}\
-        ,"no_MH_likely":{"color":"#A9A9A9","edge_color":"gray", "hatch":""}\
-        ,"no_MH":{"color":"#D3D3D3","edge_color":"gray", "hatch":""}\
-        ,"A":{"color":"#70c936","edge_color":"gray", "hatch":""}\
-        ,"C":{"color":"#ff0000","edge_color":"gray", "hatch":""}\
-        ,"G":{"color":"#ffd42a","edge_color":"gray", "hatch":""}\
-        ,"T":{"color":"#9955ff","edge_color":"gray", "hatch":""}\
-        ,True:{"color":"#D3D3D3","edge_color":"gray", "hatch":""}\
-        ,False:{"color":"#B8BEDB","edge_color":"gray", "hatch":""}\
-        ,"True":{"color":"#D3D3D3","edge_color":"gray", "hatch":""}\
-        ,"False":{"color":"#B8BEDB","edge_color":"gray", "hatch":""}\
-        ,"unmethylated":{"color":"#000000","edge_color":"gray", "hatch":""}\
-        ,"CG_only":{"color":"#4D4D4D","edge_color":"gray", "hatch":""}\
-        ,"heterochromatin":{"color":"#999999","edge_color":"gray", "hatch":""}\
-        ,"RdDM":{"color":"#fafafa","edge_color":"gray", "hatch":""}}
+    properties_dic = {'stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
+        ,'stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'//'}\
+        ,'stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':''}\
+        ,'stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'////'}\
+        ,'blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':''}\
+        ,'blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\'}\
+        ,'cannot_be_determined':{'color':'white','edge_color':'gray', 'hatch':''}\
+        ,'can_not_be_determined':{'color':'white','edge_color':'gray', 'hatch':''}\
+        ,'distal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'\\\\'}\
+        ,'distal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
+        ,'distal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'\\\\'}\
+        ,'distal_stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':''}\
+        ,'distal_blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\'}\
+        ,'distal_blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':''}\
+        ,'proximal_blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':''}\
+        ,'proximal_blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'//'}\
+        ,'proximal_stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':''}\
+        ,'proximal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'//'}\
+        ,'proximal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
+        ,'proximal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'//'}\
+        ,'gap_out_of_cut':{'color':'gray','edge_color':'gray', 'hatch':''}\
+        ,'IN':{'color':'#091f92','edge_color':'gray', 'hatch':''}\
+        ,'INs':{'color':'#091f92','edge_color':'gray', 'hatch':''}\
+        ,'DEL':{'color':'#ba8759','edge_color':'gray', 'hatch':''}\
+        ,'DELs':{'color':'#ba8759','edge_color':'gray', 'hatch':''}\
+        ,'SUB':{'color':'#ffcc33','edge_color':'gray', 'hatch':''}\
+        ,'OTHERS':{'color':'#808080','edge_color':'gray', 'hatch':''}\
+        ,'no_mutation':{'color':'#111111','edge_color':'gray', 'hatch':''}\
+        ,'distal':{'color':'#f0d271','edge_color':'gray', 'hatch':''}\
+        ,'distal_both':{'color':'#C4C4C4','edge_color':'#f0d271', 'hatch':'\\\\\\'}\
+        ,'distal_both_proximal':{'color':'#979797','edge_color':'black', 'hatch':'xx'}\
+        ,'both':{'color':'#808080','edge_color':'black', 'hatch':''}\
+        ,'both_proximal':{'color':'#C4C4C4','edge_color':'#f5ad62', 'hatch':'////'}\
+        ,'proximal':{'color':'#f5ad62','edge_color':'gray', 'hatch':''}\
+        ,'PAM_distal_nt_in_MH':{'color':'#52D8FF','edge_color':'gray', 'hatch':''}\
+        ,'PAM_proximal_nt_in_MH':{'color':'#FADA52','edge_color':'gray', 'hatch':''}\
+        ,'no_MH_likely':{'color':'#A9A9A9','edge_color':'gray', 'hatch':''}\
+        ,'no_MH':{'color':'#D3D3D3','edge_color':'gray', 'hatch':''}\
+        ,'A':{'color':'#70c936','edge_color':'gray', 'hatch':''}\
+        ,'C':{'color':'#ff0000','edge_color':'gray', 'hatch':''}\
+        ,'G':{'color':'#ffd42a','edge_color':'gray', 'hatch':''}\
+        ,'T':{'color':'#9955ff','edge_color':'gray', 'hatch':''}\
+        ,True:{'color':'#D3D3D3','edge_color':'gray', 'hatch':''}\
+        ,False:{'color':'#B8BEDB','edge_color':'gray', 'hatch':''}\
+        ,'True':{'color':'#D3D3D3','edge_color':'gray', 'hatch':''}\
+        ,'False':{'color':'#B8BEDB','edge_color':'gray', 'hatch':''}\
+        ,'unmethylated':{'color':'#000000','edge_color':'gray', 'hatch':''}\
+        ,'CG_only':{'color':'#4D4D4D','edge_color':'gray', 'hatch':''}\
+        ,'heterochromatin':{'color':'#999999','edge_color':'gray', 'hatch':''}\
+        ,'RdDM':{'color':'#fafafa','edge_color':'gray', 'hatch':''}}
 
     # Check if there are data in the data[x], if not skip making the plot.
-    if data[x].notnull().any() == False:
-        print("data['x'] are empty, plotting of the plot {} was terminated.".format(name_to_save))
-        write_into_report("data['x'] are empty, plotting of the plot {} was terminated.".format(name_to_save), destination_folder=project_output_dir)
-        return
+    if data[x].notnull().any() is False:
+        write_into_report(f'data["x"] are empty, plotting of the plot {name_to_save} was terminated.', destination_folder=project_output_dir)
+        raise PlotSnsViolinPlotError(f'data["x"] are empty, plotting of the plot {name_to_save} was terminated.')
 
     now = datetime.now()
-    date = now.strftime("%y%m%d")
+    date = now.strftime('%y%m%d')
     # Change matplotlib style and define figure size
-    sns.set(style="whitegrid")
+    sns.set_theme(style='whitegrid')
     fig, ax = plt.subplots(figsize=(number_of_columns, 4))
 
     # This script can not make hatches when usin hue for violinplot
-    if hue != None:
-        if hue_only_for_data_points == False:
+    if hue is not None:
+        if hue_only_for_data_points is False:
             hatches=False
-            print("This script can not make hatches when usin hue for violinplot. Hatches was set to False.")
+            print('This script can not make hatches when usin hue for violinplot. Hatches was set to False.')
     # Make color,edge and hatch dic from nested dictionary
-    if integrated_properties_dic == True:
+    if integrated_properties_dic is True:
         color_dic = {}
         edge_color_list = []
         hatches_list = []
         test = data.groupby(x).value.mean().to_dict()
         for item in list(data[x].unique()):
             if item in properties_dic.keys():
-                color_dic[item] = properties_dic[item]["color"]
+                color_dic[item] = properties_dic[item]['color']
                 if test[item] != 0:
-                    edge_color_list.append(properties_dic[item]["edge_color"])
-                    hatches_list.append(properties_dic[item]["hatch"])
+                    edge_color_list.append(properties_dic[item]['edge_color'])
+                    hatches_list.append(properties_dic[item]['hatch'])
             if item not in properties_dic.keys():
-                print("The " + str(item) + " is not in properties_dic of plot_sns_violin_and_print function. The dic contains:" + str(color_dic))
-        if hue != None:
+                print('The ' + str(item) + ' is not in properties_dic of plot_sns_violin_and_print function. The dic contains:' + str(color_dic))
+        if hue is not None:
             for item in list(data[hue].unique()):
                 if item in properties_dic.keys():
-                    color_dic[item] = properties_dic[item]["color"]
+                    color_dic[item] = properties_dic[item]['color']
                 if item not in properties_dic.keys():
-                    print("The " + str(item) + " is not in properties_dic of plot_sns_violin_and_print function.")
-    else:   
+                    print('The ' + str(item) + ' is not in properties_dic of plot_sns_violin_and_print function.')
+    else:
         color_dic = color_dic
         hatches_list = hatches_list
-        edge_color_dic = edge_color_dic 
+        edge_color_dic = edge_color_dic
 
     # to make hue color only for stripplot and not for violin
-    if hue_only_for_data_points == False:
+    if hue_only_for_data_points is False:
         hue_violin = hue
     else:
         hue_violin=None
 
     # Set withts for plotted boxplots
     width_list = [0.15, 0.9]
-    if hue_only_for_data_points == False:
-        if hue != None:
+    if hue_only_for_data_points is False:
+        if hue is not None:
             if len(data[hue].unique()) == 4:
                 width_list = [0.8, 0.4]
             else:
                 width_list = [0.8, 0.4]
-                print("Problem with boxplot wisht could be in settings width_list.")
+                print('Problem with boxplot wisht could be in settings width_list.')
     
     # Plot Violinplot in order (True/False) with stripplot (True/False)
-    if order == None:
+    if order is None:
         # Make Violinplot
         # Change color_dic keys to 'txt' as the violinplot bellow makes from True -> 'True'
         # and the plot does not work without the conversion -> ideas how to solve it?
         color_dic_txt = {str(key): value for key, value in color_dic.items()}
-        violinplot = sns.violinplot(data=data, x=x, y=y, hue=hue_violin, hue_order=hue_order, density_norm="width", palette=color_dic_txt, cut=0, inner=None, zorder=0)
+        violinplot = sns.violinplot(data=data, x=x, y=y, hue=hue_violin, hue_order=hue_order, density_norm='width', palette=color_dic_txt, cut=0, inner=None, zorder=0)
         ## Set hatches if wanted
-        if hatches == True:
+        if hatches is True:
             ihatch = iter(hatches_list)
             hatch = [i.set_hatch(next(ihatch)) for i in ax.get_children() if isinstance(i, matplotlib.collections.PolyCollection)]
         # Clip the right half of each violin.
-        if clip_right == True:
+        if clip_right is True:
             for item in ax.collections:
                 x0, y0, width, height = item.get_paths()[0].get_extents().bounds
                 item.set_clip_path(plt.Rectangle((x0-0.1, y0), (width/2)+0.1, height,
                                 angle=0, transform=ax.transData))
         # Make stripplot to show individual data
-        if show_datapoints == True:
+        if show_datapoints is True:
             # move all of the datapoints a bit to the left or right
             offset = lambda p: transforms.ScaledTranslation(p/72.,0, plt.gcf().dpi_scale_trans)
             trans = plt.gca().transData
@@ -343,7 +345,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                 , transform=trans+offset(stripplot_offset)\
                 , zorder=20)
             # Add median for stripplot
-            if show_hue_medians == True:
+            if show_hue_medians is True:
                 sns.boxplot(showmeans=False,
                     meanline=False,
                     meanprops={'marker':'x'},
@@ -374,36 +376,27 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                         line.set_color(col)
                         line.set_mfc(col)  # facecolor of fliers
                         line.set_mec(col)  # edgecolor of fliers
-        # Make inner boxplot with mean as "x"
-        boxplot = sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, width=width_list[0]\
-            , showfliers=False, showmeans=True\
-            , meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black'\
-                , markersize=5, linewidth=1.0, zorder=14)\
-            , boxprops=dict(facecolor="gray", edgecolor="black", linewidth=1.5, alpha=1, zorder=10)\
-            , whiskerprops=dict(color="black", linewidth=1.5, zorder=11)\
-            , capprops=dict(color="black", linewidth=1.5, zorder=12)\
-            , medianprops=dict(color="black", linewidth=1.5, zorder=13))
+        # Make inner boxplot with mean as 'x'
+        boxplot = sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, width=width_list[0], showfliers=False, showmeans=True, meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black', markersize=5, linewidth=1.0, zorder=14), boxprops=dict(facecolor='gray', edgecolor='black', linewidth=1.5, alpha=1, zorder=10), whiskerprops=dict(color='black', linewidth=1.5, zorder=11), capprops=dict(color='black', linewidth=1.5, zorder=12), medianprops=dict(color='black', linewidth=1.5, zorder=13))
     else:
         # Make Violinplot
-        violinplot = sns.violinplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, density_norm="width"\
-            , palette=color_dic\
-            , cut=0, inner=None, order=order, zorder=0)
+        violinplot = sns.violinplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, density_norm='width', palette=color_dic, cut=0, inner=None, order=order, zorder=0)
         ## Set hatches if wanted
-        if hatches == True:
+        if hatches is True:
             hatches_list = []
             for item in order:
                 if test[item] != 0:
-                    hatches_list.append(properties_dic[item]["hatch"])
+                    hatches_list.append(properties_dic[item]['hatch'])
             ihatch = iter(hatches_list)
             hatch = [i.set_hatch(next(ihatch)) for i in ax.get_children() if isinstance(i, matplotlib.collections.PolyCollection)]
         # Clip the right half of each violin.
-        if clip_right == True:
+        if clip_right is True:
             for item in ax.collections:
                 x0, y0, width, height = item.get_paths()[0].get_extents().bounds
                 item.set_clip_path(plt.Rectangle((x0-0.1, y0), (width/2)+0.1, height,
                                 angle=0, transform=ax.transData))
         # Make stripplot to show individual data
-        if show_datapoints == True:
+        if show_datapoints is True:
             # move all of the datapoints a bit to the left or right
             offset = lambda p: transforms.ScaledTranslation(p/72.,0, plt.gcf().dpi_scale_trans)
             trans = plt.gca().transData
@@ -414,7 +407,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                 , transform=trans+offset(stripplot_offset)\
                 , zorder=20)
             # Add mean for stripplot
-            if show_hue_medians == True:
+            if show_hue_medians is True:
                 sns.boxplot(showmeans=False,
                     meanline=False,
                     # meanprops={'marker':'x'},
@@ -445,69 +438,69 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                         line.set_color(col)
                         line.set_mfc(col)  # facecolor of fliers
                         line.set_mec(col)  # edgecolor of fliers
-        # Make inner boxplot with mean as "x"
+        # Make inner boxplot with mean as 'x'
         boxplot = sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data\
             , width=width_list[0]\
             , order=order, showfliers=False, showmeans=True\
             , meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black'\
                 , markersize=5, linewidth=1.0, zorder=14)\
-            , boxprops=dict(facecolor="gray", edgecolor="black", linewidth=1.5, alpha=1, zorder=10)\
-            , whiskerprops=dict(color="black", linewidth=1.5, zorder=11)\
-            , capprops=dict(color="black", linewidth=1.5, zorder=12)\
-            , medianprops=dict(color="black", linewidth=1.5, zorder=13))
-    
+            , boxprops=dict(facecolor='gray', edgecolor='black', linewidth=1.5, alpha=1, zorder=10)\
+            , whiskerprops=dict(color='black', linewidth=1.5, zorder=11)\
+            , capprops=dict(color='black', linewidth=1.5, zorder=12)\
+            , medianprops=dict(color='black', linewidth=1.5, zorder=13))
+
     # Change edge color if wanted
-    if change_edge_color == True:
-        if order!=None:
+    if change_edge_color is True:
+        if order is not None:
             edge_color_list = []
             for item in order:
                 if test[item] != 0:
-                    edge_color_list.append(properties_dic[item]["edge_color"])
+                    edge_color_list.append(properties_dic[item]['edge_color'])
         iedge_color = iter(edge_color_list)
         for i in range(0,len(edge_color_list)):
             ax.collections[i].set_edgecolor(next(iedge_color))
-    
+
     # Statistic
-    if add_stat == True:
+    if add_stat is True:
         add_stat_annotation(ax, data=data, x=x, y=y\
             , box_pairs=stat_pairs,\
             test=stat_test, text_format='star', loc='outside', verbose=1, fontsize='large')
-    
+
     # Plot vertical middle line
-    if plot_vertical_line_middle == True:
-        plt.axvline(x=middle_line_position-0.5, color="black", ls="--", label='blunt cut site')
-    
+    if plot_vertical_line_middle is True:
+        plt.axvline(x=middle_line_position-0.5, color='black', ls='--', label='blunt cut site')
+
     # Legend
-    if plot_legend == True:
-        if show_datapoints == True:
-            if show_hue_medians == True:
+    if plot_legend is True:
+        if show_datapoints is True:
+            if show_hue_medians is True:
                 # Plot legend only from the stripplot and not boxplot (they are identical)
                 handles, labels = ax.get_legend_handles_labels()
                 plt.legend(handles[int(len(handles)/2):int(len(handles))],\
                     labels[int(len(labels)/2):int(len(labels))],\
-                    loc="center left", bbox_to_anchor=(1, 0.5))    
+                    loc='center left', bbox_to_anchor=(1, 0.5))    
             else:
-                plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+                plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         else:
-            if show_hue_medians == True:
+            if show_hue_medians is True:
                 # Plot legend only from the stripplot and not boxplot (they are identical)
                 handles, labels = ax.get_legend_handles_labels()
                 plt.legend(handles[0:int(len(handles)/2)],\
                     labels[int(len(labels)/2):int(len(labels))],\
-                    loc="center left", bbox_to_anchor=(1, 0.5))    
+                    loc='center left', bbox_to_anchor=(1, 0.5))    
             else:
-                # plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+                # plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
                 # Plot legend only from the stripplot and not boxplot (they are identical)
                 handles, labels = ax.get_legend_handles_labels()
                 plt.legend(handles[0:int(len(handles)/2)],\
                     labels[int(len(labels)/2):int(len(labels))],\
-                    loc="center left", bbox_to_anchor=(1, 0.5))    
+                    loc='center left', bbox_to_anchor=(1, 0.5))    
     # Plot labels, set lims, etc.
-    plt.title(title + "\n(" + date + ")\n" + data_source)
+    plt.title(title + '\n(' + date + ')\n' + data_source)
     plt.ylabel(ylabel)
     plt.ylim(y_min, y_max)
     plt.xlim(x_min, x_max)
-    plt.xticks(rotation=xtickt_rotation, ha="left", rotation_mode="anchor")
+    plt.xticks(rotation=xtickt_rotation, ha='left', rotation_mode='anchor')
 
     # Add transparency to colors
     plt.setp(ax.collections, alpha=transparency)
@@ -517,14 +510,14 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     adjust_box_widths(fig, width_list[1])
     # Add text below chart
     if text_bellow_chart is not None:
-        props = {"backgroundcolor":"lightgray", "size":12}  # bbox features
+        props = {'backgroundcolor':'lightgray', 'size':12}  # bbox features
         at = AnchoredText(text_bellow_chart, frameon=True, loc='upper left'\
             , bbox_to_anchor=(0, y_legend_coordinate), bbox_transform=fig.transFigure, borderpad=0., prop=props)
-        at.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
+        at.patch.set_boxstyle('round,pad=0.,rounding_size=0.2')
         ax.add_artist(at)
 
-    plt.savefig(Path(str(project_output_dir) + "/" + name_to_save + "_" + date + "." + output_format), dpi=dpi, bbox_inches="tight")
-    write_into_report("Violin plot {0} was created.".format(name_to_save), destination_folder=project_output_dir)
+    plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.' + output_format), dpi=dpi, bbox_inches='tight')
+    write_into_report(f'Violin plot {name_to_save} was created.', destination_folder=project_output_dir)
     if show_plots is True:
         return plt.show()
     return plt.close()
@@ -534,10 +527,10 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
 #                                , ylabel=None, order=None, integrated_palette=False\
 #                                , transparency = 0.8 \
 #                                , hatches=False, hatches_dic=None, hatches_color_dic=None\
-#                                , yaxis_formater=1, name_to_save="Boxplot", data_source = None\
+#                                , yaxis_formater=1, name_to_save='Boxplot', data_source = None\
 #                                , y_min=None, y_max=None, y_legend_coordinate=0, plot_legend=False\
-#                                , add_stat=False, stat_pairs=None, stat_test="t-test_ind"\
-#                                , text_bellow_chart=None, output_format="png", dpi=200, show_plots=False):
+#                                , add_stat=False, stat_pairs=None, stat_test='t-test_ind'\
+#                                , text_bellow_chart=None, output_format='png', dpi=200, show_plots=False):
 #     """Plots boxplot and saves it.
 #     data: DataFrame
 #     x: x to plot
