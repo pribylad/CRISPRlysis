@@ -206,7 +206,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     show_plots: True/False, default False"""
     # Define the custom exception class within the function
     class PlotSnsViolinPlotError(Exception):
-        pass
+        """Rise a function specific error."""
 
     properties_dic = {'stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
         ,'stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'//'}\
@@ -315,14 +315,14 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             else:
                 width_list = [0.8, 0.4]
                 print('Problem with boxplot wisht could be in settings width_list.')
-    
+
     # Plot Violinplot in order (True/False) with stripplot (True/False)
     if order is None:
         # Make Violinplot
         # Change color_dic keys to 'txt' as the violinplot bellow makes from True -> 'True'
         # and the plot does not work without the conversion -> ideas how to solve it?
         color_dic_txt = {str(key): value for key, value in color_dic.items()}
-        violinplot = sns.violinplot(data=data, x=x, y=y, hue=hue_violin, hue_order=hue_order, density_norm='width', palette=color_dic_txt, cut=0, inner=None, zorder=0)
+        sns.violinplot(data=data, x=x, y=y, hue=hue_violin, hue_order=hue_order, density_norm='width', palette=color_dic_txt, cut=0, inner=None, zorder=0)
         ## Set hatches if wanted
         if hatches is True:
             ihatch = iter(hatches_list)
@@ -377,10 +377,10 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                         line.set_mfc(col)  # facecolor of fliers
                         line.set_mec(col)  # edgecolor of fliers
         # Make inner boxplot with mean as 'x'
-        boxplot = sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, width=width_list[0], showfliers=False, showmeans=True, meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black', markersize=5, linewidth=1.0, zorder=14), boxprops=dict(facecolor='gray', edgecolor='black', linewidth=1.5, alpha=1, zorder=10), whiskerprops=dict(color='black', linewidth=1.5, zorder=11), capprops=dict(color='black', linewidth=1.5, zorder=12), medianprops=dict(color='black', linewidth=1.5, zorder=13))
+        sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, width=width_list[0], showfliers=False, showmeans=True, meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black', markersize=5, linewidth=1.0, zorder=14), boxprops=dict(facecolor='gray', edgecolor='black', linewidth=1.5, alpha=1, zorder=10), whiskerprops=dict(color='black', linewidth=1.5, zorder=11), capprops=dict(color='black', linewidth=1.5, zorder=12), medianprops=dict(color='black', linewidth=1.5, zorder=13))
     else:
         # Make Violinplot
-        violinplot = sns.violinplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, density_norm='width', palette=color_dic, cut=0, inner=None, order=order, zorder=0)
+        sns.violinplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, density_norm='width', palette=color_dic, cut=0, inner=None, order=order, zorder=0)
         ## Set hatches if wanted
         if hatches is True:
             hatches_list = []
@@ -439,7 +439,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                         line.set_mfc(col)  # facecolor of fliers
                         line.set_mec(col)  # edgecolor of fliers
         # Make inner boxplot with mean as 'x'
-        boxplot = sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data\
+        sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data\
             , width=width_list[0]\
             , order=order, showfliers=False, showmeans=True\
             , meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black'\

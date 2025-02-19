@@ -109,10 +109,13 @@ else:
     write_into_report(f'Reading 01_mastertable from: {path_to_existing_mastertable_01}', destination_folder=project_output_dir)
 
 # %%
+print('wtf')
 if make_subtables is True:
     tables_dic = make_subtables_df(df, project_output_dir, subtables_param, date)
+    print('Here')
 else:
     tables_dic = {path_to_existing_mastertable_01:subtables_param}
+    print('nope, here')
 # %%
 tables_dic
 # %%
