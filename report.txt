@@ -1,0 +1,109 @@
+########## REPORT ##########
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Violin plot 01_1_INDELSUB_summary_violinplot was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Violin plot 02_2_IN_no_of_IN_nucleotides_summary_violinplot was created.
+
+Violin plot 01_1_INDELSUB_summary_violinplot was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Violin plot 02_2_IN_no_of_IN_nucleotides_summary_violinplot was created.
+
+Violin plot 01_1_INDELSUB_summary_violinplot was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Violin plot 01_1_INDELSUB_summary_violinplot was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Violin plot 01_1_INDELSUB_summary_violinplot was created.
+
+Violin plot 01_1_INDELSUB_summary_violinplot was created.
+
+Violin plot 01_1_INDELSUB_summary_violinplot was created.
+
+Violin plot 01_1_INDELSUB_summary_violinplot was created.
+
+Violin plot 01_1_INDELSUB_summary_violinplot was created.
+
+Violin plot 01_1_INDELSUB_summary_violinplot was created.
+
+Violin plot 01_1_INDELSUB_summary_violinplot was created.
+
+Violin plot 01_1_INDELSUB_summary_violinplot was created.
+
+Violin plot 01_2_INDELSUB_summary_violinplot was created.
+
+Violin plot 01_3_INDELSUB_summary_violinplot was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+

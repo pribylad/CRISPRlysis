@@ -140,6 +140,7 @@ def adjust_box_widths(g, fac):
                         l.set_xdata([xmin_new, xmax_new])
     return
 
+# TODO offset of datapoints does not work
 def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         , hue=None, hue_order=None, hue_only_for_data_points=True\
         , ylabel=None, title=None, xtickt_rotation=0\
@@ -174,17 +175,17 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     order: order of x, default None
     integrated_properties_dic:True/False use integrated dictionary for color/hatch/edge_color
     color_dic: dic{} if integrated_properties_dic==False, default None
-    hatches: True/False, if you want to make hatches, default False
+    hatches (bool): True/False, if you want to make hatches, default False
     hatches_list: list[] if integrated_properties_dic== False, deault None
-    change_edge_color: True/False, default False
+    change_edge_color (bool): True/False, default False
     edge_color_dic: dic{} if integrated_properties_dic==False, default None
-    show_datapoints: True/False, default True
+    show_datapoints (bool): True/False, default True
     jitter: True/False/int() for stripplot, default True
-    stripplot_offset: int() to move stripplot to the left or right, default -10
+    stripplot_offset (int): to move stripplot to the left or right, default -10
     dodge: True/False separated stripplot hues, default True
     show_hue_medians: True/False for stripplot, default True
     transparency = int() 0-1, default 0.8
-    clip_right: True/False removes right part of the violine plot, default False
+    clip_right (bool): True/False removes right part of the violine plot, default False
     yaxis_formater: usually 1 of 100, to make yaxis in %, default 1
     name_to_save: hae to contain full path with name of the boxplot (date and format is added automatialy)
     data_source: like 'Přibylová et al., (2021)'
@@ -276,7 +277,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             hatches=False
             print('This script can not make hatches when usin hue for violinplot. Hatches was set to False.')
     # Make color,edge and hatch dic from nested dictionary
-    if integrated_properties_dic is True:
+    if integrated_properties_dic is not False:
         color_dic = {}
         edge_color_list = []
         hatches_list = []
@@ -336,8 +337,10 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         # Make stripplot to show individual data
         if show_datapoints is True:
             # move all of the datapoints a bit to the left or right
-            offset = lambda p: transforms.ScaledTranslation(p/72.,0, plt.gcf().dpi_scale_trans)
+            def offset(p):
+                return transforms.ScaledTranslation(p/72.,0, plt.gcf().dpi_scale_trans)
             trans = plt.gca().transData
+            # Note: be careful when using dodge as it can mess up the coordinates when combined with jitter
             stripplot = sns.stripplot(x=x, y=y, hue=hue, hue_order=hue_order, data=data, jitter=jitter\
                 , order=None, dodge=dodge\
                 , palette=color_dic\
@@ -380,7 +383,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, width=width_list[0], showfliers=False, showmeans=True, meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black', markersize=5, linewidth=1.0, zorder=14), boxprops=dict(facecolor='gray', edgecolor='black', linewidth=1.5, alpha=1, zorder=10), whiskerprops=dict(color='black', linewidth=1.5, zorder=11), capprops=dict(color='black', linewidth=1.5, zorder=12), medianprops=dict(color='black', linewidth=1.5, zorder=13))
     else:
         # Make Violinplot
-        sns.violinplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, density_norm='width', palette=color_dic, cut=0, inner=None, order=order, zorder=0)
+        sns.violinplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, density_norm='width', palette=color_dic, cut=0, inner=None, order=order, zorder=1)
         ## Set hatches if wanted
         if hatches is True:
             hatches_list = []
@@ -398,7 +401,8 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         # Make stripplot to show individual data
         if show_datapoints is True:
             # move all of the datapoints a bit to the left or right
-            offset = lambda p: transforms.ScaledTranslation(p/72.,0, plt.gcf().dpi_scale_trans)
+            def offset(p):
+                return transforms.ScaledTranslation(p/72.,0, plt.gcf().dpi_scale_trans)
             trans = plt.gca().transData
             stripplot = sns.stripplot(x=x, y=y, hue=hue, hue_order=hue_order, data=data, jitter=jitter\
                 , order=order, dodge=dodge\
@@ -518,6 +522,231 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
 
     plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.' + output_format), dpi=dpi, bbox_inches='tight')
     write_into_report(f'Violin plot {name_to_save} was created.', destination_folder=project_output_dir)
+    if show_plots is True:
+        return plt.show()
+    return plt.close()
+
+def check_if_all_events_are_present_after_pivot_reset_index(df, list_of_events, return_only_predef_list=False):
+    """df = DataFrame
+    list_of_events = INDELSUBOTHERS or BluntStag or ProximalDistalBars or [individual, list]
+    return_only_predef_list = default False"""
+    # TODO solce list of events fo bluntstag
+    if list_of_events == 'BluntStag':
+        list_of_events = ['stagg2nt', 'stagg2nt_likely', 'stagg1nt', 'stagg1nt_likely', 'blunt_likely', 'blunt', 'cannot_be_determined']
+    if list_of_events == 'INDELSUBOTHERS':
+        list_of_events = ['IN', 'DEL', 'SUB', 'OTHERS']
+    # TODO solve list of events for prosimal distal
+    if list_of_events == 'ProximalDistalBars':
+        list_of_events = ['distal_blunt', 'distal_blunt_likely', 'distal_stagg1nt', 'distal_stagg1nt_likely', 'distal_stagg2nt_likely', 'proximal_blunt', 'proximal_blunt_likely', 'proximal_stagg1nt', 'proximal_stagg2nt']
+    if return_only_predef_list is True:
+        return list_of_events
+    # Check if the list is empty. If yes, return unchanged dataframe
+    if not list_of_events:
+        return df
+    for item in list_of_events:
+        if item not in df.columns.tolist():
+            df[item] = 0
+    return df
+
+def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_dir\
+    , check_columns=False, check_columns_list=[]\
+    , data_source=None, title=None, name_to_save="stacked_horizontal_barchart"\
+    , output_format='png', dpi=200, xlabel=None, sns_palette=True, palette='hls'\
+    , hatches_dic=None, x_as_perc=False, xaxis_formater=1, decimals=1, xlim=None\
+    , text_bellow_chart=None, y_legend_coordinate='Default'\
+    , y_order=None, bars_order=None, show_plots=False):
+    """Plots horizontal stacked histogram. 
+    df: DataFrame
+    x: single column
+    y: single column
+    values: single column
+    project_output_dir: path to the output folder
+    check_columns: check if the data have all neede columns to plot the plot, default False
+    check_columns_list: 'INDELSUBOTHERS' or 'BluntStag' or 'ProximalDistalBars' or [individual, list], default []
+    data_source: usually name of the study as 'Přibylová et al., (2022)', default None
+    title: Any, default None
+    name_to_save: str(), default 'stacked_horizontal_barchart'
+    output_format: png, svg..., default 'png'
+    dpi: any, default 200
+    xlabel: Anly, default None
+    sns_palette: True or False, if True set parameter palette from sns palettes, if False enter your own dictionary, default True
+    palette: choose from sns.color_palette, default 'hls'
+    hatches_dic: {'key':'value'}, default None
+    x_as_perc: True makes from xaxis axes with %, anything else is False, default=False
+    xaxis_formater: int(), multiplies x axis
+    decimals: if X_as_perc is True, set number of decimals, default 1
+    xlim: (min, max), default None
+    text_bellow_chart: str() to comment chart bellow, default None
+    y_legend_coordinate: int() coordinates of figure are 0-1, default 'Default' calculates y_legend_coordinate=(-(1/y_len)*3)
+    y_order: paste list of Ys with desired order, default None
+    bars_order: paste list of bars with desired order, default None
+    show_plots: True/False, default False"""
+
+    # Define the custom exception class within the function
+    class PlotGeneralStackedHorizonError(Exception):
+        """Rise a function specific error."""
+    # Check if there are data in the data[x], if not skip making the plot.
+    if df[x].notnull().any() is False:
+        write_into_report(f'df["x"] are empty, plotting of the plot {name_to_save} was terminated.', destination_folder=project_output_dir)
+        raise PlotGeneralStackedHorizonError(f'df["x"] are empty, plotting of the plot {name_to_save} was terminated.')
+
+    now = datetime.now()
+    date = now.strftime('%y%m%d')
+
+    y_len = len(df[y].unique())
+
+    # make dic with updated values -> value + sum from previous values nd from it df again
+    pivot = pd.pivot_table(df, index=y, columns=x, values=values)
+    if bars_order != 0:
+        pivot = pivot.reindex(bars_order, axis=1)
+    bars = pivot.columns.tolist()
+    no_of_bars = len(bars)
+    df_pivot= pivot.reset_index()
+    if check_columns is not False:
+        df_pivot = check_if_all_events_are_present_after_pivot_reset_index(df_pivot, check_columns_list)
+    y = df[y].unique()
+    i = 0
+    to_plot_dic = {}
+    for row in y:
+        list_of_row_values = []
+        value=0
+        for column in range(len(df_pivot.iloc[i,1:])):
+            value=df_pivot.iloc[i,column+1] + value
+            list_of_row_values.append(value)
+        to_plot_dic[row] = list_of_row_values
+        i+=1
+    df = pd.DataFrame.from_dict(to_plot_dic, orient='index', columns=bars)
+
+    # change order of rows if wanted
+    if y_order is not None:
+        df = df.rename_axis('y').reset_index()
+        df.y = df.y.astype('category')
+        df.y = df.y.cat.set_categories(y_order)
+        df = df.sort_values(['y'])
+        df = df.set_index('y')
+
+    # plot
+    sns.set_theme(style='whitegrid')                      # makes gid behind the plot
+    f, ax = plt.subplots(figsize=(9,y_len/4))       # set the figure size
+
+    # make color palette from sns.color_palette or own dictionary
+    if sns_palette is True:
+        pal =sns.color_palette(palette, no_of_bars)
+    else:
+        # if some of the column does not exist as a key in the dictionary -> use sns palette
+        pal = []
+        for column in bars:
+            if column in palette:
+                pal.append(palette[column])
+            else:
+                pal = sns.color_palette('hls', no_of_bars)
+                print('Key ' + str(column) + ' is not present in color dictionary, thus default hls palette was used.')
+                break
+
+    if hatches_dic is not None:
+        for column in range(no_of_bars,0,-1):              # plot in reverse
+            sns.barplot(x=df.iloc[:,column-1], y=df.index, color=pal[column-1], edgecolor='#000000', \
+                    alpha=1, errorbar=None, linewidth=0.2, hatch=hatches_dic[list(df.columns)[column-1]])
+    else:
+        for column in range(no_of_bars,0,-1):              # plot in reverse
+            sns.barplot(x=df.iloc[:,column-1], y=df.index, color=pal[column-1], edgecolor='#000000', \
+                    alpha=1, errorbar=None, linewidth=0.2)        
+    # get the current ticks and use it to set the new ticks by sampling every other tick
+    # ax.set_xticks(ax.get_xticks()[::2])
+
+    plt.title(f'{title} ({date}) \n {data_source}')
+    plt.xlabel(xlabel, size=15)
+    plt.ylabel('')
+    plt.yticks(fontname='monospace')
+    bars = np.flip(bars)                            # change the bars order as they were plotted 
+    plt.legend(labels=bars, loc='center left', bbox_to_anchor=(1.1, 0.5))
+    if xlim is not None:
+        plt.xlim(xlim)
+    if x_as_perc is True:
+        ax.xaxis.set_major_formatter(mtick.PercentFormatter(xaxis_formater, decimals=decimals))
+    # Add text below chart
+    if text_bellow_chart is not None:
+        if y_legend_coordinate == 'Default':
+            if y_len == 0:
+                y_len = 3
+            y_legend_coordinate=-(1/y_len)*3
+        props = {'backgroundcolor':'lightgray', 'size':12}  # bbox features
+        at = AnchoredText(text_bellow_chart, frameon=True, loc='upper left', bbox_to_anchor=(0, y_legend_coordinate), bbox_transform=f.transFigure, borderpad=0., prop=props)
+        at.patch.set_boxstyle('round,pad=0.,rounding_size=0.2')
+        ax.add_artist(at)
+
+    plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.' + output_format), dpi=dpi, bbox_inches='tight')
+    write_into_report(f'Stacked horizontal barchart {name_to_save} was created.', destination_folder=project_output_dir)
+    if show_plots is True:
+        return plt.show()
+    return plt.close()
+
+# TODO plot_barplot when fill_empty_x=True changes the original data which are
+# imput for the plot, solve why
+def plot_barplot(data, x, y, project_output_dir, name_to_save, data_source, hue=None, color=None\
+                , title='Bar plot', x_lim=None, y_lim=None, xlabel=None\
+                , yaxis_formater=100, decimals=1, xtickt_rotation=0, text_bellow_chart=None\
+                , errorbar=None, fill_empty_x=False, output_format='png', dpi=200, show_plots=False):
+    ''' Return plot
+    data: source DataFrame
+    project_output_dir: path to the output folder
+    name_to_save: name for the figure
+    data_source: usually name of the study as 'Přibylová et al., (2022)'
+    hue: default None
+    color: color of bars as '#091f92', default None
+    title: str(), default 'Bar plot'
+    x_lim: (x_min, x_max), default None
+    y_lim: (y_min, y_max), default None
+    xlabel = str(), default None 
+    yaxis_formater: to format y axis as %
+    decimals: if yaxis_formater is set, default 1 
+    xtickt_rotation: int(), default 0
+    text_bellow_chart: str() to comment chart bellow, default None
+    ci: sd, default None
+    fill_empty_x: True/False -> True fills missing valuese on X axis when they are int(), to make it continuous, deault False
+    output_format: png, svg...
+    dpi: any, usually 200
+    show_plots: True/False, default False'''
+    # Define the custom exception class within the function
+    class PlotBarplotError(Exception):
+        """Rise a function specific error."""
+    # Check if there are data in the data[x], if not skip making the plot.
+    if data[x].notnull().any() == False:
+        write_into_report(f'data["x"] are empty, plotting of the plot {name_to_save} was terminated.', destination_folder=project_output_dir)
+        raise PlotBarplotError(f'data["x"] are empty, plotting of the plot {name_to_save} was terminated.')
+    
+    now = datetime.now()
+    date = now.strftime('%y%m%d')
+    sns.set_theme(style='whitegrid')
+
+    # if you want to have continuous x-axis like 1,2,3,4,5,6,... -. works only for numbers
+    if fill_empty_x is True:
+        # Generate a range of continuous x values
+        min_x = data[x].min()
+        max_x = data[x].max()
+        all_x_values = pd.DataFrame({x: range(min_x, max_x + 1)})
+
+        # Merge DataFrames to fill in missing rows with 0 in the y column
+        data_filled = pd.merge(all_x_values, data, on=x, how='left').fillna(0)
+    else:
+        data_filled = data
+
+    f,ax = plt.subplots()
+    sns.barplot(x=x, y=y, data=data_filled, hue=hue, capsize=0.2, errorbar='sd', alpha=0.8, color=color)
+    plt.title(title + ' (' + date + ') \n' + data_source)
+    plt.xlabel(xlabel)
+    plt.ylabel('Average of %Reads')
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.xlim(x_lim)
+    plt.ylim(y_lim)
+    # for container in ax.containers:
+    #     ax.bar_label(container)
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter(yaxis_formater, decimals=decimals))
+    if xtickt_rotation != 0:
+        plt.xticks(rotation=xtickt_rotation, ha='left', rotation_mode='anchor')
+    plt.text(0, -0.02, text_bellow_chart, fontsize=14, transform=plt.gcf().transFigure)
+    plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.' + output_format), dpi=dpi, bbox_inches='tight')
+    write_into_report('Barplot {0} was created.'.format(name_to_save))
     if show_plots is True:
         return plt.show()
     return plt.close()
@@ -663,7 +892,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
 #     if hatches == True:
 #         # Loop over the bars
 #         for i,thisbar in enumerate(boxplot.artists):
-#             # Set a different hatch for each bar
+#             # Set a different hatch for each column
 #             thisbar.set_hatch(hatches_list[i])
 #             thisbar.set_edgecolor(edge_color_list[i])
     

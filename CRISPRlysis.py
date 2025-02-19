@@ -11,17 +11,31 @@ Example: 'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022'
 import ast
 import csv
 from datetime import datetime
-from pathlib import Path
+from glob import glob
 import os
 from os.path import dirname, split, basename
+from pathlib import Path
+import shutil
+import time
 import sys
+
+import matplotlib
+from matplotlib.offsetbox import AnchoredText
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
+from matplotlib.patches import PathPatch
+import matplotlib.transforms as transforms
 import more_itertools as mit
+import numpy as np
 import pandas as pd
+import seaborn as sns
+from statannot import add_stat_annotation
 from scripts.general_functions import write_into_report, copy_files_with_parent_folder_to_another, find_files_paths_with_criteria, check_if_path_exist_create_if_not
 
 from scripts.make_mastertables import filter_out_values_from_df, clasify_INDELSUB_from_columns, change_Event_based_on_mut_position, find_ranges, count_no_of_gaps, find_DEL_closest_to_cut, find_min_and_max_gap_ranges, find_DEL_around_cut_range, gap_span_analysed_window, find_microhomology, get_insertion_event, gap_in_aligned_seq, gap_in_range, find_difference, mutation_in_distance, make_original_seq_dic, make_seq_around_optimum_cut, size_of_del_around_the_cut, no_of_gRNA_samples_txt, return_shifted_DEL_range, return_category_of_DEL, return_cut_type_based_on_cut_categories, process_table, create_mastertable, add_columns_to_df, make_subtables_df
 
-from scripts.plot_functions import save_stat, make_Ubuntu_mnt_path, make_reverse_complement, find_element_in_list, adjust_box_widths, plot_sns_violin_and_print
+from scripts.plot_functions import save_stat, make_Ubuntu_mnt_path, make_reverse_complement, find_element_in_list, adjust_box_widths, plot_sns_violin_and_print, plot_general_stacked_horizontal_barchart, plot_barplot, check_if_all_events_are_present_after_pivot_reset_index
 
 # Get current date and time
 now = datetime.now()
@@ -108,14 +122,10 @@ else:
     df = pd.read_csv(path_to_existing_mastertable_01, sep="\t")
     write_into_report(f'Reading 01_mastertable from: {path_to_existing_mastertable_01}', destination_folder=project_output_dir)
 
-# %%
-print('wtf')
 if make_subtables is True:
     tables_dic = make_subtables_df(df, project_output_dir, subtables_param, date)
-    print('Here')
 else:
     tables_dic = {path_to_existing_mastertable_01:subtables_param}
-    print('nope, here')
 # %%
 tables_dic
 # %%
@@ -168,7 +178,6 @@ for key, value in tables_dic.items():
     #            I   N   NN   D   D   E       L           S   U   U   B   B
     #            I   N    N   DDDD    EEEEEE  LLLLLL  SSSS     UUU    BBBB
     ##########################################################################################
-    print('Here')
     if plot_INDELs is True:
         file_number = '01'
         counter = 1
@@ -176,8 +185,7 @@ for key, value in tables_dic.items():
         df_INDELSUB = df[['order', 'sample', 'gRNA_seq', 'Event_around_cut', '%Reads', 'name']]
         list_of_others = ['INDEL', 'INSUB', 'INDELSUB', 'DELSUB']
 
-        pivot = pd.pivot_table(df_INDELSUB, index=['sample'], columns='Event_around_cut', values='%Reads',\
-                aggfunc='sum', fill_value=0)
+        pivot = pd.pivot_table(df_INDELSUB, index=['sample'], columns='Event_around_cut', values='%Reads', aggfunc='sum', fill_value=0)
         df_INDELSUB_summ = pivot.reset_index()
 
         # check if all columns exists, if not make an empty one
@@ -210,8 +218,8 @@ for key, value in tables_dic.items():
         plot = plot_sns_violin_and_print(data=df_INDELSUB_summ, x='Event_around_cut', y='value'\
                 , number_of_columns=3\
                 , project_output_dir=project_output_subdir\
-                , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=True, show_hue_medians=False\
-                , hue=None, hue_only_for_data_points=True, transparency=0.7 \
+                , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False, show_hue_medians=False\
+                , hue='Event_around_cut', hue_only_for_data_points=True, transparency=0.7 \
                 , clip_right=True, change_edge_color=False\
                 , title=title, xtickt_rotation=0, ylabel=ylabel\
                 , order=['IN', 'DEL', 'SUB', 'OTHERS'] \
@@ -224,22 +232,236 @@ for key, value in tables_dic.items():
         stat_info = df_INDELSUB_summ.groupby('Event_around_cut').value.describe().unstack()
         save_stat(stat_info, name_to_save, project_output_subdir)
         counter+=1
+
         ##########################################################################################
         # plot HORIZONTAL BAR PLOT for individual samples
         ##########################################################################################
-        # title = 'INDELSUB analysis not normalised'
-        # xlabel = 'Average of %Reads from individual samples'
-        # name_to_save = f'{file_number}_{counter}_INDELSUB_horizontal_barchart_all_samples_not_normalised'
-        # text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around the cut.\
-        #                 \nOTHERS are combinations of INs, DELs and SUBs (INDELs etc.).\
-        #                 \nIN+DEL+SUB+OTHERS+no_mutation = 100%.\
-        #                 \n{no_of_gRNA_samples}'
-        # INDELSUB_color_dic=  {'IN':'#091f92'\
-        #                     ,'DEL':'#ba8759'\
-        #                     ,'SUB':'#ffcc33'\
-        #                     ,'OTHERS':'#808080'}
-        # plot = plot_general_stacked_horizontal_barchart(df=df_INDELSUB_summ, x='Event_around_cut', y='sample', values='value', project_output_subdir=project_output_subdir, data_source=data_source, title=title, name_to_save=name_to_save, output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False, palette=INDELSUB_color_dic, x_as_perc=True, text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default', xaxis_formater=100, decimals=0, xlim=(0,100), bars_order=['IN', 'DEL', 'SUB', 'OTHERS'])
-        # counter+=1
+        title = 'INDELSUB analysis not normalised'
+        xlabel = 'Average of %Reads from individual samples'
+        name_to_save = f'{file_number}_{counter}_INDELSUB_horizontal_barchart_all_samples_not_normalised'
+        text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around the cut.\
+                        \nOTHERS are combinations of INs, DELs and SUBs (INDELs etc.).\
+                        \nIN+DEL+SUB+OTHERS+no_mutation = 100%.\
+                        \n{no_of_gRNA_samples}'
+        INDELSUB_color_dic=  {'IN':'#091f92'\
+                            ,'DEL':'#ba8759'\
+                            ,'SUB':'#ffcc33'\
+                            ,'OTHERS':'#808080'}
+        plot = plot_general_stacked_horizontal_barchart(df=df_INDELSUB_summ, x='Event_around_cut', y='sample', values='value', project_output_dir=project_output_subdir, data_source=data_source, title=title, name_to_save=name_to_save, output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False, palette=INDELSUB_color_dic, x_as_perc=True, text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default', xaxis_formater=100, decimals=0, xlim=(0,100), bars_order=['IN', 'DEL', 'SUB', 'OTHERS'], show_plots=show_plots)
+        counter+=1
+
+        # normalise the events for normalised plot form 0-100%
+        pivot = pd.crosstab(index=df_INDELSUB_summ['sample'],\
+                    columns=df_INDELSUB_summ['Event_around_cut'], \
+                    values=df_INDELSUB_summ['value'],\
+                    aggfunc='sum', normalize='index')
+        df_INDELSUB_samples_norm = pivot.reset_index()
+        df_INDELSUB_samples_norm = pd.melt(df_INDELSUB_samples_norm, id_vars=['sample'], value_vars=['IN', 'DEL', 'SUB', 'OTHERS'])
+        title = 'INDELSUB analysis normalised'
+        name_to_save = f'{file_number}_{counter}_INDELSUB_horizontal_barchart_all_samples_normalised'
+        text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around the cut.\
+                            \nOTHERS are combinations of INs, DELs and SUBs (INDELs etc.).\
+                            \nIN+DEL+SUB+OTHERS = 100%.\
+                            \n{no_of_gRNA_samples}'
+        # TODO solve y_legend_cooridnate
+        # for 3 rows -1 is fine
+        plot = plot_general_stacked_horizontal_barchart(df=df_INDELSUB_samples_norm, x='Event_around_cut', y='sample', values='value', project_output_dir=project_output_subdir, data_source=data_source, title=title, name_to_save=name_to_save, output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False, palette=INDELSUB_color_dic, x_as_perc=True, text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default', xaxis_formater=1, decimals=0, xlim=(0,1), bars_order=['IN', 'DEL', 'SUB', 'OTHERS'], show_plots=show_plots)
+        stat_info = df_INDELSUB_samples_norm.groupby('Event_around_cut').value.describe().unstack()
+        save_stat(stat_info, name_to_save, project_output_subdir)
+        counter+=1
+
+    ##########################################################################################
+    #            I   N    N
+    #            I   N N  N
+    #            I   N  N N
+    #            I   N   NN
+    #            I   N    N
+    ##########################################################################################
+    if plot_INs is True:
+        file_number = '02'
+        counter = 1
+        # Get data
+        df_IN = df
+        pivot = pd.pivot_table(df_IN, index=['name', 'n_inserted', '4th_nt'], columns=(), values='%Reads', aggfunc='sum', fill_value=0)
+        df_pivot = pivot.reset_index()
+        df_pivot = df_pivot[df_pivot['n_inserted']!=0]
+
+        ##########################################################################################
+        # plot BARPLOT with number of inserted nucleotides
+        ##########################################################################################
+        name_to_save = f'{file_number}_{counter}_No_of_inserted_nucleotides'
+        title = 'No of inserted nucleotides'
+
+        # Plot average percentage of insertion and drop all despite 0 insertions
+        plot = plot_barplot(data=df_pivot, x='n_inserted', y='%Reads', project_output_dir=project_output_subdir, name_to_save=name_to_save, data_source=data_source, hue=None, color='#091f92', title=title, x_lim=(-0.5,14.5), y_lim=(0,55), xlabel='No of nucleotides', yaxis_formater=100, decimals=1, errorbar='sd', fill_empty_x=True, output_format=output_format, dpi=100, show_plots=show_plots)
+        stat_info = df_pivot.groupby('n_inserted').describe().unstack()
+        save_stat(stat_info, name_to_save, project_output_subdir)
+        counter+=1
+
+        ##########################################################################################
+        # SUM up IN>3 nt to single column, to change the number, change grater_than
+        ##########################################################################################
+        # next two lines must be there, without it the former plot changes the df_pivot
+        # and currently I do not why
+        # TODO find, why plot_barplot when fill_empty_x=True changes the df_pivot
+        df_pivot = pivot.reset_index()
+        df_pivot = df_pivot[df_pivot['n_inserted']!=0]
+
+        pivot = pd.crosstab(index=df_pivot['name'], columns=df_pivot['n_inserted'],\
+                            values=df_pivot['%Reads'], aggfunc='sum', normalize='index')
+        df_pivot = pivot.reset_index()
+
+        # sum columns where n_inserted>IN_greater_than and discard n_inserted==0
+        greater_than = IN_greater_than
+        df_pivot[f'greater_than_{greater_than}'] = 0
+        for column in df_pivot.columns:
+            if isinstance(column, str):
+                continue
+            if column < (greater_than+1):
+                continue
+            df_pivot[f'greater_than_{greater_than}'] += df_pivot[column]
+            df_pivot.drop(labels=column, axis=1, inplace=True)
+        columns = df_pivot.iloc[:0,1:]
+        df_pivot = df_pivot.melt(id_vars=['name'], value_vars=columns)
+        ##########################################################################################
+        # plot VIOLINPLOT
+        ##########################################################################################
+        # Set charts properties
+        color_dic = {'0':'#ffffff', '1':'#A8B7FF', '2':'#536CE8', '3':'#466270', '4':'#514C7A', '5':'#4E8387'\
+                    , '6':'#487D72', '7':'#4E9472'\
+                    , 0:'#ffffff', 1:'#A8B7FF', 2:'#536CE8', 3:'#466270', 4:'#514C7A', 5:'#4E8387'\
+                    , 6:'#487D72', 7:'#4E9472'}
+        color_dic[f'greater_than_{IN_greater_than}'] = '#6F79A8'
+        title='Normalised numbers od inserted nucleotides around the cut site'
+        ylabel='Normalised percentage\n of inserted nucleotides'
+        no_of_samples = len(df_pivot['name'].unique())
+        text_bellow_chart = f'Only IN events around cut.\
+                            \nSum of all IN in one sample = 100%\
+                            \n{no_of_gRNA_samples}'
+        name_to_save=f'{file_number}_{counter}_IN_no_of_IN_nucleotides_summary_violinplot'
+
+        plot = plot_sns_violin_and_print(data=df_pivot, x='n_inserted', y='value', number_of_columns=len(df_pivot['n_inserted'].unique()), show_datapoints=True, jitter=0.1, stripplot_offset=12, dodge=False, clip_right=True, order=None, project_output_dir=project_output_subdir, hue=None, integrated_properties_dic=False, color_dic=color_dic, show_hue_medians=False, title=title, xtickt_rotation=0, ylabel=ylabel, yaxis_formater=1, name_to_save=name_to_save, text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.05, data_source=data_source, y_min=0, y_max=1.02, output_format=output_format, show_plots=show_plots)
+        stat_info = df_pivot.groupby('n_inserted').value.describe().unstack()
+        save_stat(stat_info, name_to_save, project_output_subdir)
+        counter+=1
+
+        title = 'Number od inserted nucleotides'
+        xlabel='Normalised percentage of inserted nucleotides'
+        name_to_save=f'{file_number}_{counter}_no_of_IN_nucleotides_stacked_barchart_name'
+        # palette_dic = {0:'#ffffff', 1:'#A8B7FF', 2:'#536CE8', 3:'#424763', 'greater_than_2':'#6F79A8', 'greater_than_3':'#6F79A8'}
+        plot = plot_general_stacked_horizontal_barchart(df=df_pivot, x='n_inserted', y='name', project_output_dir=project_output_subdir, values='value', sns_palette=False, palette=color_dic, data_source=data_source, title=title, name_to_save=name_to_save, output_format=output_format, dpi=200, xlabel=xlabel, x_as_perc=True, xaxis_formater=1, decimals=0, xlim=(0,1), text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default', y_order=None, bars_order=None, show_plots=show_plots)
+        counter+=1
+        #########################################################################################
+        #########################################################################################
+        #########################################################################################
+        # Plot if the 4th nucleotide the inserted nucleotide
+        # Get data
+        df_IN = df[df['Event_around_cut'] == 'IN']
+        df_IN = df[df['n_inserted'] == 1]
+
+        pivot = pd.pivot_table(df_IN, index=['sample', '4th_nt_inserted', '4th_nt'], values='%Reads', aggfunc='sum', fill_value=0)
+        df_pivot = pivot.reset_index()
+
+        ##########################################################################################
+        # plot STACKED HORIZONTAL BARCHART for 4th nt inserted True/False
+        ##########################################################################################
+        color_dic={True:'#06145E', False:'#B8BEDB'}
+        text_bellow_chart = 'Only 1nt IN around the cut are plotted.\nSequences without DEL/SUB around the cut.'
+        title='Is the 4th nucleotide the inserted nucleotide?'
+        name_to_save='{0}_{1}_4th_nt_inserted_not_normalised'.format(file_number, counter)
+        xlabel='Sum of %Reads from individual samples'
+        plot = plot_general_stacked_horizontal_barchart(df=df_pivot, y='sample'\
+            , x='4th_nt_inserted', project_output_subdir=project_output_subdir\
+            , values='%Reads', sns_palette=False, palette=color_dic\
+            , hatches_dic=None\
+            , data_source=data_source\
+            , title=title\
+            , name_to_save=name_to_save, output_format=output_format\
+            , dpi=200, xlabel=xlabel, x_as_perc=True, xaxis_formater=100\
+            , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default'\
+            , bars_order=[True, False], xlim=(0,100))
+        stat_info = df_pivot.groupby('4th_nt_inserted').describe().unstack()
+        save = save_stat(stat_info, name_to_save, project_output_subdir)
+        counter+=1
+        ##########################################################################################
+        ## Normalise to have True+False = 100%
+        pivot = pd.crosstab(index=[df_IN['sample'], df_IN['4th_nt']],\
+                    columns=df_IN['4th_nt_inserted'], \
+                    values=df_IN['%Reads'],\
+                    aggfunc='sum', normalize='index')
+        df_pivot = pivot.reset_index()
+
+        list_to_check = [True, False]
+        for item in list_to_check:
+            if item not in df_pivot.columns.tolist():
+                df_pivot[item] = int()    
+
+        df_pivot = pd.melt(df_pivot, id_vars=(['sample', '4th_nt']), value_vars=[True, False])
+
+        title='Is the 4th nucleotide the inserted nucleotide? Normalised'
+        name_to_save='{0}_{1}_4th_nt_inserted_normalised'.format(file_number, counter)
+        plot = plot_general_stacked_horizontal_barchart(df=df_pivot, y='sample'\
+            , x='4th_nt_inserted', project_output_subdir=project_output_subdir\
+            , values='value', sns_palette=False, palette=color_dic\
+            , hatches_dic=None\
+            , data_source=data_source\
+            , title=title\
+            , name_to_save=name_to_save, output_format=output_format\
+            , dpi=200, xlabel=(xlabel+' normalised')\
+            , x_as_perc=True, xaxis_formater=1\
+            , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default'\
+            , bars_order=[True, False], xlim=(0,1))
+        stat_info = df_pivot.groupby('4th_nt_inserted').describe().unstack()
+        save = save_stat(stat_info, name_to_save, project_output_subdir)
+        counter+=1
+
+        df_pivot = df_pivot[df_pivot['4th_nt_inserted']==True]
+        # make hue_order according to present 4th nucleotides
+        nucleotide_order_list = {'A':1, 'C':2, 'G':3, 'T':4}
+        nucleotide_list = df_pivot['4th_nt'].unique()
+        sort_list = []
+        for nucleotide in nucleotide_list:
+            sort_list.append(nucleotide_order_list[nucleotide])
+        hue_order = [x for _, x in sorted(zip(sort_list, nucleotide_list))]        
+        ##########################################################################################
+        # plot VIOLINPLOT 1
+        ##########################################################################################
+        # Set charts properties
+        # palette_dic=  {True:'#D3D3D3'
+        #             , False:'#B8BEDB'
+        #             , 'A':'#70c936'
+        #             , 'C':'#ff0000'
+        #             , 'G':'#ffd42a'
+        #             , 'T':'#9955ff'}
+        title='Is the 4th nucleotide the inserted nucleotide?'
+        no_of_samples = len(df_pivot['sample'].unique())
+        ylabel='Normalised percentage\n of inserted 4th nucleotides'
+        text_bellow_chart = 'Only 1nt IN around the cut are plotted.\
+                            \nSequences without DEL/SUB around the cut.\
+                            \nIn individual sample True + False = 100%.\
+                            \nHorizontal lines show medians for individual 4th nucleotide.\
+                            \n{0}'.format(no_of_gRNA_samples)
+        name_to_save = '{0}_{1}_IN_4th_nt_inserted_normalised_violinplot'.format(file_number, counter)
+        plot = plot_sns_violin_and_print(data=df_pivot, x='4th_nt_inserted', y='value', number_of_columns=1.2\
+            , show_datapoints=True, jitter=0.3, stripplot_offset=25, dodge=True\
+            , show_hue_medians=False\
+            , hue='4th_nt', hue_order=hue_order, hue_only_for_data_points=True \
+            , clip_right=True\
+            , title=title, xtickt_rotation=0, ylabel=ylabel\
+            , order=None, plot_legend=True \
+            , integrated_properties_dic=True, text_bellow_chart=text_bellow_chart\
+            , y_legend_coordinate=-0.05, yaxis_formater=1\
+            , x_max=1\
+            , name_to_save=name_to_save\
+            , project_output_subdir=project_output_subdir \
+            , data_source=data_source, output_format=output_format\
+            , dpi=200\
+            , y_min=0\
+            , y_max=1.02\
+                )
+        stat_info = df_pivot.groupby('4th_nt_inserted').describe().unstack()
+        save = save_stat(stat_info, name_to_save, project_output_subdir)
+        counter+=1
 # %%
 
 # TODO make color_dic for all charts
