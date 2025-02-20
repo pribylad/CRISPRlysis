@@ -696,6 +696,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     list_18 = ['C','C','C',0,1]
     list_19 = [range_2[0],'U','D',3,1]
     list_20 = ['O','C','D',0,0]
+    list_21 = ['C','C','B',0,0]
 
     ########################################################################################
     # Based on the position of the cut_maximum and cut_minimum decide which list is going to be used
@@ -822,7 +823,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
                    11:list_17,
                    12:list_17}
     elif category_1 == 6:
-        dict_NoMH={6:list_18,
+        dict_NoMH={6:list_21,
                    7:list_19,
                    8:list_15,
                    9:list_12,
@@ -928,6 +929,8 @@ def process_table(table, gRNA_seq, sample, parameters_dic):
 
     df['Gap_category_1'] = df.apply(lambda row: return_category_of_DEL(parameters_dic['cut_position'], parameters_dic['cut_maximum'], parameters_dic['cut_minimum'], row['Gap_min_max_ranges'][0])[0], axis=1)
     df['Gap_category_2'] = df.apply(lambda row: return_category_of_DEL(parameters_dic['cut_position'], parameters_dic['cut_maximum'], parameters_dic['cut_minimum'], row['Gap_min_max_ranges'][1])[0], axis=1)
+    # TODO "DEL_orientation_min_max_range" was in former code and must be replaced somehow for plotting DELs -> related function DEL_orientation_min_max_ranges -> returned proximal_stagg1, distal_stagg2, both,...
+    # TODO "DEL_orientation_sober" was in former code and must be replaced somehow for plotting DELs -> related function change_DEL_orientation_category_to_value
 
     # Call the above function to add columns based on the function find_microhomology
     apply_return_cut_type_based_on_cut_categories(df, return_cut_type_based_on_cut_categories, ['Cut_type', 'End_participating_on_MH', 'DEL_orientation', 'End_3_5', 'Likely_cut_type'])
