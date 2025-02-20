@@ -855,6 +855,32 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
 
     return cut_type, end_participating, DEL_orientation, strand_participating, likely_type
 
+def DEL_orientation_sober(category_1, category_2):
+    """
+    Returns DEL orientation relative to cut site.
+    
+    Parameters:
+    category_1 (int): category for the first range based on the return_category_of_DEL, where the shiftable-nucleotides were moved to the right in function return_category_of_DEL
+    category_2 (int): category for the second range based on the return_category_of_DEL, where the shiftable-nucleotides were moved to the left in function return_category_of_DEL
+
+    Returns:
+    str: DEL orientation relative to cut site (upstream)
+    """
+    if category_1 <= 5:
+        if category_2 <= 5:
+            return 'upstream'
+        if category_2 == 6:
+            return 'upstream_both'
+        else:
+            return 'upstream_both_downstream'
+    elif category_1 == 6:
+        if category_2 == 6:
+            return 'both'
+        else:
+            return 'both_downstream'
+    else:
+        return 'downstream'
+
 # Add information about the sample, guide and its selected nucleoids into the table as new columns
 def process_table(table, gRNA_seq, sample, parameters_dic):
     """Adds to the given table many columns with stuff which are needed for CRISPRlysis."""
@@ -931,6 +957,7 @@ def process_table(table, gRNA_seq, sample, parameters_dic):
     df['Gap_category_2'] = df.apply(lambda row: return_category_of_DEL(parameters_dic['cut_position'], parameters_dic['cut_maximum'], parameters_dic['cut_minimum'], row['Gap_min_max_ranges'][1])[0], axis=1)
     # TODO "DEL_orientation_min_max_range" was in former code and must be replaced somehow for plotting DELs -> related function DEL_orientation_min_max_ranges -> returned proximal_stagg1, distal_stagg2, both,...
     # TODO "DEL_orientation_sober" was in former code and must be replaced somehow for plotting DELs -> related function change_DEL_orientation_category_to_value
+    df['DEL_orientation_sober'] = df.apply(lambda row: DEL_orientation_sober(row['Gap_category_1'], row['Gap_category_2']), axis=1)
 
     # Call the above function to add columns based on the function find_microhomology
     apply_return_cut_type_based_on_cut_categories(df, return_cut_type_based_on_cut_categories, ['Cut_type', 'End_participating_on_MH', 'DEL_orientation', 'End_3_5', 'Likely_cut_type'])

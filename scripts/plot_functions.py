@@ -237,12 +237,12 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         ,'SUB':{'color':'#ffcc33','edge_color':'gray', 'hatch':''}\
         ,'OTHERS':{'color':'#808080','edge_color':'gray', 'hatch':''}\
         ,'no_mutation':{'color':'#111111','edge_color':'gray', 'hatch':''}\
-        ,'distal':{'color':'#f0d271','edge_color':'gray', 'hatch':''}\
-        ,'distal_both':{'color':'#C4C4C4','edge_color':'#f0d271', 'hatch':'\\\\\\'}\
-        ,'distal_both_proximal':{'color':'#979797','edge_color':'black', 'hatch':'xx'}\
+        ,'upstream':{'color':'#f0d271','edge_color':'gray', 'hatch':''}\
+        ,'upstream_both':{'color':'#C4C4C4','edge_color':'#f0d271', 'hatch':'\\\\\\'}\
+        ,'upstream_both_downstream':{'color':'#979797','edge_color':'black', 'hatch':'xx'}\
         ,'both':{'color':'#808080','edge_color':'black', 'hatch':''}\
-        ,'both_proximal':{'color':'#C4C4C4','edge_color':'#f5ad62', 'hatch':'////'}\
-        ,'proximal':{'color':'#f5ad62','edge_color':'gray', 'hatch':''}\
+        ,'both_downstream':{'color':'#C4C4C4','edge_color':'#f5ad62', 'hatch':'////'}\
+        ,'downstream':{'color':'#f5ad62','edge_color':'gray', 'hatch':''}\
         ,'PAM_distal_nt_in_MH':{'color':'#52D8FF','edge_color':'gray', 'hatch':''}\
         ,'PAM_proximal_nt_in_MH':{'color':'#FADA52','edge_color':'gray', 'hatch':''}\
         ,'no_MH_likely':{'color':'#A9A9A9','edge_color':'gray', 'hatch':''}\
