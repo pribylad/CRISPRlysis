@@ -173,10 +173,10 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     title: title, default None
     xtickt_rotation: int(), default 0
     order: order of x, default None
-    integrated_properties_dic:True/False use integrated dictionary for color/hatch/edge_color
+    integrated_properties_dic (bool):True/False use integrated dictionary for color/hatch/edge_color
     color_dic: dic{} if integrated_properties_dic==False, default None
     hatches (bool): True/False, if you want to make hatches, default False
-    hatches_list: list[] if integrated_properties_dic== False, deault None
+    hatches_list (list, dict, None): is used if integrated_properties_dic== False, deault None
     change_edge_color (bool): True/False, default False
     edge_color_dic: dic{} if integrated_properties_dic==False, default None
     show_datapoints (bool): True/False, default True
@@ -326,6 +326,23 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         sns.violinplot(data=data, x=x, y=y, hue=hue_violin, hue_order=hue_order, density_norm='width', palette=color_dic_txt, cut=0, inner=None, zorder=0)
         ## Set hatches if wanted
         if hatches is True:
+            # changing hatches for if hatches_list is not None to be able to use predefined list
+            if hatches_list is not None:
+                if isinstance(hatches_list, list):
+                    hatches_list = hatches_list
+                elif isinstance(hatches_list, dict):
+                    hatches_list_new = []
+                    for key in order:
+                        if key in hatches_list:
+                            hatches_list_new.append(hatches_list[key])
+                    hatches_list = hatches_list_new
+                else:
+                    raise PlotSnsViolinPlotError('Problem with hatches_list variable, it is not list or dict. The hatches is set to True.')
+            else:
+                hatches_list = []
+                for item in order:
+                    if test[item] != 0:
+                        hatches_list.append(properties_dic[item]['hatch'])
             ihatch = iter(hatches_list)
             hatch = [i.set_hatch(next(ihatch)) for i in ax.get_children() if isinstance(i, matplotlib.collections.PolyCollection)]
         # Clip the right half of each violin.
@@ -386,12 +403,26 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         sns.violinplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, density_norm='width', palette=color_dic, cut=0, inner=None, order=order, zorder=1)
         ## Set hatches if wanted
         if hatches is True:
-            hatches_list = []
-            for item in order:
-                if test[item] != 0:
-                    hatches_list.append(properties_dic[item]['hatch'])
+            # changing hatches for if hatches_list is not None to be able to use predefined list
+            if hatches_list is not None:
+                if isinstance(hatches_list, list):
+                    hatches_list = hatches_list
+                elif isinstance(hatches_list, dict):
+                    hatches_list_new = []
+                    for key in order:
+                        if key in hatches_list:
+                            hatches_list_new.append(hatches_list[key])
+                    hatches_list = hatches_list_new
+                else:
+                    raise PlotSnsViolinPlotError('Problem with hatches_list variable, it is not list or dict. The hatches is set to True.')
+            else:
+                hatches_list = []
+                for item in order:
+                    if test[item] != 0:
+                        hatches_list.append(properties_dic[item]['hatch'])
             ihatch = iter(hatches_list)
             hatch = [i.set_hatch(next(ihatch)) for i in ax.get_children() if isinstance(i, matplotlib.collections.PolyCollection)]
+
         # Clip the right half of each violin.
         if clip_right is True:
             for item in ax.collections:
@@ -526,13 +557,33 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         return plt.show()
     return plt.close()
 
-def check_if_all_events_are_present_after_pivot_reset_index(df, list_of_events, return_only_predef_list=False):
-    """df = DataFrame
-    list_of_events = INDELSUBOTHERS or BluntStag or ProximalDistalBars or [individual, list]
-    return_only_predef_list = default False"""
-    # TODO solce list of events fo bluntstag
+def check_if_all_events_are_present_after_pivot_reset_index(df, list_of_events, cut_maximum, cut_minimum, return_only_predef_list=False):
+    """
+    Parameters:
+    df (DataFrame): DataFrame
+    list_of_events (str or list): INDELSUBOTHERS or BluntStag or ProximalDistalBars or [individual, list]
+    cut_maximum (int): is the most 5' position where the Cas can cut
+    cut_minimum (int): is the most 3' postition where the Cas can cut
+    return_only_predef_list (bool): default False
+    
+    Returns:
+    Edited DataFrame
+    list_of_events
+    """
+    # TODO solve list of events fo bluntstag
+    # Make list based on the cut_maximum and cut_optimum
+    default_events = ['C_0', 'C_1', 'O_0', 'O_1', 'X_0', 'X_1']
     if list_of_events == 'BluntStag':
-        list_of_events = ['stagg2nt', 'stagg2nt_likely', 'stagg1nt', 'stagg1nt_likely', 'blunt_likely', 'blunt', 'cannot_be_determined']
+        list_of_events = []
+        for i in range(cut_maximum, cut_minimum+1):
+            list_of_events.append(f'{i}_0')
+            list_of_events.append(f'{i}_1')
+        list_of_events.extend(default_events)
+        # concert int() to str()
+        # for i in range(len(list_of_events)):
+        #     list_of_events[i]=str(list_of_events[i])
+        # TODO delete onec it works
+        # list_of_events = ['stagg2nt', 'stagg2nt_likely', 'stagg1nt', 'stagg1nt_likely', 'blunt_likely', 'blunt', 'cannot_be_determined']
     if list_of_events == 'INDELSUBOTHERS':
         list_of_events = ['IN', 'DEL', 'SUB', 'OTHERS']
     # TODO solve list of events for prosimal distal
@@ -546,7 +597,7 @@ def check_if_all_events_are_present_after_pivot_reset_index(df, list_of_events, 
     for item in list_of_events:
         if item not in df.columns.tolist():
             df[item] = 0
-    return df
+    return df, list_of_events
 
 def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_dir\
     , check_columns=False, check_columns_list=[]\
