@@ -790,7 +790,7 @@ for key, value in tables_dic.items():
             , order=order\
             , plot_legend=False\
             , integrated_properties_dic=color_dic, text_bellow_chart=text_bellow_chart\
-            , y_legend_coordinate=-0.40, yaxis_formater=100\
+            , y_legend_coordinate=-0.20, yaxis_formater=100\
             , x_max=None\
             , plot_vertical_line_middle=True, middle_line_position=len(order)/2-1, change_edge_color=True\
             , name_to_save=name_to_save\
@@ -845,7 +845,7 @@ for key, value in tables_dic.items():
             , title=title, xtickt_rotation=-55, ylabel=ylabel\
             , order=order, plot_legend=False\
             , integrated_properties_dic=color_dic, text_bellow_chart=text_bellow_chart\
-            , y_legend_coordinate=-0.40, yaxis_formater=1\
+            , y_legend_coordinate=-0.20, yaxis_formater=1\
             , x_max=None\
             , plot_vertical_line_middle=True, middle_line_position=len(order)/2-1, change_edge_color=True\
             , name_to_save=name_to_save\
