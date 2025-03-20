@@ -8,6 +8,9 @@ Output files will be stored in the 'project_output_dir' which is defined in the 
 Example: 'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022'
 """
 # %%
+# TODO
+# TODO do not use DEL_orientation_sober, but use the DEL-orientation from apply_return_cut_type_based_on_cut_categories
+# %%
 import ast
 import csv
 from datetime import datetime
@@ -19,6 +22,7 @@ import shutil
 import time
 import sys
 
+import itertools
 import matplotlib
 from matplotlib.offsetbox import AnchoredText
 import matplotlib.patches as mpatches
@@ -37,8 +41,9 @@ from scripts.make_mastertables import filter_out_values_from_df, clasify_INDELSU
 
 from scripts.plot_functions import save_stat, make_Ubuntu_mnt_path, make_reverse_complement, find_element_in_list, adjust_box_widths, plot_sns_violin_and_print, plot_general_stacked_horizontal_barchart, plot_barplot, check_if_all_events_are_present_after_pivot_reset_index
 
-from scripts.dict_functions import make_color_dic_CutType, make_hatches_dic_CutType
+from scripts.dict_functions import make_color_dic_CutType, make_hatches_dic_CutType, make_color_dic_blunt_stagg_orientation
 
+# %%
 # Get current date and time
 now = datetime.now()
 # Format the date to YYMMDD
@@ -496,25 +501,36 @@ for key, value in tables_dic.items():
     #               D   D   E       L
     #               DDDD    EEEEEE  LLLLLL
     ##########################################################################################
+    # %%
     if plot_DELs is True:
         file_number = '03'
         counter = 1
         print('Plotting DELs')
         # boxplot from all individual samples showing DEL orientation
-        df_orientation = df[['order', 'gRNA_seq', 'sample', 'name', 'DEL_orientation_sober'\
+        df_orientation = df[['order', 'gRNA_seq', 'sample', 'name', 'DEL_orientation'\
                     , '%Reads', 'n_deleted_around_cut', 'Gap_around_cut']]
         # drop data without gap
-        if 'no_gap' in df_orientation['DEL_orientation_sober'].unique():
-            df_orientation = df_orientation[~df_orientation['DEL_orientation_sober'].str.contains('no_gap')]
+        if 'X' in df_orientation['DEL_orientation'].unique():
+            df_orientation = df_orientation[~df_orientation['DEL_orientation'].str.contains('X')]
         # filter out deletions which are not around the cut
         df_orientation = df_orientation[df_orientation['Gap_around_cut']==True]
-        order = ['upstream', 'upstream_both', 'upstream_both_downstream', 'both', 'both_downstream', 'downstream']
+        # Change ['U', 'B', 'D', 'C'] in DEL_orientation for ['upstream', 'both', 'downstream', 'cannot_be_determined']
+        # Replace values in the DEL_orientation column
+        df_orientation['DEL_orientation'] = df_orientation['DEL_orientation'].replace({
+            'U': 'upstream',
+            'B': 'both',
+            'D': 'downstream',
+            'C': 'cannot_be_determined'
+        })
+        # TODO delete order once it works
+        # order = ['upstream', 'upstream_both', 'upstream_both_downstream', 'both', 'both_downstream', 'downstream']
+        order = ['upstream', 'both', 'downstream', 'cannot_be_determined']
         ##########################################################################################
         # plot VIOLINPLOT
         ##########################################################################################
         # make pivot without normalisation
         pivot = pd.crosstab(index=[df_orientation['name'], df_orientation['gRNA_seq']], \
-                columns=df_orientation['DEL_orientation_sober'], values=df_orientation['%Reads'],\
+                columns=df_orientation['DEL_orientation'], values=df_orientation['%Reads'],\
                 aggfunc='sum')
         df_pivot = pivot.reset_index()
         # check if all columns exists, if not make an empty one
@@ -529,13 +545,13 @@ for key, value in tables_dic.items():
         # Set charts properties
         title = 'Not-normalised incidence of DEL according to the orientation'
         ylabel = 'Percentage of DEL around the cut'
-        no_of_samples = df_pivot.groupby('DEL_orientation_sober').value.count().unique()
+        no_of_samples = df_pivot.groupby('DEL_orientation').value.count().unique()
         text_bellow_chart = f'Only DELs around the cut are plotted.\
                             \nNot-normalised\
                             \n{no_of_gRNA_samples}'
         name_to_save = f'{file_number}_{counter}_1_DEL_orientation_summary_violinplot'
-        plot = plot_sns_violin_and_print(data=df_pivot, x='DEL_orientation_sober', y='value'\
-            , number_of_columns=len(df_pivot['DEL_orientation_sober'].unique())/2\
+        plot = plot_sns_violin_and_print(data=df_pivot, x='DEL_orientation', y='value'\
+            , number_of_columns=len(df_pivot['DEL_orientation'].unique())/2\
             , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
             , show_hue_medians=False\
             , hue=None, hue_only_for_data_points=False \
@@ -553,7 +569,7 @@ for key, value in tables_dic.items():
             , project_output_dir=project_output_subdir\
             , data_source=data_source, output_format=output_format\
             , dpi=200, y_min=0, y_max=100, show_plots=show_plots)
-        stat_info = df_pivot.groupby('DEL_orientation_sober').value.describe()
+        stat_info = df_pivot.groupby('DEL_orientation').value.describe()
         save_stat(stat_info, name_to_save, project_output_subdir)
         counter+=0 # Should be 0 as next chart is just normalised
         ##########################################################################################
@@ -561,12 +577,14 @@ for key, value in tables_dic.items():
         ##########################################################################################
         # normalise data as percentage from row total
         pivot = pd.crosstab(index=[df_orientation['name'], df_orientation['gRNA_seq']]\
-            , columns=df_orientation['DEL_orientation_sober'], values=df_orientation['%Reads']\
+            , columns=df_orientation['DEL_orientation'], values=df_orientation['%Reads']\
             , aggfunc='sum', normalize='index')
         df_pivot = pivot.reset_index()
 
         # check if all columns exists, if not make an empty one
-        order = ['upstream', 'upstream_both', 'upstream_both_downstream', 'both', 'both_downstream', 'downstream']
+        order = ['upstream', 'both', 'downstream', 'cannot_be_determined']
+        # TODO delete order once it works
+        # order = ['upstream', 'upstream_both', 'upstream_both_downstream', 'both', 'both_downstream', 'downstream']
         for orientation in order:
             if orientation not in df_pivot.columns.tolist():
                 df_pivot[orientation] = int()
@@ -578,13 +596,13 @@ for key, value in tables_dic.items():
         # Set charts properties
         title = 'Normalised incidence of DEL according to the orientation'
         ylabel = 'Normalised percentage of DEL around the cut'
-        no_of_samples = df_pivot.groupby('DEL_orientation_sober').value.count().unique()
+        no_of_samples = df_pivot.groupby('DEL_orientation').value.count().unique()
         text_bellow_chart = f'Only DELs around the cut are plotted.\
                             \nNormalised to: SUM of all DEL orientation in individual sample = 100%\
                             \n{no_of_gRNA_samples}'
         name_to_save = f'{file_number}_{counter}_2_DEL_orientation_summary_violinplot'
-        plot = plot_sns_violin_and_print(data=df_pivot, x='DEL_orientation_sober', y='value'\
-            , number_of_columns=len(df_pivot['DEL_orientation_sober'].unique())/2\
+        plot = plot_sns_violin_and_print(data=df_pivot, x='DEL_orientation', y='value'\
+            , number_of_columns=len(df_pivot['DEL_orientation'].unique())/2\
             , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
             , show_hue_medians=False\
             , hue=None, hue_only_for_data_points=False \
@@ -602,20 +620,20 @@ for key, value in tables_dic.items():
             , project_output_dir=project_output_subdir\
             , data_source=data_source, output_format=output_format\
             , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
-        stat_info = df_pivot.groupby('DEL_orientation_sober').value.describe()
+        stat_info = df_pivot.groupby('DEL_orientation').value.describe()
         save_stat(stat_info, name_to_save, project_output_subdir)
         counter+=1
         ##########################################################################################
         ##########################################################################################
         ##########################################################################################
+        # %%
         # Get data
         df_CutType = df.copy()
         ## drop data without gap
         df_CutType = df_CutType[df_CutType['n_deleted_around_cut'] != 0]
         ## filter out deletions which are not around the cut
         df_CutType = df_CutType[df_CutType['Gap_around_cut'] == True]
-        ## make pivot, where all samples have individual row and values are sum of individual events
-        # %%
+        # make pivot, where all samples have individual row and values are sum of individual events
         pivot = pd.pivot_table(df_CutType, index=['name', 'gRNA_seq'], columns=['Cut_type', 'Likely_cut_type'], values='%Reads', aggfunc='sum', fill_value=0)
         df_Blunt_Stagg_samples = pivot.reset_index()
         # Flatten the index
@@ -628,7 +646,6 @@ for key, value in tables_dic.items():
         pivot = pd.crosstab(index=[df_Blunt_Stagg_samples['name'],df_Blunt_Stagg_samples['gRNA_seq']], columns=df_Blunt_Stagg_samples['variable'], values=df_Blunt_Stagg_samples['value'], aggfunc='sum', normalize='index')
         df_Blunt_Stagg_samples_norm = pivot.reset_index()
         df_Blunt_Stagg_samples_norm = pd.melt(df_Blunt_Stagg_samples_norm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
-        # %%
         # Set charts properties
         # TODO is order needed bellow?
         # order=list_of_events
@@ -640,7 +657,7 @@ for key, value in tables_dic.items():
         xlabel = 'Average of %Reads from individual samples'
         name_to_save = f'{file_number}_{counter}_Stagg_blunt_ratio_all_samples'
 
-        # TODO solve color_dic and hatches_dic
+        # TODO solve color_dic and hatches_dic - new function was made in dict_functions.py
         color_dic = make_color_dic_CutType(list_of_events)
         # color_dic={\
         #     'stagg2nt':'#E890B8'\
@@ -678,10 +695,10 @@ for key, value in tables_dic.items():
         stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
         save_stat(stat_info, name_to_save, project_output_subdir)
         counter+=1
+        # %%
         ##########################################################################################
         # plot VIOLINPLOT without PAM proximal/distal orientation
         ##########################################################################################
-        # %%
         title='Normalised Staggered/Blunt representation'
         ylabel='Normalised percentage of DELs \naround cuts events'
         text_bellow_chart = f'Only DELs around the cut are plotted.\
@@ -700,7 +717,7 @@ for key, value in tables_dic.items():
             , integrated_properties_dic=False, color_dic=color_dic\
             , hatches=True, hatches_list=hatches_dic\
             , text_bellow_chart=text_bellow_chart\
-            , y_legend_coordinate=-0.45, yaxis_formater=1\
+            , y_legend_coordinate=-0.15, yaxis_formater=1\
             , x_max=None\
             , change_edge_color=False\
             , name_to_save=name_to_save\
@@ -710,8 +727,135 @@ for key, value in tables_dic.items():
         stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
         save_stat(stat_info, name_to_save, project_output_subdir)
         counter+=1
-# %%
+        ##########################################################################################
+        # plot VIOLINPLOTs with PAM proximal/distal orientation
+        ##########################################################################################
+        # %%
+        # order = ["distal_stagg2nt", "distal_stagg2nt_likely", "distal_stagg1nt"\
+        #     , "distal_stagg1nt_likely", "distal_blunt", "distal_blunt_likely"\
+        #     , "proximal_blunt_likely", "proximal_blunt", "proximal_stagg1nt_likely"\
+        #     , "proximal_stagg1nt", "proximal_stagg2nt_likely", "proximal_stagg2nt"\
+        #     , "cannot_be_determined"]
 
+        # make pivot, where all samples have individual row and values are sum of individual events
+        # TODO for columns add the orientation
+        pivot = pd.pivot_table(df_CutType, index=['name', 'gRNA_seq'], columns=['DEL_orientation', 'Cut_type', 'Likely_cut_type'], values='%Reads', aggfunc='sum', fill_value=0)
+        # make order for pivot table based on the upstream/downstream, cut maximum/minimum and likeliness of the cut
+        order = list(itertools.product(['U', 'D'], range(cut_maximum, cut_minimum+1), [0, 1]))
+        order.append(('C', 0, '0'))
+        order.append(('B', 'C', '0'))
+        order = [(item[0], str(item[1]), item[2]) for item in order]
+        pivot = pivot.reindex(columns=pd.MultiIndex.from_tuples(order), fill_value=0)
+        # Flatten the order
+        order = ['_'.join(map(str, col)).strip('_') for col in pivot.columns]	
+        # Reset the index
+        df_Blunt_Stagg_samples = pivot.reset_index()
+        # Flatten the index
+        df_Blunt_Stagg_samples.columns = ['_'.join(map(str, col)).strip('_') for col in df_Blunt_Stagg_samples.columns]
+
+        # check if all events are present, if not, add missing column with 0
+        # df_Blunt_Stagg_samples = check_if_all_events_are_present_after_pivot_reset_index(df_Blunt_Stagg_samples, order, cut_maximum, cut_minimum)
+        # # make single column table
+        df_Blunt_Stagg_samples = pd.melt(df_Blunt_Stagg_samples, id_vars=['name', 'gRNA_seq'], value_vars=order)
+        # %%
+        df_Blunt_Stagg_samples
+        # %%
+        ##########################################################################################
+        # plot VIOLINPLOT with PAM proximal/distal orientation with cannot_be_determined NOT-normalised
+        ##########################################################################################
+        # Make pivot crosstab without normalisation
+        pivot = pd.crosstab(index=[df_Blunt_Stagg_samples['name'],df_Blunt_Stagg_samples['gRNA_seq']]\
+                    , columns=df_Blunt_Stagg_samples['variable']\
+                    , values=df_Blunt_Stagg_samples['value']\
+                    , aggfunc='sum')
+        df_Blunt_Stagg_samples_norm = pivot.reset_index()
+        df_Blunt_Stagg_samples_norm = pd.melt(df_Blunt_Stagg_samples_norm, id_vars=['name', 'gRNA_seq'], value_vars=order)
+        # %%
+        # Set charts properties
+        title='Not-normalised Staggered/Blunt representation, cut site oriented'
+        ylabel='Percentage of DELs \naround cuts events'
+        text_bellow_chart = f'Only DELs around the cut are plotted.\
+                    \nNot-normalised.\
+                    \n{no_of_gRNA_samples}'
+        name_to_save = f'{file_number}_{counter}_1_DEL_Stagg_blunt_oriented_summary_violinplot'
+        color_dic = make_color_dic_blunt_stagg_orientation(order)
+        plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples, x='variable', y='value'\
+            , number_of_columns=len(order)/2\
+            , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=True\
+            , show_hue_medians=False\
+            , hue=None, hue_only_for_data_points=False \
+            , hatches=True\
+            , clip_right=True\
+            , title=title, xtickt_rotation=-55, ylabel=ylabel\
+            , order=order\
+            , plot_legend=False\
+            , integrated_properties_dic=color_dic, text_bellow_chart=text_bellow_chart\
+            , y_legend_coordinate=-0.40, yaxis_formater=100\
+            , x_max=None\
+            , plot_vertical_line_middle=True, middle_line_position=len(order)/2-1, change_edge_color=True\
+            , name_to_save=name_to_save\
+            , project_output_dir=project_output_subdir\
+            , data_source=data_source, output_format=output_format\
+            , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+        # plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='DEL_orientation_cut_type', y='value'\
+        #     , number_of_columns=6\
+        #     , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=True\
+        #     , show_hue_medians=False\
+        #     , hue=None, hue_only_for_data_points=False \
+        #     , hatches=True\
+        #     , clip_right=True\
+        #     , title=title, xtickt_rotation=-55, ylabel=ylabel\
+        #     , order=order\
+        #     , plot_legend=False\
+        #     , integrated_properties_dic=True, text_bellow_chart=text_bellow_chart\
+        #     , y_legend_coordinate=-0.40, yaxis_formater=100\
+        #     , x_max=None\
+        #     , plot_vertical_line_middle=True, middle_line_position=6, change_edge_color=True\
+        #     , name_to_save=name_to_save\
+        #     , project_output_dir=project_output_subdir\
+        #     , data_source=data_source, output_format=output_format\
+        #     , dpi=200, y_min=0, y_max=102)
+        stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
+        save_stat(stat_info, name_to_save, project_output_subdir)
+        counter+=0 # should be 0 as next chart is the same, just normalised
+        ##########################################################################################
+        # plot VIOLINPLOT with PAM proximal/distal orientation with cannot_be_determined
+        ##########################################################################################
+        # Make pivot crosstab where values will be normalised to sum of row = 100%
+        pivot = pd.crosstab(index=[df_Blunt_Stagg_samples['name'],df_Blunt_Stagg_samples['gRNA_seq']]\
+                    , columns=df_Blunt_Stagg_samples['variable']\
+                    , values=df_Blunt_Stagg_samples['value']\
+                    , aggfunc='sum', normalize='index')
+        df_Blunt_Stagg_samples_norm = pivot.reset_index()
+        df_Blunt_Stagg_samples_norm = pd.melt(df_Blunt_Stagg_samples_norm, id_vars=['name', 'gRNA_seq']\
+                                    , value_vars=order)
+        # Set charts properties
+        title='Normalised Staggered/Blunt representation, cut site oriented'
+        ylabel='Normalised percentage of DELs \naround cuts events'
+        text_bellow_chart = f'Only DELs around the cut are plotted.\
+                            \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
+                            \n{no_of_gRNA_samples}'
+        name_to_save = f'{file_number}_{counter}_2_DEL_Stagg_blunt_oriented_summary_violinplot_normalised'
+        plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable'\
+            , y='value', number_of_columns=len(order)/2\
+            , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=True\
+            , show_hue_medians=False\
+            , hue=None, hue_only_for_data_points=False \
+            , hatches=True, clip_right=True\
+            , title=title, xtickt_rotation=-55, ylabel=ylabel\
+            , order=order, plot_legend=False\
+            , integrated_properties_dic=color_dic, text_bellow_chart=text_bellow_chart\
+            , y_legend_coordinate=-0.40, yaxis_formater=1\
+            , x_max=None\
+            , plot_vertical_line_middle=True, middle_line_position=len(order)/2-1, change_edge_color=True\
+            , name_to_save=name_to_save\
+            , project_output_dir=project_output_subdir\
+            , data_source=data_source, output_format=output_format\
+            , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
+        stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
+        save_stat(stat_info, name_to_save, project_output_subdir)
+        counter+=1
+        # %%
 # TODO make color_dic for all charts
 color_dic = {'stagg2nt':{'color':'#E890B8','hatch_color':'gray', 'hatch':''}\
         ,'stagg2nt_likely':{'color':'#E890B8','hatch_color':'gray', 'hatch':'//'}\

@@ -208,57 +208,68 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     # Define the custom exception class within the function
     class PlotSnsViolinPlotError(Exception):
         """Rise a function specific error."""
-
-    properties_dic = {'stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
-        ,'stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'//'}\
-        ,'stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':''}\
-        ,'stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'////'}\
-        ,'blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':''}\
-        ,'blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\'}\
-        ,'cannot_be_determined':{'color':'white','edge_color':'gray', 'hatch':''}\
-        ,'can_not_be_determined':{'color':'white','edge_color':'gray', 'hatch':''}\
-        ,'distal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'\\\\'}\
-        ,'distal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
-        ,'distal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'\\\\'}\
-        ,'distal_stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':''}\
-        ,'distal_blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\'}\
-        ,'distal_blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':''}\
-        ,'proximal_blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':''}\
-        ,'proximal_blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'//'}\
-        ,'proximal_stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':''}\
-        ,'proximal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'//'}\
-        ,'proximal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
-        ,'proximal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'//'}\
-        ,'gap_out_of_cut':{'color':'gray','edge_color':'gray', 'hatch':''}\
-        ,'IN':{'color':'#091f92','edge_color':'gray', 'hatch':''}\
-        ,'INs':{'color':'#091f92','edge_color':'gray', 'hatch':''}\
-        ,'DEL':{'color':'#ba8759','edge_color':'gray', 'hatch':''}\
-        ,'DELs':{'color':'#ba8759','edge_color':'gray', 'hatch':''}\
-        ,'SUB':{'color':'#ffcc33','edge_color':'gray', 'hatch':''}\
-        ,'OTHERS':{'color':'#808080','edge_color':'gray', 'hatch':''}\
-        ,'no_mutation':{'color':'#111111','edge_color':'gray', 'hatch':''}\
-        ,'upstream':{'color':'#f0d271','edge_color':'gray', 'hatch':''}\
-        ,'upstream_both':{'color':'#C4C4C4','edge_color':'#f0d271', 'hatch':'\\\\\\'}\
-        ,'upstream_both_downstream':{'color':'#979797','edge_color':'black', 'hatch':'xx'}\
-        ,'both':{'color':'#808080','edge_color':'black', 'hatch':''}\
-        ,'both_downstream':{'color':'#C4C4C4','edge_color':'#f5ad62', 'hatch':'////'}\
-        ,'downstream':{'color':'#f5ad62','edge_color':'gray', 'hatch':''}\
-        ,'PAM_distal_nt_in_MH':{'color':'#52D8FF','edge_color':'gray', 'hatch':''}\
-        ,'PAM_proximal_nt_in_MH':{'color':'#FADA52','edge_color':'gray', 'hatch':''}\
-        ,'no_MH_likely':{'color':'#A9A9A9','edge_color':'gray', 'hatch':''}\
-        ,'no_MH':{'color':'#D3D3D3','edge_color':'gray', 'hatch':''}\
-        ,'A':{'color':'#70c936','edge_color':'gray', 'hatch':''}\
-        ,'C':{'color':'#ff0000','edge_color':'gray', 'hatch':''}\
-        ,'G':{'color':'#ffd42a','edge_color':'gray', 'hatch':''}\
-        ,'T':{'color':'#9955ff','edge_color':'gray', 'hatch':''}\
-        ,True:{'color':'#D3D3D3','edge_color':'gray', 'hatch':''}\
-        ,False:{'color':'#B8BEDB','edge_color':'gray', 'hatch':''}\
-        ,'True':{'color':'#D3D3D3','edge_color':'gray', 'hatch':''}\
-        ,'False':{'color':'#B8BEDB','edge_color':'gray', 'hatch':''}\
-        ,'unmethylated':{'color':'#000000','edge_color':'gray', 'hatch':''}\
-        ,'CG_only':{'color':'#4D4D4D','edge_color':'gray', 'hatch':''}\
-        ,'heterochromatin':{'color':'#999999','edge_color':'gray', 'hatch':''}\
-        ,'RdDM':{'color':'#fafafa','edge_color':'gray', 'hatch':''}}
+    
+    # Check if the integrated_properties_dic is a dictionary, if not use the default dictionary
+    if isinstance(integrated_properties_dic, dict) is True:
+        print('The integrated_properties_dic is a dictionary, and it is going to be used.')
+        properties_dic = integrated_properties_dic
+        print(properties_dic)
+    elif integrated_properties_dic is True:
+        properties_dic = {'stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
+            ,'stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'//'}\
+            ,'stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':''}\
+            ,'stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'////'}\
+            ,'blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':''}\
+            ,'blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\'}\
+            ,'cannot_be_determined':{'color':'white','edge_color':'gray', 'hatch':''}\
+            ,'can_not_be_determined':{'color':'white','edge_color':'gray', 'hatch':''}\
+            ,'distal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'\\\\'}\
+            ,'distal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
+            ,'distal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'\\\\'}\
+            ,'distal_stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':''}\
+            ,'distal_blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\'}\
+            ,'distal_blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':''}\
+            ,'proximal_blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':''}\
+            ,'proximal_blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'//'}\
+            ,'proximal_stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':''}\
+            ,'proximal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'//'}\
+            ,'proximal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
+            ,'proximal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'//'}\
+            ,'gap_out_of_cut':{'color':'gray','edge_color':'gray', 'hatch':''}\
+            ,'IN':{'color':'#091f92','edge_color':'gray', 'hatch':''}\
+            ,'INs':{'color':'#091f92','edge_color':'gray', 'hatch':''}\
+            ,'DEL':{'color':'#ba8759','edge_color':'gray', 'hatch':''}\
+            ,'DELs':{'color':'#ba8759','edge_color':'gray', 'hatch':''}\
+            ,'SUB':{'color':'#ffcc33','edge_color':'gray', 'hatch':''}\
+            ,'OTHERS':{'color':'#808080','edge_color':'gray', 'hatch':''}\
+            ,'no_mutation':{'color':'#111111','edge_color':'gray', 'hatch':''}\
+            ,'U':{'color':'#f0d271','edge_color':'gray', 'hatch':''}\
+            ,'B':{'color':'#808080','edge_color':'black', 'hatch':''}\
+            ,'D':{'color':'#f5ad62','edge_color':'gray', 'hatch':''}\
+            ,'upstream':{'color':'#f0d271','edge_color':'gray', 'hatch':''}\
+            ,'upstream_both':{'color':'#C4C4C4','edge_color':'#f0d271', 'hatch':'\\\\\\'}\
+            ,'upstream_both_downstream':{'color':'#979797','edge_color':'black', 'hatch':'xx'}\
+            ,'both':{'color':'#808080','edge_color':'black', 'hatch':''}\
+            ,'both_downstream':{'color':'#C4C4C4','edge_color':'#f5ad62', 'hatch':'////'}\
+            ,'downstream':{'color':'#f5ad62','edge_color':'gray', 'hatch':''}\
+            ,'PAM_distal_nt_in_MH':{'color':'#52D8FF','edge_color':'gray', 'hatch':''}\
+            ,'PAM_proximal_nt_in_MH':{'color':'#FADA52','edge_color':'gray', 'hatch':''}\
+            ,'no_MH_likely':{'color':'#A9A9A9','edge_color':'gray', 'hatch':''}\
+            ,'no_MH':{'color':'#D3D3D3','edge_color':'gray', 'hatch':''}\
+            ,'A':{'color':'#70c936','edge_color':'gray', 'hatch':''}\
+            ,'C':{'color':'#ff0000','edge_color':'gray', 'hatch':''}\
+            ,'G':{'color':'#ffd42a','edge_color':'gray', 'hatch':''}\
+            ,'T':{'color':'#9955ff','edge_color':'gray', 'hatch':''}\
+            ,True:{'color':'#D3D3D3','edge_color':'gray', 'hatch':''}\
+            ,False:{'color':'#B8BEDB','edge_color':'gray', 'hatch':''}\
+            ,'True':{'color':'#D3D3D3','edge_color':'gray', 'hatch':''}\
+            ,'False':{'color':'#B8BEDB','edge_color':'gray', 'hatch':''}\
+            ,'unmethylated':{'color':'#000000','edge_color':'gray', 'hatch':''}\
+            ,'CG_only':{'color':'#4D4D4D','edge_color':'gray', 'hatch':''}\
+            ,'heterochromatin':{'color':'#999999','edge_color':'gray', 'hatch':''}\
+            ,'RdDM':{'color':'#fafafa','edge_color':'gray', 'hatch':''}}
+    else:
+        print('The properties_dic is not a dictionary, and also the integrated dictionary is not going to be used.')
 
     # Check if there are data in the data[x], if not skip making the plot.
     if data[x].notnull().any() is False:

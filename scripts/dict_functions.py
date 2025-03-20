@@ -61,3 +61,58 @@ def make_hatches_dic_CutType(list_of_events):
         else:
             hatches_dic[l] = '*'
     return hatches_dic
+
+def make_color_dic_blunt_stagg_orientation(order):
+    """
+    Makes color dictionary for plotting blunt stagg orientation.
+    Parameters:
+    order (list): ['U_-2_0', 'U_-2_1', 'U_-1_0', ...]
+
+    Returns:
+    color_dic
+    """
+    color_dic = {}
+    for l in order:
+        # Split the string by underscore
+        split = l.split('_')
+        if split[0].startswith(('C', 'O', 'X')):
+            color_dic[l] = {'color':'gray','edge_color':'gray', 'hatch':''}
+        elif split[0].startswith('U'):
+            if split[1] == str(0):
+                if split[2] == str(0):
+                    color_dic[l] = {'color':'#6ea7ff','edge_color':'gray', 'hatch':''}
+                else:
+                    color_dic[l] = {'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\'}
+            elif split[1] == str(-1):
+                if split[2] == str(0):
+                    color_dic[l] = {'color':'#ffaaaa','edge_color':'gray', 'hatch':''}
+                else:
+                    color_dic[l] = {'color':'#ffaaaa','edge_color':'gray', 'hatch':'\\\\'} 
+            elif split[1].startswith('-'):
+                if split[2] == str(0):
+                    color_dic[l] = {'color':'#E890B8','edge_color':'gray', 'hatch':''}
+                else:
+                    color_dic[l] = {'color':'#E890B8','edge_color':'gray', 'hatch':'\\\\'}
+            else:
+                color_dic[l] = {'color':'red','edge_color':'gray', 'hatch':''}
+        elif split[0].startswith('D'):
+            if split[1] == str(0):
+                if split[2] == str(0):
+                    color_dic[l] = {'color':'#6ea7ff','edge_color':'gray', 'hatch':''}
+                else:
+                    color_dic[l] = {'color':'#6ea7ff','edge_color':'gray', 'hatch':'//'}
+            elif split[1] == str(-1):
+                if split[2] == str(0):
+                    color_dic[l] = {'color':'#ffaaaa','edge_color':'gray', 'hatch':''}
+                else:
+                    color_dic[l] = {'color':'#ffaaaa','edge_color':'gray', 'hatch':'//'}
+            elif split[1].startswith('-'):
+                if split[2] == str(0):
+                    color_dic[l] = {'color':'#E890B8','edge_color':'gray', 'hatch':''}
+                else:
+                    color_dic[l] = {'color':'#E890B8','edge_color':'gray', 'hatch':'//'}
+            else:
+                color_dic[l] = {'color':'red','edge_color':'gray', 'hatch':''}
+        else:
+            color_dic[l] = {'color':'red','edge_color':'gray', 'hatch':''}  # Default case if it doesn't match any criteria
+    return color_dic
