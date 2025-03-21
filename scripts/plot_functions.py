@@ -611,7 +611,7 @@ def check_if_all_events_are_present_after_pivot_reset_index(df, list_of_events, 
     return df, list_of_events
 
 def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_dir\
-    , check_columns=False, check_columns_list=[]\
+    , check_columns=False, cut_maximum=-2, cut_minimum=0, check_columns_list=[]\
     , data_source=None, title=None, name_to_save="stacked_horizontal_barchart"\
     , output_format='png', dpi=200, xlabel=None, sns_palette=True, palette='hls'\
     , hatches_dic=None, x_as_perc=False, xaxis_formater=1, decimals=1, xlim=None\
@@ -624,6 +624,8 @@ def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_di
     values: single column
     project_output_dir: path to the output folder
     check_columns: check if the data have all neede columns to plot the plot, default False
+    cut_maximum: int(), default -2
+    cut_minimum: int(), default 0
     check_columns_list: 'INDELSUBOTHERS' or 'BluntStag' or 'ProximalDistalBars' or [individual, list], default []
     data_source: usually name of the study as 'Přibylová et al., (2022)', default None
     title: Any, default None
@@ -665,7 +667,7 @@ def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_di
     no_of_bars = len(bars)
     df_pivot= pivot.reset_index()
     if check_columns is not False:
-        df_pivot = check_if_all_events_are_present_after_pivot_reset_index(df_pivot, check_columns_list)
+        df_pivot = check_if_all_events_are_present_after_pivot_reset_index(df_pivot, check_columns_list, cut_maximum, cut_minimum)
     y = df[y].unique()
     i = 0
     to_plot_dic = {}
@@ -810,6 +812,180 @@ def plot_barplot(data, x, y, project_output_dir, name_to_save, data_source, hue=
     plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.' + output_format), dpi=dpi, bbox_inches='tight')
     write_into_report('Barplot {0} was created.'.format(name_to_save))
     if show_plots is True:
+        return plt.show()
+    return plt.close()
+
+def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir, order_y=None\
+    , data_source=None, title=None, name_to_save='stacked_vertical_barchart'\
+    , output_format='png', dpi=200, xlabel=None, ylabel=None, sns_palette=True\
+    , hatches_dic=None, palette='hls', y_as_perc=False, yaxis_formater=1, xlim=None\
+    , ylim=None, plot_vertical_line_middle=False\
+    , text_bellow_chart=None, y_legend_coordinate=0, fill_empty_x=False, show_plots=False):
+    """Plots horizontal stacked histogram. 
+    df: DataFrame
+    x: single column
+    y: single column
+    values: single column
+    project_output_dir: path to the output folder
+    check_columns: check if the data have all neede columns to plot the plot, default False
+    check_columns_list: 'INDELSUBOTHERS' or 'BluntStag' or 'ProximalDistalBars' or [individual, list], default []
+    order_y: list['order', 'of', 'y', 'categories'], default None
+    data_source: usually name of the study as 'Přibylová et al., (2022)', default None
+    title: Any, default None
+    name_to_save: str(), default 'stacked_vertical_barchart'
+    output_format: png, svg..., default 'png'
+    dpi: any, default 200
+    xlabel: Any, default None
+    ylabel: Any, default None
+    sns_palette: True or False, if True set parameter palette from sns palettes, if False enter your own dictionary, default True
+    palette: if sns_palette is True -> choose from sns.color_palette, if False enter your dictionary, default 'hls'
+    hatches_dic: {'key':'value'}, default None
+    y_as_perc: True makes from xaxis axes with %, anything else is False, default=False
+    xaxis_formater: int(), multiplies x axis
+    xlim: (min, max), default None
+    ylim: (min, max), defaule None
+    text_bellow_chart: str() to comment chart bellow, default None
+    plot_vertical_line_middle: True/False, default False, makes dashed line between -1 and 1
+    fill_empty_x: True/False -> True fills missing valuese on X axis when they are int(), to make it continuous, deault False
+    show_plots: True/False, default False"""
+    # Check if there are data in the data[x], if not skip making the plot.
+    if df[x].notnull().any() == False:
+        print(f'df["x"] are empty, plotting of the plot {name_to_save} was terminated.')
+        write_into_report(f'df["x"] are empty, plotting of the plot {name_to_save} was terminated.')
+        return
+    # Get actual date and time for plot annotation
+    now = datetime.now()
+    date = now.strftime('%y%m%d')
+
+    # Set the limit of X axis.
+    if xlim == None:
+        minimum = 0
+        maximum = len(df[x].unique())
+    else:
+        minimum = xlim[0]
+        maximum = xlim[1]
+
+    # Make dic with updated values -> value + sum from previous values and from it df again.
+    pivot = pd.pivot_table(df, index=x, columns=y, values=values, fill_value=0)
+    # Reindex the pivot if order_y is specified.
+    if order_y == None:
+        pivot2=pivot
+    else:
+        pivot2 = pivot.reindex(order_y, axis=1)
+    # Convert pivot table to DataFrame.
+    df_pivot= pivot2.reset_index()
+
+    # if you want to have continuous x-axis like 1,2,3,4,5,6,... -. works only for numbers
+    if fill_empty_x == True:
+        # check if all columns exists, if not make an empty one
+        if min(df_pivot[x]) > 0:
+            list_of_x = list(range(max(df_pivot[x])+1))
+        else:
+            list_of_x = list(range(min(df_pivot[x]), max(df_pivot[x])+1))
+        if 0 in list_of_x:
+            list_of_x.remove(0)
+        no_of_columns = len(df_pivot.columns)
+        try:
+            middle = list_of_x.index(1)
+        except:
+            middle=0
+        for lx in list_of_x:
+            if lx not in list(df_pivot[x]):
+                empty_row = [lx]
+                for i in range(no_of_columns-1):
+                    empty_row.append(0)
+                df_pivot.loc[len(df_pivot)] = empty_row
+        df_pivot.sort_values(x, inplace=True)
+
+    i = 0
+    to_plot_dic = {}
+    for row in df_pivot[x]:
+        # print('Column is ' + str(row))
+        list_of_row_values = []
+        value=0
+        for column in range(len(df_pivot.iloc[i,1:])):
+            value=df_pivot.iloc[i,column+1] + value
+            list_of_row_values.append(value)
+        to_plot_dic[row] = list_of_row_values
+        i+=1
+    
+    # Sort the bars
+    if order_y == None:
+        bars = sorted(df_pivot.columns[1:])
+    else:
+        bars = order_y
+    no_of_bars = len(bars)
+
+    df = pd.DataFrame.from_dict(to_plot_dic, orient='index', columns=bars)
+
+    # plot 
+    sns.set_style(style='whitegrid')                      # makes gid behind the plot
+    f, ax = plt.subplots(figsize=(maximum/2, 3))       # set the figure size
+    
+    # make color palette from sns.color_palette or own dictionary
+    if sns_palette == True:
+        if isinstance(palette, str):
+            pal = sns.color_palette(palette, no_of_bars)
+        else:
+            print('Set palette to valid sns.palete. Default hls was used.')
+            pal = sns.color_palette('hls', no_of_bars)
+    else:
+        # if some of the bar does not exist as a key in the dictionary -> use sns palette
+        pal = []
+        for column in bars:
+            if column in palette:
+                pal.append(palette[column])
+            else:
+                pal = sns.color_palette('hls', no_of_bars)
+                print('Key ' + str(column) + ' is not present in color dictionary, thus default hls palette was used.') 
+                break
+    if hatches_dic != None:
+        for column in range(no_of_bars,0,-1):              # plot in reverse
+            sns.barplot(x=df.index, y=df.iloc[:,column-1], color=pal[column-1], edgecolor='#000000', \
+                alpha=1, errorbar=None, linewidth=0.2, hatch=hatches_dic[list(df.columns)[column-1]]) 
+    else:
+        for column in range(no_of_bars,0,-1):              # plot in reverse
+            sns.barplot(x=df.index, y=df.iloc[:,column-1], color=pal[column-1], edgecolor='#000000', \
+                alpha=1, errorbar=None, linewidth=0.2)        
+
+    plt.title(f'{title} \n ({date}) \n {data_source}')
+    plt.xlabel(xlabel, size=15)
+    plt.ylabel(ylabel, size=15)
+    bars = np.flip(bars)                            # change the bars order as they were plotted 
+    plt.legend(labels=bars, loc='center left', bbox_to_anchor=(1, 0.5))
+    if xlim != None:
+        if maximum <= 0:
+            maximum = 1
+        plt.xlim(middle+minimum-0.5,middle+maximum-0.5)
+    if ylim != None:
+        plt.ylim(ylim[0], ylim[1])
+    if plot_vertical_line_middle == True:
+        plt.axvline(x=middle-0.5, color='black', ls='--', label='blunt cut site')
+    if y_as_perc == True:
+        # set decimal points dependent on the ylim maxima
+        ymax = ax.get_ylim()[1]
+        if ymax >= 10:
+            decimals_value = 0
+        elif ymax >= 1:
+            decimals_value = 1
+        else:
+            decimals_value = 2
+        ax.yaxis.set_major_formatter(mtick.PercentFormatter(yaxis_formater, decimals=decimals_value))
+        # Add text below chart
+    if text_bellow_chart != None:
+        # at = AnchoredText(text_bellow_chart, prop=dict(size=12), frameon=True, loc='upper left'\
+        #     , bbox_to_anchor=(0, y_legend_coordinate), bbox_transform=f.transFigure, borderpad=0.)
+        # at.patch.set_boxstyle('round,pad=0.,rounding_size=0.2')
+        # ax.add_artist(at)
+        props = {'backgroundcolor':'lightgray', 'size':12}  # bbox features
+        at = AnchoredText(text_bellow_chart, frameon=True, loc='upper left'\
+            , bbox_to_anchor=(0, y_legend_coordinate), bbox_transform=f.transFigure, borderpad=0., prop=props)
+        at.patch.set_boxstyle('round,pad=0.,rounding_size=0.2')
+        ax.add_artist(at)
+            # plt.text(0, -0.35, text_bellow_chart, fontsize=14, transform=plt.gcf().transFigure)
+    plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.' + output_format), dpi=dpi, bbox_inches='tight')
+    write_into_report(f'Stacked vertical barchart {name_to_save} was created.')
+    if show_plots == True:
         return plt.show()
     return plt.close()
 

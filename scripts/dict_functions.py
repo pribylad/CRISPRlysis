@@ -116,3 +116,54 @@ def make_color_dic_blunt_stagg_orientation(order):
         else:
             color_dic[l] = {'color':'red','edge_color':'gray', 'hatch':''}  # Default case if it doesn't match any criteria
     return color_dic
+
+def make_color_dic_Dino(list_of_events):
+    ''' Makes color dictionary for plotting cut types in Dino-charts.
+    Parameters:
+    list_of_events (list): example: ['U_-1_1', 'U_0_0', 'D_0_1', 'D_0_0', 'U_-1_0', 'U_-2_0', 'U_-2_1'] 
+
+    Returns:
+    color_dic
+    '''
+    # Initialize an empty dictionary to store the results
+    color_dic = {}
+    # Iterate over each event in the list
+    for l in list_of_events:
+        split = l.split('_')
+        if split[0].startswith('s'):
+            color_dic[l] = 'gray'
+        elif split[1] == str(0):
+            color_dic[l] = '#6ea7ff'
+        elif split[1] == str(-1):
+            color_dic[l] = '#ffaaaa'
+        elif split[1].startswith('-'):
+            color_dic[l] = '#E890B8'
+        else:
+            color_dic[l] = 'red'  # Default case if it doesn't match any criteria
+            print(f'Error in make_color_dic_Dnino function. Parameter: {l} is not in the colour decision list.')
+    return color_dic
+
+def make_hatches_dic_Dino(list_of_events):
+    """
+    Makes hatches dictionary for plotting cut types in Dino-charts.
+    Parameters:
+    list_of_events (list): example: ['U_-1_1', 'U_0_0', 'D_0_1', 'D_0_0', 'U_-1_0', 'U_-2_0', 'U_-2_1']
+    
+    Returns:
+    "hatches_dic
+    """
+    hatches_dic = {}
+    # Iterate over each event in the list
+    for l in list_of_events:
+        split = l.split('_')
+        if split[2] == str(0):
+            hatches_dic[l] = ''
+        elif split[2] == str(1):
+            if split[0] == 'U':
+                hatches_dic[l] = '\\\\'
+            elif split[0] == 'D':
+                hatches_dic[l] = '//'
+            else:
+                hatches_dic[l] = '*'
+                print(f'Error in make_hatches_dic_Dino function. Parameter: {l} is not in the hatch decision list.')
+    return hatches_dic

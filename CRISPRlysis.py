@@ -39,9 +39,9 @@ from scripts.general_functions import write_into_report, copy_files_with_parent_
 
 from scripts.make_mastertables import filter_out_values_from_df, clasify_INDELSUB_from_columns, change_Event_based_on_mut_position, find_ranges, count_no_of_gaps, find_DEL_closest_to_cut, find_min_and_max_gap_ranges, find_DEL_around_cut_range, gap_span_analysed_window, find_microhomology, get_insertion_event, gap_in_aligned_seq, gap_in_range, find_difference, mutation_in_distance, make_original_seq_dic, make_seq_around_optimum_cut, size_of_del_around_the_cut, no_of_gRNA_samples_txt, return_shifted_DEL_range, return_category_of_DEL, return_cut_type_based_on_cut_categories, process_table, create_mastertable, add_columns_to_df, make_subtables_df
 
-from scripts.plot_functions import save_stat, make_Ubuntu_mnt_path, make_reverse_complement, find_element_in_list, adjust_box_widths, plot_sns_violin_and_print, plot_general_stacked_horizontal_barchart, plot_barplot, check_if_all_events_are_present_after_pivot_reset_index
+from scripts.plot_functions import save_stat, make_Ubuntu_mnt_path, make_reverse_complement, find_element_in_list, adjust_box_widths, plot_sns_violin_and_print, plot_general_stacked_horizontal_barchart, plot_barplot, check_if_all_events_are_present_after_pivot_reset_index, plot_general_stacked_vertical_barchart
 
-from scripts.dict_functions import make_color_dic_CutType, make_hatches_dic_CutType, make_color_dic_blunt_stagg_orientation
+from scripts.dict_functions import make_color_dic_CutType, make_hatches_dic_CutType, make_color_dic_blunt_stagg_orientation, make_color_dic_Dino, make_hatches_dic_Dino
 
 # %%
 # Get current date and time
@@ -758,8 +758,6 @@ for key, value in tables_dic.items():
         # # make single column table
         df_Blunt_Stagg_samples = pd.melt(df_Blunt_Stagg_samples, id_vars=['name', 'gRNA_seq'], value_vars=order)
         # %%
-        df_Blunt_Stagg_samples
-        # %%
         ##########################################################################################
         # plot VIOLINPLOT with PAM proximal/distal orientation with cannot_be_determined NOT-normalised
         ##########################################################################################
@@ -781,7 +779,7 @@ for key, value in tables_dic.items():
         color_dic = make_color_dic_blunt_stagg_orientation(order)
         plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples, x='variable', y='value'\
             , number_of_columns=len(order)/2\
-            , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=True\
+            , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=False\
             , show_hue_medians=False\
             , hue=None, hue_only_for_data_points=False \
             , hatches=True\
@@ -797,24 +795,6 @@ for key, value in tables_dic.items():
             , project_output_dir=project_output_subdir\
             , data_source=data_source, output_format=output_format\
             , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
-        # plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='DEL_orientation_cut_type', y='value'\
-        #     , number_of_columns=6\
-        #     , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=True\
-        #     , show_hue_medians=False\
-        #     , hue=None, hue_only_for_data_points=False \
-        #     , hatches=True\
-        #     , clip_right=True\
-        #     , title=title, xtickt_rotation=-55, ylabel=ylabel\
-        #     , order=order\
-        #     , plot_legend=False\
-        #     , integrated_properties_dic=True, text_bellow_chart=text_bellow_chart\
-        #     , y_legend_coordinate=-0.40, yaxis_formater=100\
-        #     , x_max=None\
-        #     , plot_vertical_line_middle=True, middle_line_position=6, change_edge_color=True\
-        #     , name_to_save=name_to_save\
-        #     , project_output_dir=project_output_subdir\
-        #     , data_source=data_source, output_format=output_format\
-        #     , dpi=200, y_min=0, y_max=102)
         stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
         save_stat(stat_info, name_to_save, project_output_subdir)
         counter+=0 # should be 0 as next chart is the same, just normalised
@@ -838,7 +818,7 @@ for key, value in tables_dic.items():
         name_to_save = f'{file_number}_{counter}_2_DEL_Stagg_blunt_oriented_summary_violinplot_normalised'
         plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable'\
             , y='value', number_of_columns=len(order)/2\
-            , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=True\
+            , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=False\
             , show_hue_medians=False\
             , hue=None, hue_only_for_data_points=False \
             , hatches=True, clip_right=True\
@@ -855,38 +835,90 @@ for key, value in tables_dic.items():
         stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
         save_stat(stat_info, name_to_save, project_output_subdir)
         counter+=1
+        ##########################################################################################
+        ##########################################################################################
+        ##########################################################################################
         # %%
-# TODO make color_dic for all charts
-color_dic = {'stagg2nt':{'color':'#E890B8','hatch_color':'gray', 'hatch':''}\
-        ,'stagg2nt_likely':{'color':'#E890B8','hatch_color':'gray', 'hatch':'//'}\
-        ,'stagg1nt':{'color':'#ffaaaa','hatch_color':'gray', 'hatch':''}\
-        ,'stagg1nt_likely':{'color':'#ffaaaa','hatch_color':'gray', 'hatch':'////'}\
-        ,'blunt':{'color':'#6ea7ff','hatch_color':'gray', 'hatch':''}\
-        ,'blunt_likely':{'color':'#6ea7ff','hatch_color':'gray', 'hatch':'\\\\'}\
-        ,'cannot_be_determined':{'color':'white','hatch_color':'gray', 'hatch':''}\
-        ,'can_not_be_determined':{'color':'white','hatch_color':'gray', 'hatch':''}\
-        ,'gap_out_of_cut':{'color':'gray','hatch_color':'', 'hatch':''}\
-        ,'IN':{'color':'#091f92','hatch_color':'', 'hatch':''}\
-        ,'INs':{'color':'#091f92','hatch_color':'', 'hatch':''}\
-        ,'DEL':{'color':'#ba8759','hatch_color':'', 'hatch':''}\
-        ,'DELs':{'color':'#ba8759','hatch_color':'', 'hatch':''}\
-        ,'SUB':{'color':'#ffcc33','hatch_color':'', 'hatch':''}\
-        ,'OTHERS':{'color':'#808080','hatch_color':'', 'hatch':''}\
-        ,'no_mutation':{'color':'#111111','hatch_color':'', 'hatch':''}\
-        ,'distal':{'color':'#f0d271','hatch_color':'', 'hatch':''}\
-        ,'distal_both':{'color':'#C4C4C4','hatch_color':'', 'hatch':''}\
-        ,'distal_both_proximal':{'color':'#979797','hatch_color':'', 'hatch':''}\
-        ,'both':{'color':'#808080','hatch_color':'', 'hatch':''}\
-        ,'both_proximal':{'color':'#C4C4C4','hatch_color':'', 'hatch':''}\
-        ,'proximal':{'color':'#f5ad62','hatch_color':'', 'hatch':''}\
-        ,'PAM_distal_nt_in_MH':{'color':'#52D8FF','hatch_color':'', 'hatch':''}\
-        ,'PAM_proximal_nt_in_MH':{'color':'#FADA52','hatch_color':'', 'hatch':''}\
-        ,'no_MH_likely':{'color':'#A9A9A9','hatch_color':'', 'hatch':''}\
-        ,'no_MH':{'color':'#D3D3D3','hatch_color':'', 'hatch':''}\
-        ,'A':{'color':'#70c936','hatch_color':'', 'hatch':''}\
-        ,'C':{'color':'#ff0000','hatch_color':'', 'hatch':''}\
-        ,'G':{'color':'#ffd42a','hatch_color':'', 'hatch':''}\
-        ,'T':{'color':'#9955ff','hatch_color':'', 'hatch':''}}
+        # make DataFrame for ramining DEL_orientations
+        df_CutType = df.copy()
+        # drop data without gap
+        df_CutType = df_CutType[df_CutType['n_deleted_around_cut'] != 0]
+        # filter out deletions which are not around the cut
+        df_CutType = df_CutType[df_CutType['Gap_around_cut'] == True]
+        # make DataFrame where samples where DEL_orientation cannot_be_determined is splitted between proximal and distal
+        df_CutType_cannot_be_determined = df_CutType[df_CutType['DEL_orientation']=='C'].copy()
+        df_CutType_cannot_be_determined['%Reads'] = df_CutType_cannot_be_determined['%Reads']/2
+        df_CutType_cannot_be_determined['#Reads'] = df_CutType_cannot_be_determined['#Reads']/2
+        # TODO change distal and proximal to upstream and downstream
+        df_CutType_cannot_be_determined_distal = df_CutType_cannot_be_determined.copy()
+        df_CutType_cannot_be_determined_distal['DEL_orientation'] = 'sU'
+        df_CutType_cannot_be_determined_proximal = df_CutType_cannot_be_determined.copy()
+        df_CutType_cannot_be_determined_proximal['DEL_orientation'] = 'sD'
+        df_CutType_cannot_be_determined = pd.concat([df_CutType_cannot_be_determined_proximal,\
+                                                        df_CutType_cannot_be_determined_distal],\
+                                                        ignore_index=True).copy()
+
+        # filter out deletions which are on both sites of cut, so proximal and distal will remain
+        df_CutType = df_CutType[df_CutType['DEL_orientation'] != 'B']
+        df_CutType = df_CutType[df_CutType['DEL_orientation'] != 'C']
+        df_CutType = pd.concat([df_CutType, df_CutType_cannot_be_determined], ignore_index=True)
+
+        #  make column combining DEL_orientation with Cut_type
+        df_CutType['DEL_orientation_cut_type'] = df_CutType.apply(lambda row: row['DEL_orientation'] + '_' + row['Cut_type'] + '_' + str(row['Likely_cut_type']), axis=1)
+        df_CutType['n_deleted_around_cut'] = df_CutType.apply(lambda row: -int(row['n_deleted_around_cut']) if (row['DEL_orientation']=='U' or row['DEL_orientation']=='sU') else row['n_deleted_around_cut'], axis=1)
+        order_list = df_CutType['sample'].unique()
+        df_CutType['n_deleted_around_cut'] = df_CutType['n_deleted_around_cut'].astype(int)
+        if plot_DEL_dinochart is True:
+                subcounter=1
+                for sample in order_list:
+                    print(sample)
+                    # filter individual gRNA 
+                    df_Cut_gRNA = df_CutType[df_CutType['sample'].str.contains(sample)]
+                    seq_around = df_Cut_gRNA['Original_Sequence_around_cut'].unique()
+                    print(seq_around)
+                    name_to_save= f'{file_number}_{counter}_Stagg_blunt_DEL_orientation_dino_30nt_NotNormalised_{subcounter}_' + sample
+                    title = 'Stagg/blunt + DEL orientation analysis ' + str(sample) + '\n' + str(seq_around)
+                    xlabel='Number of deleted nucleotides (minus = PAM distal, plus = PAM proximal)'
+                    ylabel='Sum of %Reads \n of Staggered/Blunt cut'
+                    text_bellow_chart = 'Data from deletions around cut only.\n\
+                        Without deletions with DEL_orientation = both \n\
+                        cannot_be_determined was split between proximal and distal - gray bars.\n\
+                        Not normalised data.'
+                    # normalise individual samples -> sum of all DEL = 100%
+                    pivot = pd.crosstab(index=[df_Cut_gRNA['DEL_orientation_cut_type']\
+                                               , df_Cut_gRNA['n_deleted_around_cut']]\
+                            , columns=df_Cut_gRNA['name'], values=df_Cut_gRNA['%Reads']\
+                            , aggfunc='sum', normalize=False)
+                    df_pivot = pivot.reset_index()
+                    # add column with gRNA name, where will be average from all samples
+                    df_pivot[sample] = df_pivot.iloc[:,2:].to_numpy().mean(axis=1)
+
+                    # Order df_pivot according to the DEL_orientation_cut_type to have blunt first                    
+                    df_pivot['Orientation'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[0]
+                    df_pivot['Cut_type'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[1]
+                    # Convert Cut_typet to int() to have it sorted correctly
+                    df_pivot['Cut_type'] = df_pivot['Cut_type'].astype(int)
+                    df_pivot['Likely_cut_type'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[2]
+                    df_pivot = df_pivot.sort_values(by=['Orientation', 'Cut_type', 'Likely_cut_type'], ascending=[True, False, False])
+                    order=list(df_pivot['DEL_orientation_cut_type'].unique())
+
+                    color_dic = make_color_dic_Dino(df_pivot['DEL_orientation_cut_type'].unique())
+                    hatches_dic = make_hatches_dic_Dino(df_pivot['DEL_orientation_cut_type'].unique())
+                    plot = plot_general_stacked_vertical_barchart(df=df_pivot, x='n_deleted_around_cut'\
+                            , y='DEL_orientation_cut_type', project_output_dir=project_output_subdir\
+                            , values=sample, sns_palette=False, palette=color_dic\
+                            , hatches_dic=hatches_dic\
+                            , data_source=data_source, plot_vertical_line_middle=True\
+                            , title=title, name_to_save=name_to_save, output_format=output_format\
+                            , dpi=200, xlabel=xlabel, ylabel=ylabel, y_as_perc=True, yaxis_formater=100\
+                            , xlim=(-30,30), ylim=None, text_bellow_chart=text_bellow_chart\
+                            , fill_empty_x=True, order_y=order\
+                            , y_legend_coordinate=-0.2, show_plots=show_plots)
+                    subcounter+=1
+        # counter+=1
+        ##########################################################################################
+        ##########################################################################################
+        ##########################################################################################
 
 # %%
 
