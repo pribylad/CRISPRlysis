@@ -23,19 +23,21 @@
 ## Use numbers as integers when column contains only numbers (not as string) -> example: 'n_deleted':[0]
 ## Use numbers as strings when column contains numbers and also strings -> example: 'Gap_around_cut_starts':['90']
 # show_plots (boolean): define if the plots will be shown during the code is running
-# plot_INDELs (boolean): controls if related charts will be make
-# plot_INs (boolean): controls if related charts will be make
-# plot_DELs (boolean): controls if related charts will be make
-# plot_DEL_dinochart (boolean): controls if related charts will be make
-# plot_MH (boolean): controls if related charts will be make
-# plot_MH_dinochart (boolean): controls if related charts will be make
+# plot_INDELs (boolean): controls if related charts will be made
+# plot_INs (boolean): controls if related charts will be made
+# plot_DELs (boolean): controls if related charts will be made
+# plot_DEL_dinochart (boolean): controls if related charts will be made
+# plot_participating_end (boolean): controls if related charts will be made
+# TODO !!! The plot MH does not work as the mastertable does not have the valid columns for that, is it needed in the end? Maybe plot_participating_end is better
+# plot_MH (boolean): controls if related charts will be made
+# plot_MH_dinochart (boolean): controls if related charts will be made
 # IN_greater_than (int): for IN analysis, what is the border for sum up n_inserted, max is 7
 # sort_alphabetically (boolean): True will sort samples in mastertable_01 by name before plotting
 
 #############################################
 #                 DICTIONARY                #
 #############################################
-{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/palnts/Pribylova_et_al_2022/03_for_Meta/to_analyse/trial/',
+{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/palnts/Pribylova_et_al_2022/03_for_Meta/to_analyse/WT/',
    'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022',
    'add_columns':{'organism':'Nicotiana benthamiana',
       'hours_post_inoculation':120,
@@ -48,18 +50,20 @@
    'nuclease':'SpCas9',
    'minimum_Reads':5,
    'output_format':'png',
-   'make_mastertable_00':False,
+   'make_mastertable_00':True,
    'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Pribylova_et_al_2022/00_mastertable_250321.tsv',
    'filter_out_values':{'sample':['sgRNA_1_SpCas9_P35S_5_WT_1_0_1', 'sgRNA_1_SpCas9_P35S_5_WT_1_0_2']},
-   'make_mastertable_01':False,
+   'make_mastertable_01':True,
    'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Pribylova_et_al_2022/01_mastertable_250321.tsv',
    'make_subtables':True,
    'subtables_param':['gene', 'mutant'],
    'show_plots':True,
-   'plot_INDELs':False,
-   'plot_INs':False,
-   'plot_DELs':False,
+   'plot_INDELs':True,
+   'plot_INs':True,
+   'plot_DELs':True,
    'plot_DEL_dinochart':True,
+   'plot_participating_end':True,
+   'plot_participating_end_dinochart':True,
    'plot_MH':False,
    'plot_MH_dinochart':False,
    'IN_greater_than':6,
