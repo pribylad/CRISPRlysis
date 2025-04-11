@@ -51,11 +51,11 @@ def make_hatches_dic_CutType(list_of_events):
             hatches_dic[l] = ''
         elif l.endswith('1'):
             if l.startswith('0'):
-                hatches_dic[l] = '--'
+                hatches_dic[l] = '//'
             elif l.startswith('-1'):
                 hatches_dic[l] = '//'
             elif l.startswith('-'):
-                hatches_dic[l] = '////'
+                hatches_dic[l] = '//'
             else:
                 hatches_dic[l] = '\\'
         else:
@@ -87,7 +87,7 @@ def make_color_dic_blunt_stagg_orientation(order):
                 if split[2] == str(0):
                     color_dic[l] = {'color':'#ffaaaa','edge_color':'gray', 'hatch':''}
                 else:
-                    color_dic[l] = {'color':'#ffaaaa','edge_color':'gray', 'hatch':'\\\\'} 
+                    color_dic[l] = {'color':'#ffaaaa','edge_color':'gray', 'hatch':'\\\\'}
             elif split[1].startswith('-'):
                 if split[2] == str(0):
                     color_dic[l] = {'color':'#E890B8','edge_color':'gray', 'hatch':''}

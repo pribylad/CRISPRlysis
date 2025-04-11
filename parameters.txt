@@ -58,7 +58,7 @@
    'show_plots':True,
    'plot_INDELs':False,
    'plot_INs':False,
-   'plot_DELs':True,
+   'plot_DELs':False,
    'plot_DEL_dinochart':True,
    'plot_MH':False,
    'plot_MH_dinochart':False,
