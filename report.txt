@@ -935,3 +935,23 @@ Stacked vertical barchart 05_1_end_participating_DEL_orientation_dino_30nt_NotNo
 
 Stacked vertical barchart 05_1_end_participating_DEL_orientation_dino_30nt_NotNormalised_32_sgRNA_1_SpCas9_P35S_8_WT_1_0_4 was created.
 
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Stacked vertical barchart 03_6_DEL_Stagg_blunt_summary_barchart_4th_nt was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Stacked vertical barchart 03_6_DEL_Stagg_blunt_summary_barchart_4th_nt was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Stacked vertical barchart 03_6_DEL_Stagg_blunt_summary_barchart_4th_nt was created.
+
+Barplot 02_1_No_of_inserted_nucleotides was created.
+
+Stacked vertical barchart 03_6_DEL_Stagg_blunt_summary_barchart_4th_nt was created.
+

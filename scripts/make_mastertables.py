@@ -737,7 +737,10 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     if abs(range_2[0])-cut_optimum>abs(range_1[1])-cut_optimum:
         list_f = list_16
     elif abs(range_2[0])-cut_optimum==abs(range_1[1])-cut_optimum:
-        list_f = list_11
+        if range_1[1]<=abs(cut_minimum):
+            list_f = list_11
+        else:
+            list_f = list_19
     else:
         list_f = list_19
 
@@ -823,7 +826,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
                    9:list_e,
                    10:list_e,
                    11:list_e,
-                   12:list_d}
+                   12:list_i}
     elif category_1 == 5:
         dict_NoMH={5:list_16,
                    6:list_16,
