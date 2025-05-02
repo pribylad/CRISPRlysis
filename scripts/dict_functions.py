@@ -121,7 +121,7 @@ def make_color_dic_Dino(list_of_events):
     ''' Makes color dictionary for plotting cut types in Dino-charts.
     Parameters:
     list_of_events (list): 
-        example 1: ['U_-1_1', 'U_0_0', 'D_0_1', 'D_0_0', 'U_-1_0', 'U_-2_0', 'U_-2_1']
+        example 1: ['U_-1_1', 'U_0_0', 'D_0_1', 'D_0_0', 'U_-1_0', 'U_-2_0', 'U_-2_1', 'D_X_0']
         example 2: ['-1_1', 'O_1', '-2_0', '-2_1', '0_0', 'C_0', 'C_1', 'X_0', '0_1', 'X_1', 'O_0', '-1_0']
 
     Returns:
@@ -141,6 +141,8 @@ def make_color_dic_Dino(list_of_events):
                 color_dic[l] = '#E890B8'
         elif len(split) == 3:
             if split[0].startswith('s'):
+                color_dic[l] = 'gray'
+            elif split[1].startswith('X'):
                 color_dic[l] = 'gray'
             elif split[1] == str(0):
                 color_dic[l] = '#6ea7ff'

@@ -682,7 +682,7 @@ for key, value in tables_dic.items():
                             \n{no_of_gRNA_samples}'
         name_to_save = f'{file_number}_{counter}_DEL_Stagg_blunt_summary_violinplot'
         plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable', y='value'\
-            , number_of_columns=len(df_Blunt_Stagg_samples_norm['variable'])/6\
+            , number_of_columns=len(df_Blunt_Stagg_samples_norm['variable'].unique())/6\
             , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=False\
             , show_hue_medians=False\
             , hue=None, hue_only_for_data_points=False \
@@ -863,7 +863,9 @@ for key, value in tables_dic.items():
                 df_pivot['Orientation'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[0]
                 df_pivot['Cut_type'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[1]
                 # Convert Cut_typet to int() to have it sorted correctly
-                df_pivot['Cut_type'] = df_pivot['Cut_type'].astype(int)
+                # TODO it does not work when 'X' is present
+                # df_pivot['Cut_type'] = df_pivot['Cut_type'].astype(int)
+
                 df_pivot['Likely_cut_type'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[2]
                 df_pivot = df_pivot.sort_values(by=['Orientation', 'Cut_type', 'Likely_cut_type'], ascending=[True, False, False])
                 order=list(df_pivot['DEL_orientation_cut_type'].unique())
@@ -882,6 +884,7 @@ for key, value in tables_dic.items():
                         , y_legend_coordinate=-0.2, show_plots=show_plots)
                 subcounter+=1
         counter+=1
+        # %%
         ##########################################################################################
         ##########################################################################################
         ##########################################################################################
