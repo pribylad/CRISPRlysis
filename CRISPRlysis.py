@@ -75,6 +75,7 @@ show_plots = parameters['show_plots']
 plot_INDELs = parameters['plot_INDELs']
 plot_INs = parameters['plot_INs']
 plot_DELs = parameters['plot_DELs']
+plot_DEL_individual_gRNAs = parameters['plot_DEL_individual_gRNAs']
 plot_DEL_dinochart = parameters['plot_DEL_dinochart']
 plot_participating_end = parameters['plot_participating_end']
 plot_participating_end_dinochart = parameters['plot_participating_end_dinochart']
@@ -126,7 +127,8 @@ if filter_out_values:
 
 # Make new mastertable containing additional columns from 00_mastertable or load existing one
 if make_mastertable_01 is True:
-    df = add_columns_to_df(mastertable, project_output_dir, parameters, date)
+    write_into_report('Making 01_mastertable.', destination_folder=project_output_dir)
+    df = add_columns_to_df(mastertable, project_output_dir, parameters, date, sort_alphabetically)
 else:
     df = pd.read_csv(path_to_existing_mastertable_01, sep="\t")
     write_into_report(f'Reading 01_mastertable from: {path_to_existing_mastertable_01}', destination_folder=project_output_dir)
@@ -143,7 +145,7 @@ for key, value in tables_dic.items():
     df = pd.read_csv(key, sep='\t', index_col=None)
     write_into_report('###########################\n# Analysing next subtable #\n###########################', destination_folder=project_output_dir)
     write_into_report(f'Processing {key}', destination_folder=project_output_dir)
-    write_into_report(f'{df["gRNA_seq"].unique()} are unique gRNAs in file.', destination_folder=project_output_dir)
+    # write_into_report(f'{df["gRNA_seq"].unique()} are unique gRNAs in file.', destination_folder=project_output_dir)
 
     # TODO the part bellow might be deleted as the filtering should be done between mastertable 00 and 01 by 'filter_out_values':{} from the parameters.txt file
     # # filter out some gRNA
@@ -653,28 +655,27 @@ for key, value in tables_dic.items():
         ##########################################################################################
         # Horizontal bar charts for Blunt/Staggered cuts
         ##########################################################################################
-        # normalise the events for normalised plot form 0-100%
-        title = 'Staggered/Blunt cut ratio for DEL adjacent or around the cut site'
-        xlabel = 'Average of %Reads from individual samples'
-        name_to_save = f'{file_number}_{counter}_Stagg_blunt_ratio_all_samples'
-
         color_dic = make_color_dic_CutType(list_of_events)
         hatches_dic = make_hatches_dic_CutType(list_of_events)
-
-        text_bellow_chart = f'Only DELs around the cut are plotted.\
-                        \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
-                        \n{no_of_gRNA_samples}'
-        # TODO solve bars_order, color_dic, hatches_dic
-        plot = plot_general_stacked_horizontal_barchart(df=df_Blunt_Stagg_samples_norm, x='variable'\
-        , y='name', values='value', project_output_dir=project_output_subdir\
-        , data_source=data_source, title=title, name_to_save=name_to_save\
-        , output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False\
-        , palette=color_dic, hatches_dic=hatches_dic, x_as_perc=True\
-        , xaxis_formater=1, decimals=0, xlim=(0,1)\
-        , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default'\
-        , bars_order=list_of_events, show_plots=show_plots)
-        stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
-        save_stat(stat_info, name_to_save, project_output_subdir)
+        if plot_DEL_individual_gRNAs is True:
+            # normalise the events for normalised plot form 0-100%
+            title = 'Staggered/Blunt cut ratio for DEL adjacent or around the cut site'
+            xlabel = 'Average of %Reads from individual samples'
+            name_to_save = f'{file_number}_{counter}_Stagg_blunt_ratio_all_samples'
+            text_bellow_chart = f'Only DELs around the cut are plotted.\
+                            \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
+                            \n{no_of_gRNA_samples}'
+            # TODO solve bars_order, color_dic, hatches_dic
+            plot = plot_general_stacked_horizontal_barchart(df=df_Blunt_Stagg_samples_norm, x='variable'\
+            , y='name', values='value', project_output_dir=project_output_subdir\
+            , data_source=data_source, title=title, name_to_save=name_to_save\
+            , output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False\
+            , palette=color_dic, hatches_dic=hatches_dic, x_as_perc=True\
+            , xaxis_formater=1, decimals=0, xlim=(0,1)\
+            , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default'\
+            , bars_order=list_of_events, show_plots=show_plots)
+            stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
+            save_stat(stat_info, name_to_save, project_output_subdir)
         counter+=1
         ##########################################################################################
         # plot VIOLINPLOT without PAM proximal/distal orientation
