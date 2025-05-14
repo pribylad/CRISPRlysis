@@ -680,7 +680,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     list_2 = [range_1[1]+1, 'X', 'U', 0, 0]
     list_3 = [range_1[1], 'X', 'U', 0, 0]
     list_4 = ['C', 'X', 'B', 0, 0]
-    list_5 = ['X', 'X', 'D', 0, 0]
+    list_5 = [range_1[0], 'X', 'D', 0, 0]
     list_6 = [range_1[0]-1, 'X', 'D', 0, 0]
     list_7 = ['O','X','D',0,0]
     list_8 = ['O','C','U',0,0]
@@ -700,6 +700,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     list_22 = [cut_optimum,'C','U',0,1]
     list_23 = [cut_optimum,'C','D',0,1]
     list_24 = [cut_minimum,'U','D',0,1]
+    list_25 = ['C', 'X', 'C', 0, 0]
 
     ########################################################################################
     # Based on the position of the cut_maximum and cut_minimum decide which list is going to be used
@@ -761,6 +762,13 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     if abs(cut_optimum)==abs(cut_minimum):
         list_h = list_6
         list_i = list_24
+    # Solve issue for category 7
+    if abs(range_1[0])-cut_optimum<abs(range_1[1])-cut_optimum:
+        list_j = list_5
+    elif abs(range_1[0])-cut_optimum==abs(range_1[1])-cut_optimum:
+        list_j = list_25
+    else:
+        list_j = list_3
     ########################################################################################
 
     # Determine for DELetions without shiftable nucleotides - no homology around the cut site
@@ -771,7 +779,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
                     4:list_2,
                     5:list_3,
                     6:list_4,
-                    7:list_5,
+                    7:list_j,
                     8:list_6,
                     9:list_6,
                     10:list_6,
