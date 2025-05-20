@@ -701,6 +701,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     list_23 = [cut_optimum,'C','D',0,1]
     list_24 = [cut_minimum,'U','D',0,1]
     list_25 = ['C', 'X', 'C', 0, 0]
+    list_27 = [cut_minimum, 'C', 'D', 0, 0]
 
     ########################################################################################
     # Based on the position of the cut_maximum and cut_minimum decide which list is going to be used
@@ -838,7 +839,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     elif category_1 == 5:
         dict_NoMH={5:list_16,
                    6:list_16,
-                   7:list_11,
+                   7:list_f,
                    8:list_23,
                    9:list_12,
                    10:list_17,
@@ -859,11 +860,16 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
                    10:list_g,
                    11:list_g,
                    12:list_i}
-    elif category_1 in (8, 9, 10, 11):
+    elif category_1 in (8, 9):
         dict_NoMH={9:list_h,
                    10:list_h,
                    11:list_h,
                    12:list_h}
+    elif category_1 == 10:
+        dict_NoMH={11:list_13,
+                   12:list_13}
+    elif category_1 == 11:
+        dict_NoMH={12:list_27}
     elif category_1 == 12:
         dict_NoMH={12:list_20}
     else:
