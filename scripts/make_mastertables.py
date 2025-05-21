@@ -702,6 +702,8 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     list_24 = [cut_minimum,'U','D',0,1]
     list_25 = ['C', 'X', 'C', 0, 0]
     list_27 = [cut_minimum, 'C', 'D', 0, 0]
+    list_28 = [range_2[0], 'D', 'U', 5, 1]
+    list_29 = [cut_optimum, 'C', 'C', 0, 1]
 
     ########################################################################################
     # Based on the position of the cut_maximum and cut_minimum decide which list is going to be used
@@ -757,7 +759,22 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
         list_h = list_13
     else:
         list_h = list_12
-    
+
+    if range_1[1]<=abs(cut_minimum):
+        list_k = list_17
+    else:
+        list_k = list_13
+
+    if abs(range_2[0])<=abs(cut_maximum):
+        list_l = list_28
+    else:
+        list_l = list_10
+
+    if abs(range_1[1])-1<=abs(range_2[0]):
+        list_m = list_14
+    else:
+        list_m = list_28
+
     list_i = list_13
     # Solve issues when cut_minimum == cut_optimum
     if abs(cut_optimum)==abs(cut_minimum):
@@ -795,47 +812,47 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     if category_1 == 1:
         dict_NoMH={1:list_8,
                    2:list_9,
-                   3:list_10,
-                   4:list_10,
+                   3:list_l,
+                   4:list_l,
                    5:list_10,
                    6:list_10,
-                   7:list_a,
-                   8:list_a,
-                   9:list_a,
-                   10:list_a,
-                   11:list_a,
-                   12:list_b}
+                   7:list_l,
+                   8:list_29,
+                   9:list_29,
+                   10:list_29,
+                   11:list_29,
+                   12:list_29}
     elif category_1 == 2:
-        dict_NoMH={3:list_14,
-                   4:list_14,
-                   5:list_14,
-                   6:list_14,
-                   7:list_c,
-                   8:list_c,
-                   9:list_c,
-                   10:list_c,
-                   11:list_c,
-                   12:list_d}
+        dict_NoMH={3:list_l,
+                   4:list_l,
+                   5:list_l,
+                   6:list_l,
+                   7:list_l,
+                   8:list_29,
+                   9:list_29,
+                   10:list_29,
+                   11:list_29,
+                   12:list_29}
     elif category_1 == 3:
-        dict_NoMH={3:list_14,
-                   4:list_14,
+        dict_NoMH={3:list_m,
+                   4:list_m,
                    5:list_14,
                    6:list_14,
                    7:list_14,
-                   8:list_c,
-                   9:list_c,
-                   10:list_c,
-                   11:list_c,
-                   12:list_d}
+                   8:list_29,
+                   9:list_29,
+                   10:list_29,
+                   11:list_29,
+                   12:list_29}
     elif category_1 == 4:
         dict_NoMH={5:list_22,
                    6:list_22,
                    7:list_22,
-                   8:list_e,
-                   9:list_e,
-                   10:list_e,
-                   11:list_e,
-                   12:list_i}
+                   8:list_15,
+                   9:list_29,
+                   10:list_29,
+                   11:list_29,
+                   12:list_29}
     elif category_1 == 5:
         dict_NoMH={5:list_16,
                    6:list_16,
@@ -860,11 +877,16 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
                    10:list_g,
                    11:list_g,
                    12:list_i}
-    elif category_1 in (8, 9):
+    elif category_1 == 8:
         dict_NoMH={9:list_h,
                    10:list_h,
                    11:list_h,
-                   12:list_h}
+                   12:list_k}
+    elif category_1 == 9:
+        dict_NoMH={9:list_h,
+                   10:list_h,
+                   11:list_h,
+                   12:list_k}
     elif category_1 == 10:
         dict_NoMH={11:list_13,
                    12:list_13}
