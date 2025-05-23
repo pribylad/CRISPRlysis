@@ -186,7 +186,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     show_hue_medians: True/False for stripplot, default True
     transparency = int() 0-1, default 0.8
     clip_right (bool): True/False removes right part of the violine plot, default False
-    yaxis_formater: usually 1 of 100, to make yaxis in %, default 1
+    yaxis_formater: None or usually 1 of 100, to make yaxis in %, default 1
     name_to_save: hae to contain full path with name of the boxplot (date and format is added automatialy)
     data_source: like 'Přibylová et al., (2021)'
     y_min: int(), default None
@@ -390,23 +390,24 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                     showbox=True, # must be True for Change color of meanprops later
                     showcaps=False,
                     ax=stripplot)
-                # Change color of the mean according to the used palette
-                box_patches = [patch for patch in ax.patches if type(patch) == matplotlib.patches.PathPatch]
-                if len(box_patches) == 0:  # in matplotlib older than 3.5, the boxes are stored in ax.artists
-                    box_patches = ax.artists
-                num_patches = len(box_patches)
-                lines_per_boxplot = len(ax.lines) // num_patches
-                for i, patch in enumerate(box_patches):
-                    # Set the linecolor on the patch to the facecolor, and set the facecolor to None
-                    col = patch.get_facecolor()
-                    patch.set_edgecolor(col)
-                    patch.set_facecolor('None')
-                    # Each box has asociated Line2D objects (to make the whiskers, fliers, etc.)
-                    # Loop over them here, and use the same color as above
-                    for line in ax.lines[i * lines_per_boxplot: (i + 1) * lines_per_boxplot]:
-                        line.set_color(col)
-                        line.set_mfc(col)  # facecolor of fliers
-                        line.set_mec(col)  # edgecolor of fliers
+                # Change color of the mean according to the used palette in color_dic
+                
+                # box_patches = [patch for patch in ax.patches if type(patch) == matplotlib.patches.PathPatch]
+                # if len(box_patches) == 0:  # in matplotlib older than 3.5, the boxes are stored in ax.artists
+                #     box_patches = ax.artists
+                # num_patches = len(box_patches)
+                # lines_per_boxplot = len(ax.lines) // num_patches
+                # for i, patch in enumerate(box_patches):
+                #     # Set the linecolor on the patch to the facecolor, and set the facecolor to None
+                #     col = patch.get_facecolor()
+                #     patch.set_edgecolor(col)
+                #     patch.set_facecolor('None')
+                #     # Each box has asociated Line2D objects (to make the whiskers, fliers, etc.)
+                #     # Loop over them here, and use the same color as above
+                #     for line in ax.lines[i * lines_per_boxplot: (i + 1) * lines_per_boxplot]:
+                #         line.set_color(col)
+                #         line.set_mfc(col)  # facecolor of fliers
+                #         line.set_mec(col)  # edgecolor of fliers
         # Make inner boxplot with mean as 'x'
         sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, width=width_list[0], showfliers=False, showmeans=True, meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black', markersize=5, linewidth=1.0, zorder=14), boxprops=dict(facecolor='gray', edgecolor='black', linewidth=1.5, alpha=1, zorder=10), whiskerprops=dict(color='black', linewidth=1.5, zorder=11), capprops=dict(color='black', linewidth=1.5, zorder=12), medianprops=dict(color='black', linewidth=1.5, zorder=13))
     else:
@@ -551,7 +552,8 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     # Add transparency to colors
     plt.setp(ax.collections, alpha=transparency)
 
-    ax.yaxis.set_major_formatter(mtick.PercentFormatter(yaxis_formater, decimals=0))
+    if yaxis_formater is not None:
+        ax.yaxis.set_major_formatter(mtick.PercentFormatter(yaxis_formater, decimals=0))
     # makes gaps between boxes when hue is used
     adjust_box_widths(fig, width_list[1])
     # Add text below chart

@@ -458,7 +458,7 @@ for key, value in tables_dic.items():
         name_to_save = f'{file_number}_{counter}_IN_4th_nt_inserted_normalised_violinplot'
         # TODO Maybe dodge should be True here
         plot = plot_sns_violin_and_print(data=df_pivot, x='4th_nt_inserted', y='value', number_of_columns=1.2\
-            , show_datapoints=True, jitter=0.3, stripplot_offset=25, dodge=False\
+            , show_datapoints=True, jitter=0.3, stripplot_offset=25, dodge=True\
             , show_hue_medians=False\
             , hue='4th_nt', hue_order=hue_order, hue_only_for_data_points=True \
             , clip_right=True\
@@ -506,9 +506,9 @@ for key, value in tables_dic.items():
     #               D   D   E       L
     #               DDDD    EEEEEE  LLLLLL
     ##########################################################################################
+    file_number = '03'
+    counter = 1
     if plot_DELs is True:
-        file_number = '03'
-        counter = 1
         print('Plotting DELs')
         # boxplot from all individual samples showing DEL orientation
         df_orientation = df[['order', 'gRNA_seq', 'sample', 'name', 'DEL_orientation'\
@@ -687,7 +687,7 @@ for key, value in tables_dic.items():
                             \n{no_of_gRNA_samples}'
         name_to_save = f'{file_number}_{counter}_DEL_Stagg_blunt_summary_violinplot'
         plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable', y='value'\
-            , number_of_columns=len(df_Blunt_Stagg_samples_norm['variable'].unique())/6\
+            , number_of_columns=len(df_Blunt_Stagg_samples_norm['variable'].unique())/2\
             , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=False\
             , show_hue_medians=False\
             , hue=None, hue_only_for_data_points=False \
@@ -889,7 +889,6 @@ for key, value in tables_dic.items():
                         , y_legend_coordinate=-0.2, show_plots=show_plots)
                 subcounter+=1
         counter+=1
-        # %%
         ##########################################################################################
         ##########################################################################################
         ##########################################################################################
@@ -1002,35 +1001,40 @@ for key, value in tables_dic.items():
     ##########################################################################################
     ##########################################################################################
     # TODO the part for analysin MH around the cut site was not implemented in this code and was replaced by the charts plotting the ends participating in the repair
-    # %%
+    file_number = '05'
+    counter=1
     if plot_participating_end is True:
-        file_number = '05'
-        counter=1
         df_end = df
         # drop data without gap
         df_end = df_end[df_end['n_deleted_around_cut'] != 0]
         # filter out deletions which are not around the cut
         df_end = df_end[df_end['Gap_around_cut'] == True]
+        # filter out deletionw which does not have MH around the cut site
+        df_end = df_end[df_end['End_participating_on_MH'] != 'X']
         # Change values in End_3_5 to be 3', 5' and cannot_be_determined needed for plotting with color_dic
-        df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'unknown'})
+        df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'eider 3\' or 5\''})
         pivot = pd.pivot_table(df_end, index=['name', 'gRNA_seq'], columns=['End_3_5'], values='%Reads', aggfunc='sum', fill_value=0)
         df_end_samples = pivot.reset_index()
-        df_end_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_end_samples, ['3\'', '5\'', 'unknown'], cut_maximum, cut_minimum)
+        df_end_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_end_samples, ['3\'', '5\'', 'eider 3\' or 5\''], cut_maximum, cut_minimum)
         df_end_samples = pd.melt(df_end_samples, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
-        pivot = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['End_3_5'], values=df_end_samples['value'], aggfunc='sum', normalize='index')
-        df_end_samples_norm = pivot.reset_index()
+        pivot_normalised = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['End_3_5'], values=df_end_samples['value'], aggfunc='sum', normalize='index')
+        pivot_NOTnorm = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['End_3_5'], values=df_end_samples['value'], aggfunc='sum')
+        df_end_samples_norm = pivot_normalised.reset_index()
         df_end_samples_norm = pd.melt(df_end_samples_norm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
+        df_end_samples_NOTnorm = pivot_NOTnorm.reset_index()
+        df_end_samples_NOTnorm = pd.melt(df_end_samples_NOTnorm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
         #########################################################################################
         # plot VIOLINPLOT
         ##########################################################################################
+        # NORMALISED
         # Set charts properties for violinplot
         title = 'Normalised ends participating on the repair'
         ylabel = 'Normalised percentage of ends \n around cut events'
         text_bellow_chart = f'Only DELs around the cut are plotted.\
                             \nNormalised to: SUM of all ends in individual sample = 100%\
                             \n{no_of_gRNA_samples}'
-        name_to_save = f'{file_number}_{counter}_DEL_end_summary_violinplot'
-        color_dic = {'3\'':'blue', '5\'':'gold', 'unknown':'white'}
+        name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_violinplot'
+        color_dic = {'3\'':'blue', '5\'':'gold', 'eider 3\' or 5\'':'white'}
         plot = plot_sns_violin_and_print(data=df_end_samples_norm, x='End_3_5', y='value'\
             , number_of_columns=3\
             , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
@@ -1039,7 +1043,7 @@ for key, value in tables_dic.items():
             , hatches=False\
             , clip_right=True\
             , title=title, xtickt_rotation=0, ylabel=ylabel\
-            , order=['5\'', '3\'','unknown']\
+            , order=['5\'', '3\'','eider 3\' or 5\'']\
             , plot_legend=False\
             , integrated_properties_dic=False, color_dic=color_dic\
             , text_bellow_chart=text_bellow_chart\
@@ -1052,8 +1056,37 @@ for key, value in tables_dic.items():
             , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
         stat_info = df_end_samples_norm.groupby('End_3_5').value.describe()
         save_stat(stat_info, name_to_save, project_output_subdir)
+
+         # NOT- NORMALISED
+        # Set charts properties for violinplot
+        title = 'Ends participating on the repair'
+        ylabel = 'Percentage from all events'
+        text_bellow_chart = f'Only DELs around the cut are plotted.\
+                            \n{no_of_gRNA_samples}'
+        name_to_save = f'{file_number}_{counter}_DEL_end_summary_NOTnorm_violinplot'
+        color_dic = {'3\'':'blue', '5\'':'gold', 'eider 3\' or 5\'':'white'}
+        plot = plot_sns_violin_and_print(data=df_end_samples_NOTnorm, x='End_3_5', y='value'\
+            , number_of_columns=3\
+            , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
+            , show_hue_medians=False\
+            , hue=None, hue_only_for_data_points=False \
+            , hatches=False\
+            , clip_right=True\
+            , title=title, xtickt_rotation=0, ylabel=ylabel\
+            , order=['5\'', '3\'','eider 3\' or 5\'']\
+            , plot_legend=False\
+            , integrated_properties_dic=False, color_dic=color_dic\
+            , text_bellow_chart=text_bellow_chart\
+            , y_legend_coordinate=-0.10, yaxis_formater=100\
+            , x_max=None\
+            , change_edge_color=False\
+            , name_to_save=name_to_save\
+            , project_output_dir=project_output_subdir\
+            , data_source=data_source, output_format=output_format\
+            , dpi=200, y_min=0, show_plots=show_plots)
+        stat_info = df_end_samples_NOTnorm.groupby('End_3_5').value.describe()
+        save_stat(stat_info, name_to_save, project_output_subdir)
         ##########################################################################################
-        # %%
         if plot_participating_end_dinochart is True:
             # make DataFrame for ramining DEL_orientations
             df_end = df.copy()

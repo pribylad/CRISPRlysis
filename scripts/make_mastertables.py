@@ -836,9 +836,9 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     elif category_1 == 3:
         dict_NoMH={3:list_m,
                    4:list_m,
-                   5:list_14,
-                   6:list_14,
-                   7:list_14,
+                   5:list_m,
+                   6:list_m,
+                   7:list_m,
                    8:list_29,
                    9:list_29,
                    10:list_29,
