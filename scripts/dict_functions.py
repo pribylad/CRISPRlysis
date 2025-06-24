@@ -195,9 +195,9 @@ def make_color_dic_Dino_end(list_of_events):
     for l in list_of_events:
         split = l.split('_')
         if split[1] == str(5):
-            color_dic[l] = 'gold'
+            color_dic[l] = '#d22d40'
         elif split[1] == str(3):
-            color_dic[l] = 'blue'
+            color_dic[l] = '#003657'
         elif split[1] == str(0):
             color_dic[l] = 'white'
         else:

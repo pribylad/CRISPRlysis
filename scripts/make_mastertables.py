@@ -1122,18 +1122,26 @@ def create_mastertable (project_dir, project_output_dir, parameters_dic):
     return
 
 # Add columns to the 01_mastertable
-def add_columns_to_df(df, project_output_dir, parameters_dic, date, sort_alphabetically):
-    """Adds columns to the mastertable based on the given parameters and filters for #Reads column higher than minimum_Reads. The initial names of the source files from CRISPREsso2 must follow exact orders: Order_CasVariant_Gene_gRNAnum_Mutant_NoOfTargets_Overhangs_Replicate. Saves the updated mastertable as a TSV file."""
+def add_columns_to_df(df, project_output_dir, parameters_dic, date, sort_alphabetically, list_of_columns=None):
+    """Adds columns to the mastertable based on the given parameters and filters for #Reads column higher than minimum_Reads. 
+    The initial names of the source files from CRISPREsso2 must follow exact orders: Order_CasVariant_Gene_gRNAnum_Mutant_NoOfTargets_Overhangs_Replicate. If not, list of columns can be given.
+    Saves the updated mastertable as a TSV file."""
     # filter out #Reads<minimum_Reads
     df = df[df['#Reads'] >= int(parameters_dic['minimum_Reads'])].copy()
-    df['order'] = df.apply(lambda row: row['sample'].split('_')[1], axis=1)
-    df['Cas_variant'] = df.apply(lambda row: row['sample'].split('_')[2], axis=1)
-    df['gene'] = df.apply(lambda row: row['sample'].split('_')[3], axis=1)
-    df['gRNA_num'] = df.apply(lambda row: row['sample'].split('_')[4], axis=1)
-    df['mutant'] = df.apply(lambda row: row['sample'].split('_')[5], axis=1)
-    df['no_of_targets'] = df.apply(lambda row: row['sample'].split('_')[6], axis=1)
-    df['overhang'] = df.apply(lambda row: row['sample'].split('_')[7], axis=1)
-    df['replicate'] = df.apply(lambda row: row['sample'].split('_')[8], axis=1)
+    if list_of_columns is None:
+        df['order'] = df.apply(lambda row: row['sample'].split('_')[1], axis=1)
+        df['Cas_variant'] = df.apply(lambda row: row['sample'].split('_')[2], axis=1)
+        df['gene'] = df.apply(lambda row: row['sample'].split('_')[3], axis=1)
+        df['gRNA_num'] = df.apply(lambda row: row['sample'].split('_')[4], axis=1)
+        df['mutant'] = df.apply(lambda row: row['sample'].split('_')[5], axis=1)
+        df['no_of_targets'] = df.apply(lambda row: row['sample'].split('_')[6], axis=1)
+        df['overhang'] = df.apply(lambda row: row['sample'].split('_')[7], axis=1)
+        df['replicate'] = df.apply(lambda row: row['sample'].split('_')[8], axis=1)
+    else:
+        i = 1
+        for col in list_of_columns:
+            df[col] = df.apply(lambda row: row['sample'].split('_')[i], axis=1)
+            i += 1
     for key in parameters_dic['add_columns']:
         df[key] = parameters_dic['add_columns'][key]
     df['name'] = df['sample'].astype(str) + '_' + df['gRNA_seq'].astype(str)

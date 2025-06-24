@@ -920,10 +920,10 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
 
     df = pd.DataFrame.from_dict(to_plot_dic, orient='index', columns=bars)
 
-    # plot 
+    # plot
     sns.set_style(style='whitegrid')                      # makes gid behind the plot
     f, ax = plt.subplots(figsize=(maximum/2, 3))       # set the figure size
-    
+
     # make color palette from sns.color_palette or own dictionary
     if sns_palette == True:
         if isinstance(palette, str):
@@ -951,7 +951,7 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
                 alpha=1, errorbar=None, linewidth=0.2)        
 
     plt.title(f'{title} \n ({date}) \n {data_source}')
-    plt.xlabel(xlabel, size=15)
+    plt.xlabel(xlabel, size=10)
     plt.ylabel(ylabel, size=15)
     bars = np.flip(bars)                            # change the bars order as they were plotted 
     plt.legend(labels=bars, loc='center left', bbox_to_anchor=(1, 0.5))

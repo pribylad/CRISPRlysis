@@ -67,6 +67,10 @@ output_format = parameters['output_format']
 make_mastertable_00 = parameters['make_mastertable_00']
 path_to_existing_mastertable_00 = parameters['path_to_existing_mastertable_00']
 make_mastertable_01 = parameters['make_mastertable_01']
+if 'list_of_columns' in parameters:
+    list_of_columns = parameters['list_of_columns']
+else:
+    list_of_columns = []
 path_to_existing_mastertable_01 = parameters['path_to_existing_mastertable_01']
 make_subtables = parameters['make_subtables']
 subtables_param = parameters['subtables_param']
@@ -128,7 +132,7 @@ if filter_out_values:
 # Make new mastertable containing additional columns from 00_mastertable or load existing one
 if make_mastertable_01 is True:
     write_into_report('Making 01_mastertable.', destination_folder=project_output_dir)
-    df = add_columns_to_df(mastertable, project_output_dir, parameters, date, sort_alphabetically)
+    df = add_columns_to_df(mastertable, project_output_dir, parameters, date, sort_alphabetically, list_of_columns)
 else:
     df = pd.read_csv(path_to_existing_mastertable_01, sep="\t")
     write_into_report(f'Reading 01_mastertable from: {path_to_existing_mastertable_01}', destination_folder=project_output_dir)
@@ -1034,7 +1038,7 @@ for key, value in tables_dic.items():
                             \nNormalised to: SUM of all ends in individual sample = 100%\
                             \n{no_of_gRNA_samples}'
         name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_violinplot'
-        color_dic = {'3\'':'blue', '5\'':'gold', 'eider 3\' or 5\'':'white'}
+        color_dic = {'3\'':'#003657', '5\'':'#d22d40', 'eider 3\' or 5\'':'white'}
         plot = plot_sns_violin_and_print(data=df_end_samples_norm, x='End_3_5', y='value'\
             , number_of_columns=3\
             , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
@@ -1064,7 +1068,6 @@ for key, value in tables_dic.items():
         text_bellow_chart = f'Only DELs around the cut are plotted.\
                             \n{no_of_gRNA_samples}'
         name_to_save = f'{file_number}_{counter}_DEL_end_summary_NOTnorm_violinplot'
-        color_dic = {'3\'':'blue', '5\'':'gold', 'eider 3\' or 5\'':'white'}
         plot = plot_sns_violin_and_print(data=df_end_samples_NOTnorm, x='End_3_5', y='value'\
             , number_of_columns=3\
             , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
