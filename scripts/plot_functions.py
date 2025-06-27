@@ -817,6 +817,7 @@ def plot_barplot(data, x, y, project_output_dir, name_to_save, data_source, hue=
         return plt.show()
     return plt.close()
 
+# TODO shift the chart when no positive values are present
 def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir, order_y=None\
     , data_source=None, title=None, name_to_save='stacked_vertical_barchart'\
     , output_format='png', dpi=200, xlabel=None, ylabel=None, sns_palette=True\
@@ -878,26 +879,64 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
     df_pivot= pivot2.reset_index()
 
     # if you want to have continuous x-axis like 1,2,3,4,5,6,... -. works only for numbers
-    if fill_empty_x == True:
-        # check if all columns exists, if not make an empty one
+    if fill_empty_x:
         if min(df_pivot[x]) > 0:
-            list_of_x = list(range(max(df_pivot[x])+1))
+            list_of_x = list(range(max(df_pivot[x]) + 1))
         else:
-            list_of_x = list(range(min(df_pivot[x]), max(df_pivot[x])+1))
+            if max(df_pivot[x]) < 0:
+                list_of_x = list(range(min(df_pivot[x]), 2))
+            else:
+                list_of_x = list(range(min(df_pivot[x]), max(df_pivot[x]) + 1))
+
         if 0 in list_of_x:
             list_of_x.remove(0)
-        no_of_columns = len(df_pivot.columns)
+
+        # if 1 not in list_of_x:
+        #     list_of_x.append(1)
+        # list_of_x.sort()
+
+        # Track the index of 1 in the cleaned-up list
         try:
             middle = list_of_x.index(1)
-        except:
-            middle=0
+        except ValueError:
+            middle = 0  # fallback just in case
+
+        no_of_columns = len(df_pivot.columns)
+
         for lx in list_of_x:
-            if lx not in list(df_pivot[x]):
-                empty_row = [lx]
-                for i in range(no_of_columns-1):
-                    empty_row.append(0)
+            if lx not in df_pivot[x].values:
+                empty_row = [lx] + [0] * (no_of_columns - 1)
                 df_pivot.loc[len(df_pivot)] = empty_row
+
         df_pivot.sort_values(x, inplace=True)
+
+    # if fill_empty_x == True:
+    #     # check if all columns exists, if not make an empty one
+    #     if min(df_pivot[x]) > 0:
+    #         list_of_x = list(range(max(df_pivot[x])+1))
+    #     else:
+    #         list_of_x = list(range(min(df_pivot[x]), max(df_pivot[x])+1))
+    #     if 0 in list_of_x:
+    #         list_of_x.remove(0)
+    #     no_of_columns = len(df_pivot.columns)
+
+    #     if 1 not in list_of_x:
+    #         empty_row = [1] + [0] * (no_of_columns - 1)
+    #         df_pivot.loc[len(df_pivot)] = empty_row
+    #         # append 1 to the list of x values
+
+    #     # try:
+    #     middle = list_of_x.index(1)
+    #     # except:
+    #     #     middle=0
+        
+    #     for lx in list_of_x:
+    #         if lx not in list(df_pivot[x]):
+    #             empty_row = [lx]
+    #             for i in range(no_of_columns-1):
+    #                 empty_row.append(0)
+    #             df_pivot.loc[len(df_pivot)] = empty_row
+    #     df_pivot.sort_values(x, inplace=True)
 
     i = 0
     to_plot_dic = {}

@@ -143,7 +143,7 @@ else:
     tables_dic = {path_to_existing_mastertable_01:subtables_param}
 # if tables_dic is not empty (imported empty from variables_for_analysis_linux.py) it will use the first half of the code.
 # else it will use the bottom part of the code, where there are no sub-tables
-
+# %%
 for key, value in tables_dic.items():
     print(f'Processing {key} and {value}')
     df = pd.read_csv(key, sep='\t', index_col=None)
@@ -163,12 +163,15 @@ for key, value in tables_dic.items():
     # if subtables_param is not empty list
     # TODO solve for filtering to other than 2 stuff
     if len(subtables_param) > 0:
+        subpath = ''
         for param in subtables_param:
+            subpath = subpath + str(value[i]) + '_'
             data_source += f'{param} is {value[i]}; '
             i+=1
-        write_into_report(f'New data_source is {data_source}.', destination_folder=project_output_dir)
+        write_into_report(f'New data_source is {subpath}.', destination_folder=project_output_dir)
         # Change project_output_dir
-        project_output_subdir = Path(project_output_dir, f'{value[0]}_{value[1]}_{date}')
+        project_output_subdir = Path(project_output_dir, subpath + f'{date}')
+        print(f'New project_output_subdir is {project_output_subdir}')
     else:
         project_output_subdir = Path(project_output_dir, f'{date}')
     check_if_path_exist_create_if_not(project_output_subdir)
