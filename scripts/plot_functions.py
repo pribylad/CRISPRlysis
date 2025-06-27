@@ -891,10 +891,6 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
         if 0 in list_of_x:
             list_of_x.remove(0)
 
-        # if 1 not in list_of_x:
-        #     list_of_x.append(1)
-        # list_of_x.sort()
-
         # Track the index of 1 in the cleaned-up list
         try:
             middle = list_of_x.index(1)
