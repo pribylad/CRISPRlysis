@@ -9065,3 +9065,5 @@ Stacked vertical barchart 03_6_DEL_Stagg_blunt_summary_barchart_4th_nt was creat
 
 Stacked vertical barchart 03_5_Stagg_blunt_DEL_orientation_dino_30nt_NotNormalised_1_sgRNA_1_SpCas9_T2_MCsite4_0_1_cmt3_1_0_1_1 was created.
 
+Stacked vertical barchart 03_5_Stagg_blunt_DEL_orientation_dino_30nt_NotNormalised_2_sgRNA_1_SpCas9_T2_MCsite4_0_1_cmt3_1_0_2_1 was created.
+
