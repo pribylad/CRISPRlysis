@@ -1118,20 +1118,7 @@ for key, value in tables_dic.items():
             df_end = df_end[df_end['DEL_orientation'] != 'C']
             df_end = pd.concat([df_end, df_end_cannot_be_determined], ignore_index=True)
 
-            #  make column combining DEL_orientation with participating end
-            def return_MH_len(value):
-                value = int(value)
-                if value == 0:
-                    return '0bp'
-                elif value == 1:
-                    return '1bp'
-                elif value > 1:
-                    return '>1bp'
-                else:
-                    return ValueError("Invalid Maximal_MH_len value")
-                
-            df_end['MH_len'] = df_end.apply(lambda row: return_MH_len(row['Maximal_MH_len']), axis=1)
-            df_end['DEL_orientation_participating_end'] = df_end.apply(lambda row: row['DEL_orientation'] + '_' + str(row['End_3_5']) + '_' + row['MH_len'], axis=1)
+            df_end['DEL_orientation_participating_end'] = df_end.apply(lambda row: row['DEL_orientation'] + '_' + str(row['End_3_5']) + '_' + str(row['blunt_cut_with_MH_possible']), axis=1)
             df_end['n_deleted_around_cut'] = df_end.apply(lambda row: -int(row['n_deleted_around_cut']) if (row['DEL_orientation']=='U' or row['DEL_orientation']=='sU') else row['n_deleted_around_cut'], axis=1)
             df_end['n_deleted_around_cut'] = df_end['n_deleted_around_cut'].astype(int)
             # subcounter=1
@@ -1209,5 +1196,7 @@ for key, value in tables_dic.items():
                         , fill_empty_x=True, order_y=order\
                         , y_legend_coordinate=-0.2, show_plots=show_plots)
                 subcounter+=1
+                # Delete the following line if you want to plot all samples
+                # break
 
 # %%

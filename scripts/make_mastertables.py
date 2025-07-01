@@ -38,6 +38,7 @@ Made by Adela Pribylova, Charles University, Prague, Czech Republic. 2025
 ##########################################################################################
 # To make mastertable from CRISPRESSO2 output files
 ##########################################################################################
+import ast
 import csv
 from datetime import datetime
 from pathlib import Path
@@ -905,6 +906,21 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
 
     return cut_type, end_participating, DEL_orientation, strand_participating, likely_type
 
+def blunt_cut_with_MH_possible(gap_min_max_range, Cut_position):
+    '''
+    Get the MH positions from the GAP_min_max_range column and make ranges where the MH is present.
+    The ranges are ([112, 126], [114, 128]) and are from find_min_and_max_gap_ranges function.
+    '''
+    # Check if the gap_min_max_range is a string like 'no_gap' or 'gap_span....'
+    if 'gap' in str(gap_min_max_range):
+        return ''
+    
+    (x1, y1), (x2, y2) = gap_min_max_range
+
+    if Cut_position in range(x1, x2) or Cut_position in range(y1, y2):
+        return True
+    else:
+        return False
 # TODO do not use DEL_orientation_sober, but use the DEL-orientation from apply_return_cut_type_based_on_cut_categories
 # def DEL_orientation_sober(category_1, category_2):
     # """
@@ -996,6 +1012,8 @@ def process_table(table, gRNA_seq, sample, parameters_dic):
             df[col_name] = [result[i] for result in results]
     # Call the above function to add columns based on the function find_microhomology
     apply_find_microhomology(df, find_microhomology, ['MH_to_proximal_len', 'MH_to_distal_len', 'Maximal_MH_len', 'Maximal_MH'])
+
+    df['blunt_cut_with_MH_possible'] = df.apply(lambda row: blunt_cut_with_MH_possible(row['Gap_min_max_ranges'], parameters_dic['cut_position']), axis=1)
 
     def apply_return_cut_type_based_on_cut_categories(df, func, new_column_names):
         """Adds new columns into table based on the function return_cut_type_based_on_cut_categories."""

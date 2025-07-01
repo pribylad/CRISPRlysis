@@ -185,6 +185,7 @@ def make_color_dic_Dino_end(list_of_events):
     Parameters:
     list_of_events (list): 
         example: ['U_5', 'U_3', 'U_0', 'D_5', 'D_3', 'D_0']
+        ['U_5_True', 'U_5_False', 'U_3_True', 'U_3_False', 'D_5_True', 'D_5_False', 'D_3_True', 'D_3_False']
                 ['U_5_0bp', 'U_5_1bp', 'U_5_>1bp', 'U_3_0bp', 'U_3_1bp', 'U_3_>1bp', 'D_5_0bp', 'D_5_1bp', 'D_5_>1bp', 'D_3_0bp', 'D_3_1bp', 'D_3_>1bp']
 
     Returns:
@@ -196,35 +197,23 @@ def make_color_dic_Dino_end(list_of_events):
     for l in list_of_events:
         split = l.split('_')
         if split[1] == str(5):
-            if split[2] == '0bp':
-                color_dic[l] = '#FFFFFF'
-            elif split[2] == '1bp':
+            if split[2] == 'False':
                 color_dic[l] = '#d22d40'
-            elif split[2] == '>1bp':
+            elif split[2] == 'True':
                 color_dic[l] = '#d3838c'
             else:
                 color_dic[l] = 'red'  # Default case if it doesn't match any criteria
                 print(f'Error in make_color_dic_Dnino_end function. Parameter: {l} is not in the colour decision list.')
         elif split[1] == str(3):
-            if split[2] == '0bp':
-                color_dic[l] = '#FFFFFF'
-            elif split[2] == '1bp':
+            if split[2] == 'False':
                 color_dic[l] = '#003657'
-            elif split[2] == '>1bp':
+            elif split[2] == 'True':
                 color_dic[l] = "#668699"
             else:
                 color_dic[l] = 'red'  # Default case if it doesn't match any criteria
                 print(f'Error in make_color_dic_Dnino_end function. Parameter: {l} is not in the colour decision list.')
         elif split[1] == str(0):
-            if split[2] == '0bp':
-                color_dic[l] = '#FFFFFF'
-            elif split[2] == '1bp':
-                color_dic[l] = '#b2b2b2'
-            elif split[2] == '>1bp':
-                color_dic[l] = "#4d4d4d"
-            else:
-                color_dic[l] = 'red'  # Default case if it doesn't match any criteria
-                print(f'Error in make_color_dic_Dnino_end function. Parameter: {l} is not in the colour decision list.')
+            color_dic[l] = '#FFFFFF'
         else:
             color_dic[l] = 'red'  # Default case if it doesn't match any criteria
             print(f'Error in make_color_dic_Dnino function. Parameter: {l} is not in the colour decision list.')
