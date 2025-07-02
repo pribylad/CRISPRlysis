@@ -1042,6 +1042,7 @@ for key, value in tables_dic.items():
                             \n{no_of_gRNA_samples}'
         name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_violinplot'
         color_dic = {'3\'':'#003657', '5\'':'#d22d40', 'eider 3\' or 5\'':'white'}
+        # TODO split it to True/False for can be blunt cut with MH
         plot = plot_sns_violin_and_print(data=df_end_samples_norm, x='End_3_5', y='value'\
             , number_of_columns=3\
             , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
@@ -1071,6 +1072,7 @@ for key, value in tables_dic.items():
         text_bellow_chart = f'Only DELs around the cut are plotted.\
                             \n{no_of_gRNA_samples}'
         name_to_save = f'{file_number}_{counter}_DEL_end_summary_NOTnorm_violinplot'
+        # TODO split it to True/False for can be blunt cut with MH
         plot = plot_sns_violin_and_print(data=df_end_samples_NOTnorm, x='End_3_5', y='value'\
             , number_of_columns=3\
             , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
@@ -1104,7 +1106,6 @@ for key, value in tables_dic.items():
             df_end_cannot_be_determined = df_end[df_end['DEL_orientation']=='C'].copy()
             df_end_cannot_be_determined['%Reads'] = df_end_cannot_be_determined['%Reads']/2
             df_end_cannot_be_determined['#Reads'] = df_end_cannot_be_determined['#Reads']/2
-            # TODO change distal and proximal to upstream and downstream
             df_end_cannot_be_determined_distal = df_end_cannot_be_determined.copy()
             df_end_cannot_be_determined_distal['DEL_orientation'] = 'sU'
             df_end_cannot_be_determined_proximal = df_end_cannot_be_determined.copy()
@@ -1121,43 +1122,6 @@ for key, value in tables_dic.items():
             df_end['DEL_orientation_participating_end'] = df_end.apply(lambda row: row['DEL_orientation'] + '_' + str(row['End_3_5']) + '_' + str(row['blunt_cut_with_MH_possible']), axis=1)
             df_end['n_deleted_around_cut'] = df_end.apply(lambda row: -int(row['n_deleted_around_cut']) if (row['DEL_orientation']=='U' or row['DEL_orientation']=='sU') else row['n_deleted_around_cut'], axis=1)
             df_end['n_deleted_around_cut'] = df_end['n_deleted_around_cut'].astype(int)
-            # subcounter=1
-            # for sample in df_end['sample'].unique():
-            #     print(sample)
-            #     # filter individual gRNA
-            #     df_end_gRNA = df_end[df_end['sample'].str.contains(sample)]
-            #     seq_around = df_end_gRNA['Original_Sequence_around_cut'].unique()
-            #     print(seq_around)
-            #     name_to_save= f'{file_number}_{counter}_end_participating_DEL_orientation_dino_30nt_NotNormalised_{subcounter}_' + sample
-            #     title = 'End participating on the repair + DEL orientation analysis ' + str(sample) + '\n' + str(seq_around)
-            #     xlabel='Number of deleted nucleotides (minus = upstream from the probable cut, plus = downstream from the probable cut)'
-            #     ylabel='Sum of %Reads \n of ends participating in the repair'
-            #     text_bellow_chart = 'Data from deletions around cut only.\n\
-            #         Without deletions with DEL_orientation = both \n\
-            #         cannot_be_determined was split between upstream and downstream - gray bars.\n\
-            #         Not normalised data.'
-            #     # normalise individual samples -> sum of all DEL = 100%
-            #     pivot = pd.crosstab(index=[df_end_gRNA['DEL_orientation_participating_end']\
-            #                                 , df_end_gRNA['n_deleted_around_cut']]\
-            #             , columns=df_end_gRNA['name'], values=df_end_gRNA['%Reads']\
-            #             , aggfunc='sum', normalize=False)
-            #     df_pivot = pivot.reset_index()
-            #     # add column with gRNA name, where will be average from all samples
-            #     # TODO what is the reason for the row below?
-            #     df_pivot[sample] = df_pivot.iloc[:,2:].to_numpy().mean(axis=1)
-            #     df_pivot = df_pivot.sort_values(by=['DEL_orientation_participating_end'], ascending=[False])
-            #     order = list(df_pivot['DEL_orientation_participating_end'].unique())
-            #     color_dic = make_color_dic_Dino_end(df_pivot['DEL_orientation_participating_end'].unique())
-            #     plot = plot_general_stacked_vertical_barchart(df=df_pivot, x='n_deleted_around_cut'\
-            #             , y='DEL_orientation_participating_end', project_output_dir=project_output_subdir\
-            #             , values=sample, sns_palette=False, palette=color_dic\
-            #             , data_source=data_source, plot_vertical_line_middle=True\
-            #             , title=title, name_to_save=name_to_save, output_format=output_format\
-            #             , dpi=200, xlabel=xlabel, ylabel=ylabel, y_as_perc=True, yaxis_formater=100\
-            #             , xlim=(-30,30), ylim=None, text_bellow_chart=text_bellow_chart\
-            #             , fill_empty_x=True, order_y=order\
-            #             , y_legend_coordinate=-0.2, show_plots=show_plots)
-            #     subcounter+=1
 
             subcounter=1
             for sample in df_end['sample'].unique():
