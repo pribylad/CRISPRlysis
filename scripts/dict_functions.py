@@ -184,9 +184,7 @@ def make_color_dic_Dino_end(list_of_events):
     ''' Makes color dictionary for plotting cut types in Dino-charts.
     Parameters:
     list_of_events (list): 
-        example: ['U_5', 'U_3', 'U_0', 'D_5', 'D_3', 'D_0']
-        ['U_5_True', 'U_5_False', 'U_3_True', 'U_3_False', 'D_5_True', 'D_5_False', 'D_3_True', 'D_3_False']
-                ['U_5_0bp', 'U_5_1bp', 'U_5_>1bp', 'U_3_0bp', 'U_3_1bp', 'U_3_>1bp', 'D_5_0bp', 'D_5_1bp', 'D_5_>1bp', 'D_3_0bp', 'D_3_1bp', 'D_3_>1bp']
+        example: ['U_5_True', 'U_5_False', 'U_3_True', 'U_3_False', 'D_5_True', 'D_5_False', 'D_3_True', 'D_3_False']
 
     Returns:
     color_dic
@@ -217,4 +215,17 @@ def make_color_dic_Dino_end(list_of_events):
         else:
             color_dic[l] = 'red'  # Default case if it doesn't match any criteria
             print(f'Error in make_color_dic_Dnino function. Parameter: {l} is not in the colour decision list.')
+    return color_dic
+
+def get_color_dic_35_violin():
+    """
+    Returns:
+    color_dic
+    """
+    color_dic = {'3\' possible blunt':"#668699",
+                 '5\' possible blunt':'#d3838c',
+                 'eider 3\' or 5\' possible blunt':'#FFFFFF',
+                 '3\' NOT blunt':'#003657',
+                 '5\' NOT blunt':'#d22d40',
+                 'eider 3\' or 5\' NOT blunt':"#C7C7C7"}
     return color_dic

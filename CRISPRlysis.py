@@ -41,7 +41,7 @@ from scripts.make_mastertables import filter_out_values_from_df, clasify_INDELSU
 
 from scripts.plot_functions import save_stat, make_Ubuntu_mnt_path, make_reverse_complement, find_element_in_list, adjust_box_widths, plot_sns_violin_and_print, plot_general_stacked_horizontal_barchart, plot_barplot, check_if_all_events_are_present_after_pivot_reset_index, plot_general_stacked_vertical_barchart
 
-from scripts.dict_functions import make_color_dic_CutType, make_hatches_dic_CutType, make_color_dic_blunt_stagg_orientation, make_color_dic_Dino, make_hatches_dic_Dino, make_color_dic_Dino_end
+from scripts.dict_functions import make_color_dic_CutType, make_hatches_dic_CutType, make_color_dic_blunt_stagg_orientation, make_color_dic_Dino, make_hatches_dic_Dino, make_color_dic_Dino_end, get_color_dic_35_violin
 
 # Get current date and time
 now = datetime.now()
@@ -1011,6 +1011,7 @@ for key, value in tables_dic.items():
     file_number = '05'
     counter=1
     if plot_participating_end is True:
+
         df_end = df
         # drop data without gap
         df_end = df_end[df_end['n_deleted_around_cut'] != 0]
@@ -1020,12 +1021,18 @@ for key, value in tables_dic.items():
         df_end = df_end[df_end['End_participating_on_MH'] != 'X']
         # Change values in End_3_5 to be 3', 5' and cannot_be_determined needed for plotting with color_dic
         df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'eider 3\' or 5\''})
-        pivot = pd.pivot_table(df_end, index=['name', 'gRNA_seq'], columns=['End_3_5'], values='%Reads', aggfunc='sum', fill_value=0)
+        pivot = pd.pivot_table(df_end, index=['name', 'gRNA_seq'], columns=['End_3_5', 'blunt_cut_with_MH_possible'], values='%Reads', aggfunc='sum', fill_value=0)
         df_end_samples = pivot.reset_index()
-        df_end_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_end_samples, ['3\'', '5\'', 'eider 3\' or 5\''], cut_maximum, cut_minimum)
+        # Flattern the MultiIndex columns
+        df_end_samples.columns = ['_'.join(map(str, col)).strip() for col in df_end_samples.columns.values]
+        # Rename columns
+        df_end_samples.rename(columns={'name_': 'name', 'gRNA_seq_':'gRNA_seq', '3\'_True':'3\' possible blunt', '5\'_True':'5\' possible blunt', 'eider 3\' or 5\'_True':'eider 3\' or 5\' possible blunt', '3\'_False':'3\' NOT blunt', '5\'_False':'5\' NOT blunt', 'eider 3\' or 5\'_False':'eider 3\' or 5\' NOT blunt'}, inplace=True)
+
+        df_end_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_end_samples, ['3\' possible blunt', '5\' possible blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '5\' NOT blunt', 'eider 3\' or 5\' NOT blunt'], cut_maximum, cut_minimum)
         df_end_samples = pd.melt(df_end_samples, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
-        pivot_normalised = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['End_3_5'], values=df_end_samples['value'], aggfunc='sum', normalize='index')
-        pivot_NOTnorm = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['End_3_5'], values=df_end_samples['value'], aggfunc='sum')
+        pivot_normalised = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['variable'], values=df_end_samples['value'], aggfunc='sum', normalize='index')
+        pivot_normalised
+        pivot_NOTnorm = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['variable'], values=df_end_samples['value'], aggfunc='sum')
         df_end_samples_norm = pivot_normalised.reset_index()
         df_end_samples_norm = pd.melt(df_end_samples_norm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
         df_end_samples_NOTnorm = pivot_NOTnorm.reset_index()
@@ -1041,28 +1048,28 @@ for key, value in tables_dic.items():
                             \nNormalised to: SUM of all ends in individual sample = 100%\
                             \n{no_of_gRNA_samples}'
         name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_violinplot'
-        color_dic = {'3\'':'#003657', '5\'':'#d22d40', 'eider 3\' or 5\'':'white'}
+        color_dic = get_color_dic_35_violin()
         # TODO split it to True/False for can be blunt cut with MH
-        plot = plot_sns_violin_and_print(data=df_end_samples_norm, x='End_3_5', y='value'\
+        plot = plot_sns_violin_and_print(data=df_end_samples_norm, x='variable', y='value'\
             , number_of_columns=3\
             , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
             , show_hue_medians=False\
             , hue=None, hue_only_for_data_points=False \
             , hatches=False\
             , clip_right=True\
-            , title=title, xtickt_rotation=0, ylabel=ylabel\
-            , order=['5\'', '3\'','eider 3\' or 5\'']\
+            , title=title, xtickt_rotation=-55, ylabel=ylabel\
+            , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', '3\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']\
             , plot_legend=False\
             , integrated_properties_dic=False, color_dic=color_dic\
             , text_bellow_chart=text_bellow_chart\
-            , y_legend_coordinate=-0.10, yaxis_formater=1\
+            , y_legend_coordinate=-0.45, yaxis_formater=1\
             , x_max=None\
             , change_edge_color=False\
             , name_to_save=name_to_save\
             , project_output_dir=project_output_subdir\
             , data_source=data_source, output_format=output_format\
             , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
-        stat_info = df_end_samples_norm.groupby('End_3_5').value.describe()
+        stat_info = df_end_samples_norm.groupby('variable').value.describe()
         save_stat(stat_info, name_to_save, project_output_subdir)
 
          # NOT- NORMALISED
@@ -1073,26 +1080,26 @@ for key, value in tables_dic.items():
                             \n{no_of_gRNA_samples}'
         name_to_save = f'{file_number}_{counter}_DEL_end_summary_NOTnorm_violinplot'
         # TODO split it to True/False for can be blunt cut with MH
-        plot = plot_sns_violin_and_print(data=df_end_samples_NOTnorm, x='End_3_5', y='value'\
+        plot = plot_sns_violin_and_print(data=df_end_samples_NOTnorm, x='variable', y='value'\
             , number_of_columns=3\
             , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
             , show_hue_medians=False\
             , hue=None, hue_only_for_data_points=False \
             , hatches=False\
             , clip_right=True\
-            , title=title, xtickt_rotation=0, ylabel=ylabel\
-            , order=['5\'', '3\'','eider 3\' or 5\'']\
+            , title=title, xtickt_rotation=-55, ylabel=ylabel\
+            , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', '3\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']\
             , plot_legend=False\
             , integrated_properties_dic=False, color_dic=color_dic\
             , text_bellow_chart=text_bellow_chart\
-            , y_legend_coordinate=-0.10, yaxis_formater=100\
+            , y_legend_coordinate=-0.45, yaxis_formater=100\
             , x_max=None\
             , change_edge_color=False\
             , name_to_save=name_to_save\
             , project_output_dir=project_output_subdir\
             , data_source=data_source, output_format=output_format\
             , dpi=200, y_min=0, show_plots=show_plots)
-        stat_info = df_end_samples_NOTnorm.groupby('End_3_5').value.describe()
+        stat_info = df_end_samples_NOTnorm.groupby('variable').value.describe()
         save_stat(stat_info, name_to_save, project_output_subdir)
         ##########################################################################################
         if plot_participating_end_dinochart is True:
