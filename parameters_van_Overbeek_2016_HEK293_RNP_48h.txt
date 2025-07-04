@@ -37,10 +37,10 @@
 #############################################
 #                 DICTIONARY                #
 #############################################
-{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/animals/van_Overbeek_et_al_2016/03_for_Meta/to_analyse/HEK293_RNP_16hours/02_CRISPResso/',
+{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/animals/van_Overbeek_et_al_2016/03_for_Meta/to_analyse/HEK293_RNP_48hours/02_CRISPResso/',
    'project_output_dir':'../../CRISPRlysis_outputs/van_Overbeek_2016',
    'add_columns':{'organism':'HEK293',
-      'hours_post_inoculation':16,
+      'hours_post_inoculation':48,
       'deliver_of_nuclease':'RNP'      
       },
    'data_source_original':'van Overbeek et al., 2016',
@@ -50,14 +50,14 @@
    'nuclease':'SpCas9',
    'minimum_Reads':5,
    'output_format':'png',
-   'make_mastertable_00':False,
-   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/00_mastertable_250703.tsv',
+   'make_mastertable_00':True,
+   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/00_mastertable_250704.tsv',
    'filter_out_values':{},
-   'make_mastertable_01':False,
-   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/01_mastertable_250703.tsv',
+   'make_mastertable_01':True,
+   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/01_mastertable_250704.tsv',
    'make_subtables':True,
    'subtables_param':['organism', 'deliver_of_nuclease', 'hours_post_inoculation'],
-   'show_plots':True,
+   'show_plots':False,
    'plot_INDELs':True,
    'plot_INs':True,
    'plot_DELs':True,
@@ -65,8 +65,8 @@
    'plot_DEL_dinochart':False,
    'plot_participating_end':True,
    'plot_participating_end_dinochart':True,
-   'plot_MH':True,
-   'plot_MH_dinochart':True,
+   'plot_MH':False,
+   'plot_MH_dinochart':False,
    'IN_greater_than':6,
    'sort_alphabetically':True
    }
