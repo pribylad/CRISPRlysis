@@ -896,7 +896,8 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     elif category_1 == 12:
         dict_NoMH={12:list_20}
     else:
-        raise ValueError(f'Category_1 from return_category_of_DEL is not in function return_cut_type_based_on_cut_categories. Value of category_1 is {category_1}')
+        return 'X', 'X', 'X', 0, 0
+        # raise ValueError(f'Category_1 from return_category_of_DEL is not in function return_cut_type_based_on_cut_categories. Value of category_1 is {category_1}')
 
     cut_type = dict_NoMH[category_2][0]
     end_participating = dict_NoMH[category_2][1]

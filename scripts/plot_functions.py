@@ -649,18 +649,23 @@ def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_di
     show_plots: True/False, default False"""
 
     # Define the custom exception class within the function
-    class PlotGeneralStackedHorizonError(Exception):
-        """Rise a function specific error."""
+    # class PlotGeneralStackedHorizonError(Exception):
+        # """Rise a function specific error."""
     # Check if there are data in the data[x], if not skip making the plot.
     if df[x].notnull().any() is False:
         write_into_report(f'df["x"] are empty, plotting of the plot {name_to_save} was terminated.', destination_folder=project_output_dir)
-        raise PlotGeneralStackedHorizonError(f'df["x"] are empty, plotting of the plot {name_to_save} was terminated.')
+        return
+        # raise PlotGeneralStackedHorizonError(f'df["x"] are empty, plotting of the plot {name_to_save} was terminated.')
 
     now = datetime.now()
     date = now.strftime('%y%m%d')
 
     y_len = len(df[y].unique())
 
+    # If '%Reads' not in df.columns break the function
+    if '%Reads' not in df.columns:
+        write_into_report(f'The {values} is not in df.columns, plotting of the plot {name_to_save} was terminated.', destination_folder=project_output_dir)
+        return
     # make dic with updated values -> value + sum from previous values nd from it df again
     pivot = pd.pivot_table(df, index=y, columns=x, values=values)
     if bars_order != 0:
@@ -779,7 +784,8 @@ def plot_barplot(data, x, y, project_output_dir, name_to_save, data_source, hue=
     # Check if there are data in the data[x], if not skip making the plot.
     if data[x].notnull().any() == False:
         write_into_report(f'data["x"] are empty, plotting of the plot {name_to_save} was terminated.', destination_folder=project_output_dir)
-        raise PlotBarplotError(f'data["x"] are empty, plotting of the plot {name_to_save} was terminated.')
+        return
+        # raise PlotBarplotError(f'data["x"] are empty, plotting of the plot {name_to_save} was terminated.')
     
     now = datetime.now()
     date = now.strftime('%y%m%d')
@@ -868,6 +874,10 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
         minimum = xlim[0]
         maximum = xlim[1]
 
+        # If '%Reads' not in df.columns break the function
+    if '%Reads' not in df.columns:
+        write_into_report(f'The {values} is not in df.columns, plotting of the plot {name_to_save} was terminated.', destination_folder=project_output_dir)
+        return
     # Make dic with updated values -> value + sum from previous values and from it df again.
     pivot = pd.pivot_table(df, index=x, columns=y, values=values, fill_value=0)
     # Reindex the pivot if order_y is specified.
