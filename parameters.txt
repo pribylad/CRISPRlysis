@@ -64,9 +64,9 @@
    'plot_DEL_individual_gRNAs':True,
    'plot_DEL_dinochart':False,
    'plot_participating_end':True,
-   'plot_participating_end_dinochart':True,
-   'plot_MH':True,
-   'plot_MH_dinochart':True,
+   'plot_participating_end_dinochart':False,
+   'plot_MH':False,
+   'plot_MH_dinochart':False,
    'IN_greater_than':6,
    'sort_alphabetically':True
    }

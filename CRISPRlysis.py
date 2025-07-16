@@ -197,7 +197,6 @@ for key, value in tables_dic.items():
         write_into_report(f'There is no mutation in {key}, moved to the next subtable.', destination_folder=project_output_dir)
         continue
 
-
     ##########################################################################################
     #            I   N    N   DDDD    EEEEEE  L        SSSS   U   U   BBBB
     #            I   N N  N   D   D   E       L       S       U   U   B   B
