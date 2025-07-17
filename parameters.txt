@@ -37,7 +37,7 @@
 #############################################
 #                 DICTIONARY                #
 #############################################
-{'source_dir':'/mnt/d/Lab_Edin/data/02_Cas9_Chlamydomonas/CRISPResso2_output/CRISPRessoBatch_on_batch_250715',
+{'source_dir':'/mnt/d/Lab_Edin/data/02_Cas9_Chlamydomonas/05_CRISPResso2_output/CRISPRessoBatch_on_batch_250717',
    'project_output_dir':'../../CRISPRlysis_outputs/Ponce_unpublished',
    'add_columns':{'organism':'Chlamydomonas reinhardtii',
       'hours_post_inoculation':'n',
@@ -50,11 +50,11 @@
    'nuclease':'SpCas9',
    'minimum_Reads':5,
    'output_format':'png',
-   'make_mastertable_00':False,
-   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Ponce_unpublished/00_mastertable_250715.tsv',
+   'make_mastertable_00':True,
+   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Ponce_unpublished/00_mastertable_250717.tsv',
    'filter_out_values':{},
-   'make_mastertable_01':False,
-   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Ponce_unpublished/01_mastertable_250715.tsv',
+   'make_mastertable_01':True,
+   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Ponce_unpublished/01_mastertable_250717.tsv',
    'make_subtables':True,
    'subtables_param':['gene', 'mutant'],
    'show_plots':True,
@@ -66,7 +66,7 @@
    'plot_participating_end':True,
    'plot_participating_end_dinochart':False,
    'plot_MH':False,
-   'plot_MH_dinochart':False,
+   'plot_MH_dinochart':True,
    'IN_greater_than':6,
    'sort_alphabetically':True
    }
