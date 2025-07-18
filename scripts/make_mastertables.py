@@ -521,7 +521,7 @@ def no_of_gRNA_samples_txt(df, order_list, project_output_dir):
     Returns:
     Nothing
     """
-    no_of_gRNA_samples = f'Analysed {len(order_list)} gRNAs in {len(df["replicate"].unique())} biological replicates.'
+    no_of_gRNA_samples = f'Analysed {len(order_list)} gRNAs in {len(df["replicate"].unique())} groups.'
     write_into_report(no_of_gRNA_samples, destination_folder=project_output_dir)
     return no_of_gRNA_samples
 

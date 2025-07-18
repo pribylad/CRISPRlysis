@@ -1042,6 +1042,47 @@ for key, value in tables_dic.items():
         df_end_samples_norm = pd.melt(df_end_samples_norm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
         df_end_samples_NOTnorm = pivot_NOTnorm.reset_index()
         df_end_samples_NOTnorm = pd.melt(df_end_samples_NOTnorm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
+        ##########################################################################################
+        # Horizontal bar charts for participating ends
+        ##########################################################################################
+        # NORMALISED
+        title = 'Normalised ends participating on the repair'
+        xlabel = 'Average of %Reads from individual samples'
+        text_bellow_chart = f'Only DELs around the cut are plotted.\
+                            \nNormalised to: SUM of all ends in individual sample = 100%.\
+                            \n{no_of_gRNA_samples}'
+        name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_horizontal_barchart'
+        color_dic = get_color_dic_35_violin()
+        plot = plot_general_stacked_horizontal_barchart(df=df_end_samples_norm, x='variable'\
+            , y='name', values='value', project_output_dir=project_output_subdir\
+            , data_source=data_source, title=title, name_to_save=name_to_save\
+            , output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False\
+            , palette=color_dic, x_as_perc=True\
+            , xaxis_formater=1, decimals=0, xlim=(0,1)\
+            , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default' \
+            , bars_order=['5\' NOT blunt', '5\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '3\' possible blunt'], show_plots=show_plots)
+        stat_info = df_end_samples_norm.groupby('variable').value.describe()
+        save_stat(stat_info, name_to_save, project_output_subdir)
+        counter+=1
+
+        # NOT-NORMALISED
+        title = 'Ends participating on the repair'
+        xlabel = 'Average of %Reads from individual samples'
+        text_bellow_chart = f'Only DELs around the cut are plotted.\
+                            \n{no_of_gRNA_samples}'
+        name_to_save = f'{file_number}_{counter}_DEL_end_summary_NOTnorm_horizontal_barchart'
+        # TODO solve bars_order, color_dic, hatches_dic
+        plot = plot_general_stacked_horizontal_barchart(df=df_end_samples_NOTnorm, x='variable'\
+            , y='name', values='value', project_output_dir=project_output_subdir\
+            , data_source=data_source, title=title, name_to_save=name_to_save\
+            , output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False\
+            , palette=color_dic, x_as_perc=True\
+            , xaxis_formater=100, decimals=0, xlim=(0,100)\
+            , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default' \
+            , bars_order=['5\' NOT blunt', '5\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '3\' possible blunt'], show_plots=show_plots)
+        stat_info = df_end_samples_NOTnorm.groupby('variable').value.describe()
+        save_stat(stat_info, name_to_save, project_output_subdir)
+        counter+=1
         #########################################################################################
         # plot VIOLINPLOT
         ##########################################################################################
