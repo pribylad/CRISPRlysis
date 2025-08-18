@@ -549,6 +549,7 @@ for key, value in tables_dic.items():
                 columns=df_orientation['DEL_orientation'], values=df_orientation['%Reads'],\
                 aggfunc='sum')
         df_pivot = pivot.reset_index()
+        print(df_pivot)
         # check if all columns exists, if not make an empty one
         for orientation in order:
             if orientation not in df_pivot.columns.tolist():

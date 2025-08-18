@@ -662,8 +662,14 @@ def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_di
 
     y_len = len(df[y].unique())
 
+    # Try to make the pivot table, if not possible, skip the plot
+    try:
+        pivot = pd.pivot_table(df, index=y, columns=x, values=values)
+    except Exception as e:
+        write_into_report(f'Pivot table could not be created for {name_to_save} plot. Error: {e}', destination_folder=project_output_dir)
+        return
     # make dic with updated values -> value + sum from previous values nd from it df again
-    pivot = pd.pivot_table(df, index=y, columns=x, values=values)
+    # pivot = pd.pivot_table(df, index=y, columns=x, values=values)
     if bars_order != 0:
         pivot = pivot.reindex(bars_order, axis=1)
     bars = pivot.columns.tolist()
