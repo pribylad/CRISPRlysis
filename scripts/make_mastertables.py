@@ -914,7 +914,7 @@ def blunt_cut_with_MH_possible(gap_min_max_range, Cut_position):
     '''
     # Check if the gap_min_max_range is a string like 'no_gap' or 'gap_span....'
     if 'gap' in str(gap_min_max_range):
-        return ''
+        return 'unknown'
     
     (x1, y1), (x2, y2) = gap_min_max_range
 

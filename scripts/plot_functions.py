@@ -661,6 +661,11 @@ def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_di
     date = now.strftime('%y%m%d')
 
     y_len = len(df[y].unique())
+    # skip the plot if there are more than 20 unique ys
+    if y_len > 40:
+        write_into_report(f'There are more than 40 unique values in df["{y}"], plotting of the plot {name_to_save} was terminated.', destination_folder=project_output_dir)
+        return
+        # raise PlotGeneralStackedHorizonError(f'There are more than 20 unique values in df["{y}"], plotting of the plot {name_to_save} was terminated.')
 
     # Try to make the pivot table, if not possible, skip the plot
     try:
