@@ -597,9 +597,15 @@ def return_category_of_DEL(cut_position, cut_maximum, cut_minimum, DEL_range):
         return category, comment
 
     if y==cut_maximum-1:
-        comment = 'DEL is upstream and next to the cut_maximum.'
-        category = 2
-        return category, comment
+        # Solve problem when cut_maximum==cut_optimum
+        if cut_maximum==cut_optimum:
+            comment = 'DEL is upstream and next to the cut_optimum -> blunt cut.'
+            category = 4
+            return category, comment
+        else:
+            comment = 'DEL is upstream and next to the cut_maximum.'
+            category = 2
+            return category, comment
 
     if cut_maximum<=y<cut_optimum-1:
         comment = 'DEL is between cut_maximum and cut_optimum-2 -> not a blunt cut.'
@@ -705,6 +711,9 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     list_27 = [cut_minimum, 'C', 'D', 0, 0]
     list_28 = [range_2[0], 'D', 'U', 5, 1]
     list_29 = [cut_optimum, 'C', 'C', 0, 1]
+    list_30 = [cut_optimum, 'D', 'U', 0, 1]
+    list_31 = [cut_optimum, 'X', 'U', 0, 1]
+    list_32 = [cut_optimum, 'X', 'D', 0, 1]
 
     ########################################################################################
     # Based on the position of the cut_maximum and cut_minimum decide which list is going to be used
@@ -763,13 +772,17 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
 
     if range_1[1]<=abs(cut_minimum):
         list_k = list_17
+        list_p = list_17
     else:
         list_k = list_13
+        list_p = list_13
 
     if abs(range_2[0])<=abs(cut_maximum):
         list_l = list_28
+        list_o = list_28
     else:
         list_l = list_10
+        list_o = list_10
 
     if abs(range_1[1])-1<=abs(range_2[0]):
         list_m = list_14
@@ -781,6 +794,14 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     if abs(cut_optimum)==abs(cut_minimum):
         list_h = list_6
         list_i = list_24
+        list_p = list_32
+    
+    # Solve isses when cut_maximum == cut_optimum
+    list_n = list_10
+    if abs(cut_optimum)==abs(cut_maximum):
+        list_n = list_30
+        list_o = list_31
+
     # Solve issue for category 7
     if abs(range_1[0])-cut_optimum<abs(range_1[1])-cut_optimum:
         list_j = list_5
@@ -814,9 +835,9 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
         dict_NoMH={1:list_8,
                    2:list_9,
                    3:list_l,
-                   4:list_l,
-                   5:list_10,
-                   6:list_10,
+                   4:list_o,
+                   5:list_n,
+                   6:list_n,
                    7:list_l,
                    8:list_29,
                    9:list_29,
@@ -882,7 +903,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
         dict_NoMH={9:list_h,
                    10:list_h,
                    11:list_h,
-                   12:list_k}
+                   12:list_p}
     elif category_1 == 9:
         dict_NoMH={9:list_h,
                    10:list_h,
