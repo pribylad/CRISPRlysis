@@ -1023,7 +1023,7 @@ for key, value in tables_dic.items():
         df_end = df_end[df_end['n_deleted_around_cut'] != 0]
         # filter out deletions which are not around the cut
         df_end = df_end[df_end['Gap_around_cut'] == True]
-        # filter out deletionw which does not have MH around the cut site
+        # filter out deletions which does not have MH around the cut site
         df_end = df_end[df_end['End_participating_on_MH'] != 'X']
         # Change values in End_3_5 to be 3', 5' and cannot_be_determined needed for plotting with color_dic
         df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'eider 3\' or 5\''})
