@@ -43,6 +43,8 @@ from scripts.plot_functions import save_stat, make_Ubuntu_mnt_path, make_reverse
 
 from scripts.dict_functions import make_color_dic_CutType, make_hatches_dic_CutType, make_color_dic_blunt_stagg_orientation, make_color_dic_Dino, make_hatches_dic_Dino, make_color_dic_Dino_end, get_color_dic_35_violin
 
+# Get start time
+start_time = time.time()
 # Get current date and time
 now = datetime.now()
 # Format the date to YYMMDD
@@ -1216,5 +1218,8 @@ for key, value in tables_dic.items():
                 subcounter+=1
                 # Delete the following line if you want to plot all samples
                 # break
-
+# Write into the report how long the script run took
+end_time = time.time()
+total_time = end_time - start_time
+write_into_report(f'\n\nScript run time: {total_time/60:.2f} minutes.', destination_folder=project_output_subdir)
 # %%

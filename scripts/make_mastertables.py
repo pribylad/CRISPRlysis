@@ -979,6 +979,7 @@ def process_table(table, gRNA_seq, sample, parameters_dic):
     Can also process single .tsv file which is used to test the code with the randomly generated data. In that case, the gRNA_seq column is already present in the table."""
     df = pd.DataFrame(table)
     mutation_diff = df.apply(lambda row: find_difference(row["Aligned_Sequence"], row["Reference_Sequence"]), axis=1)
+    df['source'] = parameters_dic['data_source_original']
     if sample != False:
         df['sample'] = sample
     if gRNA_seq != False:
