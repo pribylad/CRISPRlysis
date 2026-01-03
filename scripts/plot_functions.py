@@ -143,7 +143,7 @@ def adjust_box_widths(g, fac):
 # TODO offset of datapoints does not work
 def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         , hue=None, hue_order=None, hue_only_for_data_points=True\
-        , ylabel=None, title=None, xtickt_rotation=0\
+        , ylabel=None, xlabel=None, title=None, xtickt_rotation=0\
         , order=None\
         , integrated_properties_dic=False, color_dic=None\
         , hatches=False, hatches_list=None\
@@ -170,6 +170,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     hue_order: list or None, default None
     hue_only_for_data_points: True/False, default True
     ylabel: ylabel, default None
+    xlabel: xlabel, default None
     title: title, default None
     xtickt_rotation: int(), default 0
     order: order of x, default None
@@ -545,6 +546,8 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     # Plot labels, set lims, etc.
     plt.title(title + '\n(' + date + ')\n' + data_source)
     plt.ylabel(ylabel)
+    if xlabel is not None:
+        plt.xlabel(xlabel)
     plt.ylim(y_min, y_max)
     plt.xlim(x_min, x_max)
     plt.xticks(rotation=xtickt_rotation, ha='left', rotation_mode='anchor')

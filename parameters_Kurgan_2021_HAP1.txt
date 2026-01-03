@@ -1,0 +1,73 @@
+#############################################
+#    DESCRIPTION OF THE DICTIONARY BELLOW   #
+#############################################
+# source_dir (str): Unix path format to a folder where the code will recursively search the path for 'Alleles_frequency_table_around*.txt' files which will be used to make mastertable_00
+## Unix path format -> /path/to/folder/with/CRISPRessoBatch_on_batch/data
+# project_output_dir (str): Unix path to the location where the outputs should be saved in subfolder ADELysis_output_YYMMDD
+# add_columns (dic): has nested dictionary, where each key will create new column to the created mastertable and filled with the value
+# data_source_original (str): source of the analysed data 
+# cut_position (int): value set as a 'offset_around_cut_to_plot' in CRISPResso2 analysis
+# MAXIMUM (int):  No of nucleotides upstream from cut_position - the most 5' end cut site. Example -2 for SpCas9.
+# MINIMUM (int): No of nucleotides upstream from cut_position - the most 3' end cut site. Example 0 for SpCas9.
+# nuclease (str): 'SpCas9' or 'LbCas12a'
+# minimum_Reads (int): set the limit for minimum occurance of #Reads for individual mutation output for mastertable_01 (usually set to 5)
+# output_format (str): 'png', 'svg', 'any_supported_matplotlib_format'
+# make_mastertable_00 (boolean) : True will make new mastertable, False will use the following 'path_to_existing_mastertable_00' key as a path to the existing mastertable
+## Subtables for individual 'Alleles_frequency_table_around*.txt' will be created and merged into one 00_mastertable_YYMMDD
+# filter_out_values (dic): {'column_name_1':['value_to_be_filtered_out_1', 'value_to_be_filtered_out_2'], 'column_name_2':['value_to_be_filtered_out']} if empty {} no filtration will be done. Example: {'sample':['sgRNA_1_SpCas9_P35S_5_WT_1_0_1', 'sgRNA_1_SpCas9_P35S_5_WT_1_0_2']}
+# make_mastertable_01 (boolean) : True will make new mastertable, False will use the following 'path_to_existing_mastertable_01' key as a path to the existing mastertable
+## Additional columns will be added to the 00_mastertable_YYMMDD based on the names where individual 'Alleles_frequency_table_around*.txt' were. The names must follow the strict rules for naming the samples for CRISPResso2 analysis -> Order_Nuclease_targetedGene_TargetNum_Mutant_NoOfTargets_Overhangs_Replicate
+# make_subtables (boolean): True will make subtables from mastertable_01 according to list in 'subtables_param'. Parameters are names of mastertable columns and subtables are made as unique values from the column. Like to make individual analysis for each unique gRNA/mutant/...
+# subtables_param (list): [list, of, parameters]
+## Use True/False columns as boolean (not as string) -> example: 'Unedited':[True]
+## Use numbers as integers when column contains only numbers (not as string) -> example: 'n_deleted':[0]
+## Use numbers as strings when column contains numbers and also strings -> example: 'Gap_around_cut_starts':['90']
+# show_plots (boolean): define if the plots will be shown during the code is running
+# plot_INDELs (boolean): controls if related charts will be made
+# plot_INs (boolean): controls if related charts will be made
+# plot_DELs (boolean): controls if related charts will be made
+# plot_DEL_dinochart (boolean): controls if related charts will be made
+# plot_participating_end (boolean): controls if related charts will be made
+# TODO !!! The plot MH does not work as the mastertable does not have the valid columns for that, is it needed in the end? Maybe plot_participating_end is better
+# plot_MH (boolean): controls if related charts will be made
+# plot_MH_dinochart (boolean): controls if related charts will be made
+# IN_greater_than (int): for IN analysis, what is the border for sum up n_inserted, max is 7
+# sort_alphabetically (boolean): True will sort samples in mastertable_01 by name before plotting
+
+#############################################
+#                 DICTIONARY                #
+#############################################
+{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/03_maybe_to use/Kurgan_et_al_2021/02_Metacentrum_output/01_CRISPResso2_output/HAP1',
+   'project_output_dir':'../../CRISPRlysis_outputs/Kurgan_et_al_2021/HAP1',
+   'add_columns':{'organism':'Homo sapiens',
+      'hours_post_inoculation':'48to72',
+      'deliver_of_nuclease':'RNP',
+      'cell_line':'HAP1'      
+      },
+   'data_source_original':'Kurgan et al., 2021',
+   'cut_position':70,
+   'cut_maximum':-2,
+   'cut_minimum':0,
+   'nuclease':'SpCas9',
+   'minimum_Reads':5,
+   'output_format':'png',
+   'make_mastertable_00':True,
+   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Kurgan_et_al_2021/00_mastertable_251231.tsv',
+   'filter_out_values':{},
+   'make_mastertable_01':True,
+   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Kurgan_et_al_2021/01_mastertable_251231.tsv',
+   'make_subtables':True,
+   'subtables_param':['mutant', 'cell_line'],
+   'show_plots':False,
+   'plot_INDELs':True,
+   'plot_INs':True,
+   'plot_DELs':True,
+   'plot_DEL_individual_gRNAs':True,
+   'plot_DEL_dinochart':False,
+   'plot_participating_end':True,
+   'plot_participating_end_dinochart':True,
+   'plot_MH':True,
+   'plot_MH_dinochart':True,
+   'IN_greater_than':6,
+   'sort_alphabetically':True
+   }
