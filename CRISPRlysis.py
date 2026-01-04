@@ -539,8 +539,6 @@ for key, value in tables_dic.items():
             'D': 'downstream',
             'C': 'cannot_be_determined'
         })
-        # TODO delete order once it works
-        # order = ['upstream', 'upstream_both', 'upstream_both_downstream', 'both', 'both_downstream', 'downstream']
         order = ['upstream', 'both', 'downstream', 'cannot_be_determined']
         ##########################################################################################
         # plot VIOLINPLOT

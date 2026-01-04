@@ -77,8 +77,11 @@ file_number = '02'
 # Define list
 default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'replicate']
 list_of_events = ['1', '2', '3', '4', '5', '>6']
-df_IN = df[default_list + ['n_inserted', '4th_nt', '%Reads']]
+df_IN = df[default_list + ['n_inserted', '4th_nt', '4th_nt_inserted', '%Reads']]
 
+#########################################################################################
+#        Number of inserted nucleotides around the cut site
+#########################################################################################
 # Get data
 pivot = pd.pivot_table(df_IN, index=default_list, columns='n_inserted', values='%Reads', aggfunc='sum', fill_value=0)
 # reset pivot and remove index
@@ -100,7 +103,6 @@ df_pivot = pd.melt(df_pivot, id_vars=default_list, value_vars=list_of_events)
 df_pivot.head()
 # %%    
 # Make pivot table with all columns without column replicate and make average of values
-
 pivot_table_avg = create_pivot_table(df_pivot, default_list[:-1], columns='variable', values='value', aggfunc='mean')
 # Met pivot table_avg reset index
 pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list[:-1], value_vars=list_of_events)
@@ -122,5 +124,77 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value', 
 # Save pivot table as tsv
 pivot_table_avg.to_csv(Path(str(project_output_subdir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
 stat_info = pivot_table_avg.groupby('variable').value.describe().unstack()
+save_stat(stat_info, name_to_save, project_output_subdir)
+# %%
+##########################################################################################
+#        Is the 4th nucleotide the inserted nucleotide?
+##########################################################################################
+# %%
+list_4th_nt = default_list + ['4th_nt']
+# Filter df_IN for 1nd insertion only
+df_1IN = df_IN[df_IN['n_inserted'] == 1]
+# Get data
+pivot = pd.pivot_table(df_1IN, index=list_4th_nt, columns='4th_nt_inserted', values='%Reads', aggfunc='sum', fill_value=0)
+# reset pivot and remove index
+df_pivot = pivot.reset_index()
+# remove index name
+df_pivot.columns.name = None
+# Normalise rows to 100%
+df_pivot.iloc[:, len(list_4th_nt):] = df_pivot.iloc[:, len(list_4th_nt):].div(df_pivot.iloc[:, len(list_4th_nt):].sum(axis=1), axis=0) * 100
+# Melt dataframe
+df_pivot = pd.melt(df_pivot, id_vars=list_4th_nt, value_vars=[True, False])
+# remove from list_4th_nt the 'replicate' element
+list_4th_nt.remove('replicate')
+# Make pivot table with all columns without column replicate and make average of values
+pivot_table_avg = create_pivot_table(df_pivot, list_4th_nt, columns='variable', values='value', aggfunc='mean')
+# Met pivot table_avg reset index
+pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=list_4th_nt, value_vars=[True, False])
+# Filter out False values of variable
+pivot_table_avg = pivot_table_avg[pivot_table_avg['variable'] == True]
+# Rename column variable to '4th_nt_inserted'
+pivot_table_avg = pivot_table_avg.rename(columns={'variable': '4th_nt_inserted'})
+pivot_table_avg
+# %%
+counter = 6
+
+# make hue_order according to present 4th nucleotides
+nucleotide_order_list = {'A':1, 'C':2, 'G':3, 'T':4}
+nucleotide_list = pivot_table_avg['4th_nt'].unique()
+sort_list = []
+for nucleotide in nucleotide_list:
+    sort_list.append(nucleotide_order_list[nucleotide])
+hue_order = [x for _, x in sorted(zip(sort_list, nucleotide_list))]     
+
+title='Is the 4th nucleotide the inserted nucleotide? Mean of replicates'
+no_of_samples = len(pivot_table_avg['gRNA_seq'].unique())
+ylabel='Normalised percentage\n of inserted 4th nucleotides'
+text_bellow_chart = f'Only 1nt IN around the cut are plotted.\
+                    \nSequences without DEL/SUB around the cut.\
+                    \nIn individual sample True + False = 100%.\
+                    \nHorizontal lines show medians for individual 4th nucleotide.\
+                    \nNo of samples: {no_of_samples}'
+name_to_save = f'{file_number}_{counter}_IN_4th_nt_inserted_normalised_violinplot'
+
+plot = plot_sns_violin_and_print(data=pivot_table_avg, x='4th_nt_inserted', y='value', number_of_columns=1.2\
+    , show_datapoints=True, jitter=0.3, stripplot_offset=25, dodge=True\
+    , show_hue_medians=False\
+    , hue='4th_nt', hue_order=hue_order, hue_only_for_data_points=True \
+    , clip_right=True\
+    , title=title, xtickt_rotation=0, ylabel=ylabel\
+    , order=None, plot_legend=True \
+    , integrated_properties_dic=True, text_bellow_chart=text_bellow_chart\
+    , y_legend_coordinate=-0.05, yaxis_formater=100\
+    , x_max=1\
+    , name_to_save=name_to_save\
+    , project_output_dir=project_output_subdir \
+    , data_source=data_source, output_format=output_format\
+    , dpi=200\
+    , y_min=0\
+    , y_max=102, show_plots=show_plots
+        )
+# Save pivot table as tsv
+pivot_table_avg.to_csv(Path(str(project_output_subdir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
+# Save statistics
+stat_info = pivot_table_avg.groupby('4th_nt_inserted').describe().unstack()
 save_stat(stat_info, name_to_save, project_output_subdir)
 # %%
