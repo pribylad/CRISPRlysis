@@ -10,21 +10,29 @@ import numpy as np
 import seaborn as sns
 from statannot import add_stat_annotation
 
-
 from scripts.plot_functions import plot_sns_violin_and_print, save_stat
-
-# %%
-project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts'
+##########################################################################################
 output_format = 'png'
 show_plots = True
-data_source = 'test'
+# data_source = 'dividing'
+data_source = 'nondividing'
+##########################################################################################
+if data_source == 'dividing':
+    data_dir = '/home/lefnui/CRISPRlysis_outputs/02_tables/dividing'
+    project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts/dividing'
+else:
+    data_dir = '/home/lefnui/CRISPRlysis_outputs/02_tables/nondividing'
+    project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts/nondividing'
 
-# %%
+# test if the directory exists, if not create it
+if not os.path.exists(project_output_subdir):
+    os.makedirs(project_output_subdir)
+##########################################################################################
 # Get current date and time
 now = datetime.now()
 # Format the date to YYMMDD
 date = now.strftime('%y%m%d')
-# %%
+##########################################################################################
 def load_tsv_files_from_directory_to_dic(directory_path):
     tsv_files = glob.glob(os.path.join(directory_path, "02_*.tsv"))
     dataframes = {}
@@ -56,14 +64,11 @@ def create_pivot_table(df, list_of_indexes, columns, values, aggfunc):
         fill_value=0
     )
     return pivot_table
-# %%
-df = load_tsv_files_from_directory_to_dic('/home/lefnui/CRISPRlysis_outputs/02_tables/')
+##########################################################################################
+df = load_tsv_files_from_directory_to_dic(data_dir)
 summary = summarize_dataframes(df)
-summary
-# %%
 # Join all dataframes into a single dataframe
 df = pd.concat(df.values(), ignore_index=True)
-# %%
 ##########################################################################################
 #            I   N    N
 #            I   N N  N
@@ -71,7 +76,6 @@ df = pd.concat(df.values(), ignore_index=True)
 #            I   N   NN
 #            I   N    N
 ##########################################################################################
-# %%
 file_number = '02'
 
 # Define list
@@ -101,14 +105,11 @@ df_pivot[list_of_events] = df_pivot[list_of_events].div(df_pivot[list_of_events]
 # Melt dataframe
 df_pivot = pd.melt(df_pivot, id_vars=default_list, value_vars=list_of_events)
 df_pivot.head()
-# %%    
 # Make pivot table with all columns without column replicate and make average of values
 pivot_table_avg = create_pivot_table(df_pivot, default_list[:-1], columns='variable', values='value', aggfunc='mean')
 # Met pivot table_avg reset index
 pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list[:-1], value_vars=list_of_events)
 
-pivot_table_avg
-# %%
 counter = 2
 color_dic = {'0':'#ffffff', '1':'#A8B7FF', '2':'#536CE8', '3':'#466270', '4':'#514C7A', '5':'#4E8387'\
                     , '>6':'#6F79A8'}
@@ -119,17 +120,15 @@ text_bellow_chart = f'Only IN events around cut.\
                     \nSum of all IN in one sample = 100%\
                     \nNo of samples: {no_of_samples}'
 name_to_save=f'{file_number}_{counter}_IN_no_of_IN_nucleotides_summary_violinplot'
-# %%
 plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value', number_of_columns=6, show_datapoints=True, jitter=0.1, stripplot_offset=12, dodge=False, clip_right=True, order=None, project_output_dir=project_output_subdir, hue=None, integrated_properties_dic=False, color_dic=color_dic, show_hue_medians=False, title=title, xtickt_rotation=0, ylabel=ylabel, xlabel='No. of inserted nucleotides', yaxis_formater=100, name_to_save=name_to_save, text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.05, data_source=data_source, y_min=0, y_max=102, output_format=output_format, show_plots=show_plots)
 # Save pivot table as tsv
 pivot_table_avg.to_csv(Path(str(project_output_subdir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
 stat_info = pivot_table_avg.groupby('variable').value.describe().unstack()
 save_stat(stat_info, name_to_save, project_output_subdir)
-# %%
+
 ##########################################################################################
 #        Is the 4th nucleotide the inserted nucleotide?
 ##########################################################################################
-# %%
 list_4th_nt = default_list + ['4th_nt']
 # Filter df_IN for 1nd insertion only
 df_1IN = df_IN[df_IN['n_inserted'] == 1]
@@ -153,10 +152,8 @@ pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=list_4th_nt, va
 pivot_table_avg = pivot_table_avg[pivot_table_avg['variable'] == True]
 # Rename column variable to '4th_nt_inserted'
 pivot_table_avg = pivot_table_avg.rename(columns={'variable': '4th_nt_inserted'})
-pivot_table_avg
-# %%
-counter = 6
 
+counter = 6
 # make hue_order according to present 4th nucleotides
 nucleotide_order_list = {'A':1, 'C':2, 'G':3, 'T':4}
 nucleotide_list = pivot_table_avg['4th_nt'].unique()

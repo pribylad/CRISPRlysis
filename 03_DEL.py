@@ -10,22 +10,31 @@ import numpy as np
 import seaborn as sns
 from statannot import add_stat_annotation
 
-
 from scripts.plot_functions import plot_sns_violin_and_print, save_stat
 from scripts.dict_functions import get_color_dic_35_violin
-
-# %%
-project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts'
+##########################################################################################
 output_format = 'png'
 show_plots = True
-data_source = 'test'
+# data_source = 'dividing'
+data_source = 'nondividing'
+##########################################################################################
+if data_source == 'dividing':
+    data_dir = '/home/lefnui/CRISPRlysis_outputs/02_tables/dividing'
+    project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts/dividing'
+else:
+    data_dir = '/home/lefnui/CRISPRlysis_outputs/02_tables/nondividing'
+    project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts/nondividing'
+output_format = 'png'
 
-# %%
+# test if the directory exists, if not create it
+if not os.path.exists(project_output_subdir):
+    os.makedirs(project_output_subdir)
+##########################################################################################
 # Get current date and time
 now = datetime.now()
 # Format the date to YYMMDD
 date = now.strftime('%y%m%d')
-# %%
+##########################################################################################
 def load_tsv_files_from_directory_to_dic(directory_path):
     tsv_files = glob.glob(os.path.join(directory_path, "02_*.tsv"))
     dataframes = {}
@@ -57,14 +66,12 @@ def create_pivot_table(df, list_of_indexes, columns, values, aggfunc):
         fill_value=0
     )
     return pivot_table
-# %%
-df = load_tsv_files_from_directory_to_dic('/home/lefnui/CRISPRlysis_outputs/02_tables/')
+##########################################################################################
+df = load_tsv_files_from_directory_to_dic(data_dir)
 summary = summarize_dataframes(df)
-summary
-# %%
 # Join all dataframes into a single dataframe
 df = pd.concat(df.values(), ignore_index=True)
-# %%
+
 ##########################################################################################
 #               DDDD    EEEEEE  L
 #               D   D   E       L
@@ -72,7 +79,6 @@ df = pd.concat(df.values(), ignore_index=True)
 #               D   D   E       L
 #               DDDD    EEEEEE  LLLLLL
 ##########################################################################################
-# %%
 file_number = '03'
 
 # Define list of indexes for pivot table
@@ -115,9 +121,8 @@ pivot_table_avg = create_pivot_table(df_pivot, default_list, columns='variable',
 pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list, value_vars=list_of_events)
 pivot_table_avg
 
-# %%
-counter = 2
 
+counter = 2
 # Set charts properties
 title = 'Normalised incidence of DEL according to the orientation,\n mean of replicates'
 ylabel = 'Normalised percentage \nof DEL around the cut'
@@ -152,7 +157,6 @@ save_stat(stat_info, name_to_save, project_output_subdir)
 ##################################################################################
 #       Ends participating on the repair
 ##################################################################################
-# %%
 file_number = '05'
 counter = 3
 
@@ -190,7 +194,7 @@ pivot_table_avg = create_pivot_table(df_pivot, default_list, columns='variable',
 # Melt pivot table_avg reset index
 pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list, value_vars=list_of_events)
 pivot_table_avg
-# %%
+
 #########################################################################################
 # plot VIOLINPLOT
 ##########################################################################################

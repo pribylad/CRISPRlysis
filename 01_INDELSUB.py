@@ -10,21 +10,28 @@ import numpy as np
 import seaborn as sns
 from statannot import add_stat_annotation
 
-
 from scripts.plot_functions import plot_sns_violin_and_print, save_stat
-
-# %%
-project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts'
+##########################################################################################
 output_format = 'png'
 show_plots = True
-data_source = 'test'
+# data_source = 'dividing'
+data_source = 'nondividing'
+##########################################################################################
+if data_source == 'dividing':
+    data_dir = '/home/lefnui/CRISPRlysis_outputs/02_tables/dividing'
+    project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts/dividing'
+else:
+    data_dir = '/home/lefnui/CRISPRlysis_outputs/02_tables/nondividing'
+    project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts/nondividing'
 
-# %%
+# test if the directory exists, if not create it
+if not os.path.exists(project_output_subdir):
+    os.makedirs(project_output_subdir)
 # Get current date and time
 now = datetime.now()
 # Format the date to YYMMDD
 date = now.strftime('%y%m%d')
-# %%
+##########################################################################################
 def load_tsv_files_from_directory_to_dic(directory_path):
     tsv_files = glob.glob(os.path.join(directory_path, "02_*.tsv"))
     dataframes = {}
@@ -56,14 +63,11 @@ def create_pivot_table(df, list_of_indexes, columns, values, aggfunc):
         fill_value=0
     )
     return pivot_table
-# %%
-df = load_tsv_files_from_directory_to_dic('/home/lefnui/CRISPRlysis_outputs/02_tables/')
+##########################################################################################
+df = load_tsv_files_from_directory_to_dic(data_dir)
 summary = summarize_dataframes(df)
-summary
-# %%
 # Join all dataframes into a single dataframe
 df = pd.concat(df.values(), ignore_index=True)
-# %%
 ##########################################################################################
 #            I   N    N   DDDD    EEEEEE  L        SSSS   U   U   BBBB
 #            I   N N  N   D   D   E       L       S       U   U   B   B
@@ -80,8 +84,6 @@ list_of_events = ['IN', 'DEL', 'SUB', 'OTHERS']
 default_list_NOreplicate = default_list.copy()
 default_list_NOreplicate.remove('replicate')
 default_list_NOreplicate.append('Event_around_cut')
-# # join defalt_list_NOreplicate with list_of_events
-# default_list_NOreplicate = default_list_NOreplicate + list_of_events
 
 # Get data
 df_INDELSUB = df[default_list + ['Event_around_cut', '%Reads']]
@@ -104,15 +106,12 @@ for event in list_of_others:
 
 df_INDELSUB_summ = df_INDELSUB_summ[default_list + list_of_events]
 df_INDELSUB_summ = pd.melt(df_INDELSUB_summ, id_vars=default_list, value_vars=list_of_events)
-# %%
 # Make pivot table with all columns without column replicate and make average of values
 pivot_table_avg = create_pivot_table(df_INDELSUB_summ, default_list_NOreplicate, columns=None, values='value', aggfunc='mean')
 pivot_table_avg.reset_index(inplace=True)
 print(pivot_table_avg)
-# %%
 print(pivot_table_avg['source'].unique())
 
-# %%
 ##########################################################################################
 # plot VIOLINPLOT
 ##########################################################################################
