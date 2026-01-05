@@ -41,7 +41,8 @@
    'project_output_dir':'../../CRISPRlysis_outputs/Subburaj_et_al_2016',
    'add_columns':{'organism':'Petunia hybrida',
       'hours_post_inoculation':'24',
-      'deliver_of_nuclease':'PEG leaves protoplasts'      
+      'deliver_of_nuclease':'PEG leaves protoplasts',
+      'cell_cycle':'nondividing'       
       },
    'data_source_original':'Subburaj et al, 2016',
    'cut_position':60,

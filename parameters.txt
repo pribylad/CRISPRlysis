@@ -16,7 +16,9 @@
 ## Subtables for individual 'Alleles_frequency_table_around*.txt' will be created and merged into one 00_mastertable_YYMMDD
 # filter_out_values (dic): {'column_name_1':['value_to_be_filtered_out_1', 'value_to_be_filtered_out_2'], 'column_name_2':['value_to_be_filtered_out']} if empty {} no filtration will be done. Example: {'sample':['sgRNA_1_SpCas9_P35S_5_WT_1_0_1', 'sgRNA_1_SpCas9_P35S_5_WT_1_0_2']}
 # make_mastertable_01 (boolean) : True will make new mastertable, False will use the following 'path_to_existing_mastertable_01' key as a path to the existing mastertable
-## Additional columns will be added to the 00_mastertable_YYMMDD based on the names where individual 'Alleles_frequency_table_around*.txt' were. The names must follow the strict rules for naming the samples for CRISPResso2 analysis -> Order_Nuclease_targetedGene_TargetNum_Mutant_NoOfTargets_Overhangs_Replicate
+## Additional columns will be added to the 00_mastertable_YYMMDD based on the names where individual 'Alleles_frequency_table_around*.txt' were. The names must follow the strict rules for naming the samples for CRISPResso2 analysis if None is specified in the list_of_columns parameter.
+## If not, the list of the columns can be provided as 'list_of_columns':['column_1', 'column_2', ...]
+#list_of_columns (list/None): name of columns used in making the mastertable_01, by default None is using Order_Nuclease_targetedGene_TargetNum_Mutant_NoOfTargets_Overhangs_Replicate
 # make_subtables (boolean): True will make subtables from mastertable_01 according to list in 'subtables_param'. Parameters are names of mastertable columns and subtables are made as unique values from the column. Like to make individual analysis for each unique gRNA/mutant/...
 # subtables_param (list): [list, of, parameters]
 ## Use True/False columns as boolean (not as string) -> example: 'Unedited':[True]
@@ -37,26 +39,28 @@
 #############################################
 #                 DICTIONARY                #
 #############################################
-{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/03_maybe_to use/Hoijer_et_al_2022/02_Metacentrum/CRISPResso_output_1399bp/10dpi',
-   'project_output_dir':'../../CRISPRlysis_outputs/Hoijer_et_al_2022',
-   'add_columns':{'organism':'Danio rerio',
-      'hours_post_inoculation':240,
-      'deliver_of_nuclease':'RNP'  
+{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/palnts/Weiss_et_al_2022/03_for_Meta/to_analyse',
+   'project_output_dir':'../../CRISPRlysis_outputs/Weiss_et_al_2022',
+   'add_columns':{'organism':'A. thaliana Col-0',
+      'hours_post_inoculation':'unknown',
+      'deliver_of_nuclease':'Agrobacterium floral dip',
+      'cell_cycle':'nondividing'
       },
-   'data_source_original':'Hoijer et al., 2022',
-   'cut_position':1399,
+   'data_source_original':'Weiss et al, 2022',
+   'cut_position':20,
    'cut_maximum':-2,
    'cut_minimum':0,
    'nuclease':'SpCas9',
    'minimum_Reads':5,
    'output_format':'png',
    'make_mastertable_00':True,
-   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Hoijer_et_al_2022/00_mastertable_260102.tsv',
+   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Weiss_et_al_2022/00_mastertable_260105.tsv',
    'filter_out_values':{},
    'make_mastertable_01':True,
-   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Hoijer_et_al_2022/01_mastertable_260102.tsv',
+   'list_of_columns':['order', 'Cas_variant', 'generation', 'gene', 'TergetNum', 'TargetRegion', 'mutant', 'no_of_targets', 'overhang', 'replicate', 'AzaC'],
+   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Weiss_et_al_2022/01_mastertable_260105.tsv',
    'make_subtables':True,
-   'subtables_param':['gene', 'mutant', 'hours_post_inoculation'],
+   'subtables_param':['generation', 'gene', 'mutant', 'TergetNum', 'AzaC'],
    'show_plots':False,
    'plot_INDELs':True,
    'plot_INs':True,

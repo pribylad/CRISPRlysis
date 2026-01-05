@@ -42,7 +42,8 @@
    'add_columns':{'organism':'Nicotiana benthamiana',
       'hours_post_inoculation':120,
       'deliver_of_nuclease':'Agrobacterium leaves infiltration',
-      'plant_part':'infected'
+      'plant_part':'infected',
+      'cell_cycle':'nondividing'
       },
    'data_source_original':'Ellison et al., 2020',
    'cut_position':100,

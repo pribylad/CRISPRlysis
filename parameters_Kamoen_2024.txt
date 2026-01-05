@@ -41,7 +41,8 @@
    'project_output_dir':'../../CRISPRlysis_outputs/Kamoen_et_al_2024',
    'add_columns':{'organism':'Arabidopsis thaliana',
       'hours_post_inoculation':'504',
-      'deliver_of_nuclease':'Agroinfiltration'      
+      'deliver_of_nuclease':'Agroinfiltration',
+      'cell_cycle':'dividing'      
       },
    'data_source_original':'Kamoen et al., 2024',
    'cut_position':70,

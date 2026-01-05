@@ -1,3 +1,5 @@
+# pylint: disable=line-too-long
+# pylint: disable=invalid-name
 # %%
 # import necessary libraries
 from datetime import datetime
@@ -15,47 +17,21 @@ from scripts.dict_functions import get_color_dic_35_violin
 ##########################################################################################
 output_format = 'png'
 show_plots = True
-# data_source = 'dividing'
-data_source = 'nondividing'
-##########################################################################################
-if data_source == 'dividing':
-    data_dir = '/home/lefnui/CRISPRlysis_outputs/02_tables/dividing'
-    project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts/dividing'
-else:
-    data_dir = '/home/lefnui/CRISPRlysis_outputs/02_tables/nondividing'
-    project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts/nondividing'
-output_format = 'png'
+filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
+# filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by
+filter_value = 'nondividing'  # value of the parameter used to filter the df_dir table by
 
-# test if the directory exists, if not create it
-if not os.path.exists(project_output_subdir):
-    os.makedirs(project_output_subdir)
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260105.tsv'
+data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
 ##########################################################################################
-# Get current date and time
 now = datetime.now()
 # Format the date to YYMMDD
 date = now.strftime('%y%m%d')
+
+if project_output_dir.exists() is False:
+    os.makedirs(project_output_dir)
 ##########################################################################################
-def load_tsv_files_from_directory_to_dic(directory_path):
-    tsv_files = glob.glob(os.path.join(directory_path, "02_*.tsv"))
-    dataframes = {}
-    for file in tsv_files:
-        df_name = os.path.splitext(os.path.basename(file))[0]
-        dataframes[df_name] = pd.read_csv(file, sep='\t')
-    return dataframes
-
-def summarize_dataframes(dataframes):
-    summary = {}
-    for name, df in dataframes.items():
-        summary[name] = {
-            'num_rows': df.shape[0],
-            'num_columns': df.shape[1]
-        }
-    return summary
-
-def add_metadata_column(df, column_name, value):
-    df[column_name] = value
-    return df
-
 def create_pivot_table(df, list_of_indexes, columns, values, aggfunc):
     pivot_table = pd.pivot_table(
         df,
@@ -67,11 +43,9 @@ def create_pivot_table(df, list_of_indexes, columns, values, aggfunc):
     )
     return pivot_table
 ##########################################################################################
-df = load_tsv_files_from_directory_to_dic(data_dir)
-summary = summarize_dataframes(df)
-# Join all dataframes into a single dataframe
-df = pd.concat(df.values(), ignore_index=True)
-
+# Load datafreame
+df = pd.read_csv(df_dir, sep='\t')
+print(f"Loaded dataframe with shape {df.shape} from {df_dir}")
 ##########################################################################################
 #               DDDD    EEEEEE  L
 #               D   D   E       L
@@ -108,7 +82,7 @@ df_pivot = pivot.reset_index()
 df_pivot.columns.name = None
 print(df_pivot.head())
 # Save pivot table as tsv
-df_pivot.to_csv(Path(str(project_output_subdir) + '/' + file_number + '_DEL_orientation_NOTnormalised_pivot_' + date + '.tsv'), sep='\t')
+df_pivot.to_csv(Path(str(project_output_dir) + '/' + file_number + '_DEL_orientation_NOTnormalised_pivot_' + date + '.tsv'), sep='\t')
 # Normalise rows to 100%
 df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
 # Melt dataframe
@@ -148,11 +122,11 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , x_max=None\
     , change_edge_color=True\
     , name_to_save=name_to_save\
-    , project_output_dir=project_output_subdir\
+    , project_output_dir=project_output_dir\
     , data_source=data_source, output_format=output_format\
     , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 stat_info = pivot_table_avg.groupby('variable').value.describe()
-save_stat(stat_info, name_to_save, project_output_subdir)
+save_stat(stat_info, name_to_save, project_output_dir)
 
 ##################################################################################
 #       Ends participating on the repair
@@ -171,7 +145,8 @@ df_end = df_end[df_end['Gap_around_cut'] == True]
 # Change values in End_3_5 to be 3', 5' and cannot_be_determined needed for plotting with color_dic
 df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'eider 3\' or 5\''})
 # Change True and False in  blunt_cut_with_MH_possible to 'possible blunt' and 'NOT possible blunt'
-df_end['blunt_cut_with_MH_possible'] = df_end['blunt_cut_with_MH_possible'].replace({'True':'possible blunt', 'False':'NOT blunt'})
+df_end['blunt_cut_with_MH_possible'] = df_end['blunt_cut_with_MH_possible'].replace({'TRUE':'possible blunt', 'FALSE':'NOT blunt'})
+
 # Make column where both End_3_5 and blunt_cut_with_MH_possible are combined
 df_end['End_3_5_blunt'] = df_end['End_3_5'] + ' ' + df_end['blunt_cut_with_MH_possible']
 # remove columns End_3_5, blunt_cut_with_MH_possible
@@ -185,6 +160,8 @@ df_pivot = pivot.reset_index()
 df_pivot.columns.name = None
 # Normalise rows to 100%
 df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
+df_pivot.head()
+
 # Melt dataframe
 df_pivot = pd.melt(df_pivot, id_vars=default_list, value_vars=list_of_events)
 # remove 'replicate' from default_list
@@ -225,13 +202,13 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , x_max=None\
     , change_edge_color=False\
     , name_to_save=name_to_save\
-    , project_output_dir=project_output_subdir\
+    , project_output_dir=project_output_dir\
     , data_source=data_source, output_format=output_format\
     , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 # Save pivot table as tsv
-pivot_table_avg.to_csv(Path(str(project_output_subdir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
+pivot_table_avg.to_csv(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
 # Save statistics
 stat_info = pivot_table_avg.groupby('variable').value.describe()
-save_stat(stat_info, name_to_save, project_output_subdir)
+save_stat(stat_info, name_to_save, project_output_dir)
 
 # %%

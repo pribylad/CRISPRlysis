@@ -41,7 +41,8 @@
    'project_output_dir':'../../CRISPRlysis_outputs/Ponce_unpublished',
    'add_columns':{'organism':'Chlamydomonas reinhardtii',
       'hours_post_inoculation':'n',
-      'deliver_of_nuclease':'RNP'      
+      'deliver_of_nuclease':'RNP',
+      'cell_cycle':'dividing'      
       },
    'data_source_original':'Cristina Ponce Lilly (unpublished)',
    'cut_position':100,

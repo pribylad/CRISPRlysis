@@ -41,7 +41,8 @@
    'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022',
    'add_columns':{'organism':'Nicotiana benthamiana',
       'hours_post_inoculation':120,
-      'deliver_of_nuclease':'Agroinfiltration'      
+      'deliver_of_nuclease':'Agroinfiltration',
+      'cell_cycle':'nondividing'      
       },
    'data_source_original':'Pribylova et al., 2022',
    'cut_position':120,

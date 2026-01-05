@@ -42,7 +42,8 @@
    'add_columns':{'organism':'Homo sapiens',
       'hours_post_inoculation':'48to72',
       'deliver_of_nuclease':'RNP',
-      'cell_line':'HAP1'      
+      'cell_line':'HAP1',
+      'cell_cycle':'dividing'      
       },
    'data_source_original':'Kurgan et al., 2021',
    'cut_position':70,

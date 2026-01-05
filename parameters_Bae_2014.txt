@@ -41,7 +41,8 @@
    'project_output_dir':'../../CRISPRlysis_outputs/Bae_et_al_2014',
    'add_columns':{'organism':'Hela cell lines',
       'hours_post_inoculation':'72',
-      'deliver_of_nuclease':'xx'      
+      'deliver_of_nuclease':'xx',
+      'cell_cycle':'dividing'      
       },
    'data_source_original':'Bae et al., 2014',
    'cut_position':50,

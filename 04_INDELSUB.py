@@ -1,3 +1,5 @@
+# pylint: disable=line-too-long
+# pylint: disable=invalid-name
 # %%
 # import necessary libraries
 from datetime import datetime
@@ -14,45 +16,21 @@ from scripts.plot_functions import plot_sns_violin_and_print, save_stat
 ##########################################################################################
 output_format = 'png'
 show_plots = True
-# data_source = 'dividing'
-data_source = 'nondividing'
-##########################################################################################
-if data_source == 'dividing':
-    data_dir = '/home/lefnui/CRISPRlysis_outputs/02_tables/dividing'
-    project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts/dividing'
-else:
-    data_dir = '/home/lefnui/CRISPRlysis_outputs/02_tables/nondividing'
-    project_output_subdir = '/home/lefnui/CRISPRlysis_outputs/03_charts/nondividing'
+filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
+# filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by
+filter_value = 'nondividing'  # value of the parameter used to filter the df_dir table by
 
-# test if the directory exists, if not create it
-if not os.path.exists(project_output_subdir):
-    os.makedirs(project_output_subdir)
-# Get current date and time
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260105.tsv'
+data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
+##########################################################################################
 now = datetime.now()
 # Format the date to YYMMDD
 date = now.strftime('%y%m%d')
+
+if project_output_dir.exists() is False:
+    os.makedirs(project_output_dir)
 ##########################################################################################
-def load_tsv_files_from_directory_to_dic(directory_path):
-    tsv_files = glob.glob(os.path.join(directory_path, "02_*.tsv"))
-    dataframes = {}
-    for file in tsv_files:
-        df_name = os.path.splitext(os.path.basename(file))[0]
-        dataframes[df_name] = pd.read_csv(file, sep='\t')
-    return dataframes
-
-def summarize_dataframes(dataframes):
-    summary = {}
-    for name, df in dataframes.items():
-        summary[name] = {
-            'num_rows': df.shape[0],
-            'num_columns': df.shape[1]
-        }
-    return summary
-
-def add_metadata_column(df, column_name, value):
-    df[column_name] = value
-    return df
-
 def create_pivot_table(df, list_of_indexes, columns, values, aggfunc):
     pivot_table = pd.pivot_table(
         df,
@@ -64,10 +42,9 @@ def create_pivot_table(df, list_of_indexes, columns, values, aggfunc):
     )
     return pivot_table
 ##########################################################################################
-df = load_tsv_files_from_directory_to_dic(data_dir)
-summary = summarize_dataframes(df)
-# Join all dataframes into a single dataframe
-df = pd.concat(df.values(), ignore_index=True)
+# Load datafreame
+df = pd.read_csv(df_dir, sep='\t')
+print(f"Loaded dataframe with shape {df.shape} from {df_dir}")
 ##########################################################################################
 #            I   N    N   DDDD    EEEEEE  L        SSSS   U   U   BBBB
 #            I   N N  N   D   D   E       L       S       U   U   B   B
@@ -126,7 +103,7 @@ text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around t
 name_to_save = f'{file_number}_{counter}_INDELSUB_summary_violinplot'
 plot = plot_sns_violin_and_print(data=pivot_table_avg, x='Event_around_cut', y='value'\
         , number_of_columns=3\
-        , project_output_dir=project_output_subdir\
+        , project_output_dir=project_output_dir\
         , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False, show_hue_medians=False\
         , hue='Event_around_cut', hue_only_for_data_points=True, transparency=0.7 \
         , clip_right=True, change_edge_color=False\
@@ -138,6 +115,6 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='Event_around_cut', y='
         , data_source=data_source, output_format=output_format\
         , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 # Save pivot table as tsv
-pivot_table_avg.to_csv(Path(str(project_output_subdir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
+pivot_table_avg.to_csv(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
 stat_info = pivot_table_avg.groupby('Event_around_cut').value.describe().unstack()
-save_stat(stat_info, name_to_save, project_output_subdir)
+save_stat(stat_info, name_to_save, project_output_dir)

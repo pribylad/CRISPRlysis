@@ -41,7 +41,8 @@
    'project_output_dir':'../../CRISPRlysis_outputs/Slaman_et_al_2024',
    'add_columns':{'organism':'Solanum lycopersicum',
       'hours_post_inoculation':24,
-      'deliver_of_nuclease':'protoplasts transfection'      
+      'deliver_of_nuclease':'protoplasts transfection',
+      'cell_cycle':'nondividing'            
       },
    'data_source_original':'Slaman et al., 2024',
    'cut_position':49,

@@ -41,7 +41,8 @@
    'project_output_dir':'../../CRISPRlysis_outputs/Hoijer_et_al_2022',
    'add_columns':{'organism':'Danio rerio',
       'hours_post_inoculation':240,
-      'deliver_of_nuclease':'RNP'  
+      'deliver_of_nuclease':'RNP',
+      'cell_cycle':'dividing'  
       },
    'data_source_original':'Hoijer et al., 2022',
    'cut_position':1399,

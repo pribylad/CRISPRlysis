@@ -41,7 +41,8 @@
    'project_output_dir':'../../CRISPRlysis_outputs/van_Overbeek_2016',
    'add_columns':{'organism':'HEK293',
       'hours_post_inoculation':8,
-      'deliver_of_nuclease':'RNP'      
+      'deliver_of_nuclease':'RNP',
+      'cell_cycle':'nondividing'      
       },
    'data_source_original':'van Overbeek et al., 2016',
    'cut_position':50,
