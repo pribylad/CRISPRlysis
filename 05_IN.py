@@ -16,13 +16,25 @@ from scripts.plot_functions import plot_sns_violin_and_print, save_stat
 ##########################################################################################
 output_format = 'png'
 show_plots = True
-filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
-# filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by
-filter_value = 'nondividing'  # value of the parameter used to filter the df_dir table by
 
-df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260105.tsv'
-data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
-project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
+#####
+# filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
+# filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by
+# filter_value = 'nondividing'  # value of the parameter used to filter the df_dir table by
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260105.tsv'
+# data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
+
+#####
+filter_criterion = 'Event_around_cut'
+filter_value = 'IN'
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_above_treshold_260106.tsv'
+data_source = filter_criterion + '_' + filter_value + '_above_treshold'
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}_above_treshold')
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_below_treshold_260106.tsv'
+# data_source = filter_criterion + '_' + filter_value + '_below_treshold'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}_below_treshold')
+#####
 ##########################################################################################
 now = datetime.now()
 # Format the date to YYMMDD
