@@ -10,9 +10,9 @@ import pandas as pd
 from datetime import datetime
 import matplotlib.pyplot as plt
 ##########################################################################################
-input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_260105.tsv'
+input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_260109.tsv'
 output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/'
-x=90  # efficacy threshold percentage
+x=95  # efficacy threshold percentage
 ##########################################################################################
 # load the merged dataframe
 df = pd.read_csv(input_file, sep='\t')

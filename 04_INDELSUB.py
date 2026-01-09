@@ -18,20 +18,20 @@ output_format = 'png'
 show_plots = True
 
 #####
-# filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
+filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
 # filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by
-# filter_value = 'nondividing'  # value of the parameter used to filter the df_dir table by
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260105.tsv'
-# data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
+filter_value = 'nondividing'  # value of the parameter used to filter the df_dir table by
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260109.tsv'
+data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
 
 #####
-filter_criterion = 'Event_around_cut'
-filter_value = 'IN'
+# filter_criterion = 'Event_around_cut'
+# filter_value = 'IN'
 
-df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_above_treshold_260106.tsv'
-data_source = filter_criterion + '_' + filter_value + '_above_treshold'
-project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}_above_treshold')
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_above_treshold_260106.tsv'
+# data_source = filter_criterion + '_' + filter_value + '_above_treshold'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}_above_treshold')
 
 # df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_below_treshold_260106.tsv'
 # data_source = filter_criterion + '_' + filter_value + '_below_treshold'
@@ -69,7 +69,7 @@ print(f"Loaded dataframe with shape {df.shape} from {df_dir}")
 file_number = '01'
 counter = 1
 # Define lists
-default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'replicate']
+default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
 list_of_events = ['IN', 'DEL', 'SUB', 'OTHERS']
 
 default_list_NOreplicate = default_list.copy()
@@ -109,7 +109,7 @@ print(pivot_table_avg['source'].unique())
 # Set charts properties
 title = 'INDELSUB representation in all samples, mean of replicates'
 ylabel = 'Percentage'
-no_of_samples = len(pivot_table_avg['gRNA_seq'].unique())
+no_of_samples = len(pivot_table_avg[['source', 'gRNA_seq', 'organism']].drop_duplicates())
 text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around the cut.\
                     \nOTHERS are combinations of INs, DELs and SUBs (INDELs etc.).\
                     \nIN+DEL+SUB+OTHERS+no_mutation = 100%.\
@@ -132,3 +132,8 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='Event_around_cut', y='
 pivot_table_avg.to_csv(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
 stat_info = pivot_table_avg.groupby('Event_around_cut').value.describe().unstack()
 save_stat(stat_info, name_to_save, project_output_dir)
+# %%
+# Count number of unique source+gRNA_seq+organism combinations in the pivot_table_avg
+unique_combinations = pivot_table_avg[['source', 'gRNA_seq', 'organism']].drop_duplicates()
+print(f"Number of unique source+gRNA_seq+organism combinations: {len(unique_combinations)}")
+##########################################################################################

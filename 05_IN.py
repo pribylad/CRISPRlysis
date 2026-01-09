@@ -18,19 +18,19 @@ output_format = 'png'
 show_plots = True
 
 #####
-# filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
+filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
 # filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by
-# filter_value = 'nondividing'  # value of the parameter used to filter the df_dir table by
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260105.tsv'
-# data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
+filter_value = 'nondividing'  # value of the parameter used to filter the df_dir table by
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260109.tsv'
+data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
 
 #####
-filter_criterion = 'Event_around_cut'
-filter_value = 'IN'
-df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_above_treshold_260106.tsv'
-data_source = filter_criterion + '_' + filter_value + '_above_treshold'
-project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}_above_treshold')
+# filter_criterion = 'Event_around_cut'
+# filter_value = 'IN'
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_above_treshold_260106.tsv'
+# data_source = filter_criterion + '_' + filter_value + '_above_treshold'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}_above_treshold')
 # df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_below_treshold_260106.tsv'
 # data_source = filter_criterion + '_' + filter_value + '_below_treshold'
 # project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}_below_treshold')
@@ -67,7 +67,7 @@ print(f"Loaded dataframe with shape {df.shape} from {df_dir}")
 file_number = '02'
 
 # Define list
-default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'replicate']
+default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
 list_of_events = ['1', '2', '3', '4', '5', '>6']
 df_IN = df[default_list + ['n_inserted', '4th_nt', '4th_nt_inserted', '%Reads']]
 
@@ -103,7 +103,7 @@ color_dic = {'0':'#ffffff', '1':'#A8B7FF', '2':'#536CE8', '3':'#466270', '4':'#5
                     , '>6':'#6F79A8'}
 title='Normalised numbers of inserted nucleotides around the cut site, mean of replicates'
 ylabel='Normalised percentage\n of inserted nucleotides'
-no_of_samples = len(pivot_table_avg['gRNA_seq'].unique())
+no_of_samples = len(pivot_table_avg[['source', 'gRNA_seq', 'organism']].drop_duplicates())
 text_bellow_chart = f'Only IN events around cut.\
                     \nSum of all IN in one sample = 100%\
                     \nNo of samples: {no_of_samples}'
@@ -151,7 +151,7 @@ for nucleotide in nucleotide_list:
 hue_order = [x for _, x in sorted(zip(sort_list, nucleotide_list))]     
 
 title='Is the 4th nucleotide the inserted nucleotide? Mean of replicates'
-no_of_samples = len(pivot_table_avg['gRNA_seq'].unique())
+no_of_samples = len(pivot_table_avg[['source', 'gRNA_seq', 'organism']].drop_duplicates())
 ylabel='Normalised percentage\n of inserted 4th nucleotides'
 text_bellow_chart = f'Only 1nt IN around the cut are plotted.\
                     \nSequences without DEL/SUB around the cut.\

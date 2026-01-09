@@ -42,7 +42,7 @@
    'add_columns':{'organism':'HCT116',
       'hours_post_inoculation':24,
       'deliver_of_nuclease':'RNP',
-      'cell_cycle':'nondividing'      
+      'cell_cycle':'dividing'      
       },
    'data_source_original':'van Overbeek et al., 2016',
    'cut_position':50,

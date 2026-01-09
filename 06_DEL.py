@@ -19,19 +19,19 @@ output_format = 'png'
 show_plots = True
 
 #####
-# filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
-# filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by
+filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
+filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by
 # filter_value = 'nondividing'  # value of the parameter used to filter the df_dir table by
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260105.tsv'
-# data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260109.tsv'
+data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
 
 #####
-filter_criterion = 'Event_around_cut'
-filter_value = 'IN'
-df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_above_treshold_260106.tsv'
-data_source = filter_criterion + '_' + filter_value + '_above_treshold'
-project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}_above_treshold')
+# filter_criterion = 'Event_around_cut'
+# filter_value = 'IN'
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_above_treshold_260106.tsv'
+# data_source = filter_criterion + '_' + filter_value + '_above_treshold'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}_above_treshold')
 # df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_below_treshold_260106.tsv'
 # data_source = filter_criterion + '_' + filter_value + '_below_treshold'
 # project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}_below_treshold')
@@ -68,7 +68,7 @@ print(f"Loaded dataframe with shape {df.shape} from {df_dir}")
 file_number = '03'
 
 # Define list of indexes for pivot table
-default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'replicate']
+default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism','replicate']
 list_of_events = ['upstream', 'both', 'downstream', 'cannot_be_determined', 'X']
 df_DEL_orientation = df[default_list + ['DEL_orientation', 'Gap_around_cut', '%Reads']]
 # Filter out rows where Gap_around_cut is False
@@ -112,7 +112,7 @@ counter = 2
 # Set charts properties
 title = 'Normalised incidence of DEL according to the orientation,\n mean of replicates'
 ylabel = 'Normalised percentage \nof DEL around the cut'
-no_of_samples =  len(pivot_table_avg['gRNA_seq'].unique())
+no_of_samples =  len(pivot_table_avg[['source', 'gRNA_seq', 'organism']].drop_duplicates())
 text_bellow_chart = f'Only DELs around the cut are plotted. Without gaps spanning analysed window\
                     \n - see table with source data.\
                     \nNormalised to: SUM of all DEL orientation in individual sample = 100%\
