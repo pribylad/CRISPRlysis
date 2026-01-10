@@ -7,8 +7,8 @@ import os
 import pandas as pd
 from datetime import datetime
 ##########################################################################################
-input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_samples_limit5efficacy_260109.tsv'
-output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/'
+input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/nondividing_animal/03_filtered_efficacy_samples_limit5efficacy_260110.tsv'
+output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/nondividing_animal/'
 
 # load the filtered dataframe
 df = pd.read_csv(input_file, sep='\t')
