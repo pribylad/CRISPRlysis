@@ -24,7 +24,9 @@ import more_itertools as mit
 import numpy as np
 import pandas as pd
 import seaborn as sns
+# TODO remove statannot once all works on statannotations bellow
 from statannot import add_stat_annotation
+from statannotations.Annotator import Annotator
 
 from .general_functions import write_into_report
 
@@ -136,8 +138,13 @@ def adjust_box_widths(g, fac):
                 verts_sub[verts_sub[:, 0] == xmax, 0] = xmax_new
                 # Setting new width of median line
                 for l in ax.lines:
-                    if np.all(l.get_xdata() == [xmin, xmax]):
+                    xdata = l.get_xdata()
+                    if np.isclose(np.min(xdata), xmin) and np.isclose(np.max(xdata), xmax):
                         l.set_xdata([xmin_new, xmax_new])
+                    # TODO delete next twlo lines once above if part works
+                    # if np.all(l.get_xdata() == [xmin, xmax]):
+                    #     l.set_xdata([xmin_new, xmax_new])
+                
     return
 
 # TODO offset of datapoints does not work
@@ -183,7 +190,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     show_datapoints (bool): True/False, default True
     jitter: True/False/int() for stripplot, default True
     stripplot_offset (int): to move stripplot to the left or right, default -10
-    dodge: True/False separated stripplot hues, default True
+    dodge: True/False separated stripplot hues - needed when hues are used, default True
     show_hue_medians: True/False for stripplot, default True
     transparency = int() 0-1, default 0.8
     clip_right (bool): True/False removes right part of the violine plot, default False
@@ -510,9 +517,12 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
 
     # Statistic
     if add_stat is True:
-        add_stat_annotation(ax, data=data, x=x, y=y\
-            , box_pairs=stat_pairs,\
-            test=stat_test, text_format='star', loc='outside', verbose=1, fontsize='large')
+        # add_stat_annotation(ax, data=data, x=x, y=y\
+        #     , box_pairs=stat_pairs,\
+        #     test=stat_test, text_format='star', loc='outside', verbose=1, fontsize='large')
+        annot = Annotator(ax, pairs=stat_pairs, data=data, x=x, y=y)
+        annot.configure(test=stat_test, text_format='star')
+        annot.apply_and_annotate()
 
     # Plot vertical middle line
     if plot_vertical_line_middle is True:
