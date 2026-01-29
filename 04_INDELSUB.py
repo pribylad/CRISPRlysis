@@ -17,11 +17,28 @@ from scripts.plot_functions import plot_sns_violin_and_print, save_stat
 output_format = 'png'
 show_plots = True
 
-filter_criterion = 'All'
-filter_value = 'All'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_samples_limit5efficacy_260109.tsv'
-data_source = 'all_samples'
+
+#####
+# filter_criterion = 'Kingdom'
+# filter_value = 'Animals'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Animals_260126.tsv'
+# data_source = 'Animals'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
+# #####
+filter_criterion = 'Kingdom'
+filter_value = 'Plants'
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Plants_260126.tsv'
+data_source = 'Plants'
 project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
+
+
+#####
+
+# filter_criterion = 'All'
+# filter_value = 'All'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_samples_limit5efficacy_260109.tsv'
+# data_source = 'all_samples'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
 #####
 # filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
 # filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by
@@ -72,7 +89,7 @@ print(f"Loaded dataframe with shape {df.shape} from {df_dir}")
 #            I   N   NN   D   D   E       L           S   U   U   B   B
 #            I   N    N   DDDD    EEEEEE  LLLLLL  SSSS     UUU    BBBB
 ##########################################################################################
-file_number = '01'
+file_number = '002_Supp'
 counter = 1
 # Define lists
 default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
@@ -139,7 +156,27 @@ pivot_table_avg.to_csv(Path(str(project_output_dir) + '/' + name_to_save + '_' +
 stat_info = pivot_table_avg.groupby('Event_around_cut').value.describe().unstack()
 save_stat(stat_info, name_to_save, project_output_dir)
 # %%
-# Count number of unique source+gRNA_seq+organism combinations in the pivot_table_avg
-unique_combinations = pivot_table_avg[['source', 'gRNA_seq', 'organism']].drop_duplicates()
-print(f"Number of unique source+gRNA_seq+organism combinations: {len(unique_combinations)}")
-##########################################################################################
+# remove from the pivot_table_avg the OTHERS and SUB rows
+pivot_table_avg = pivot_table_avg[~pivot_table_avg['Event_around_cut'].isin(['OTHERS', 'SUB'])]
+pivot_table_avg
+# %%
+file_number = '002_Fig'
+text_bellow_chart = f'INDEL category clasified only for events around the cut - full data in the Supplement.\
+                    \nIN+DEL+SUB+OTHERS+no_mutation = 100%.\
+                    \nNo of samples: {no_of_samples}'
+name_to_save = f'{file_number}_{counter}_INDEL_summary_violinplot'
+plot = plot_sns_violin_and_print(data=pivot_table_avg, x='Event_around_cut', y='value'\
+        , number_of_columns=2\
+        , project_output_dir=project_output_dir\
+        , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False, show_hue_medians=False\
+        , hue='Event_around_cut', hue_only_for_data_points=True, transparency=0.7 \
+        , clip_right=True, change_edge_color=False\
+        , title=title, xtickt_rotation=0, ylabel=ylabel\
+        , order=['IN', 'DEL'] \
+        , integrated_properties_dic=True\
+        , text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.05\
+        , yaxis_formater=100, name_to_save=name_to_save\
+        , data_source=data_source, output_format=output_format\
+        , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+# Save pivot table as tsv
+pivot_table_avg.to_csv(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')

@@ -5,9 +5,12 @@ import glob
 import pandas as pd
 from datetime import datetime
 ##########################################################################################
-source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/part_B'
+# source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/part_A/Animals'
+# output_file_name = '01_merged_02tables_NoFilter_Animals_' + datetime.now().strftime('%y%m%d') + '.tsv'
+source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/part_A/Plants'
+output_file_name = '01_merged_02tables_NoFilter_Plants_' + datetime.now().strftime('%y%m%d') + '.tsv'
+
 output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/'
-output_file_name = '01_merged_02tables_NoFilter_' + datetime.now().strftime('%y%m%d') + '.tsv'
 if not os.path.exists(output_directory):
     os.makedirs(output_directory)
 ##########################################################################################

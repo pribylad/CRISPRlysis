@@ -10,7 +10,7 @@ import glob
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-from statannot import add_stat_annotation
+from statannotations.Annotator import Annotator
 
 from scripts.plot_functions import plot_sns_violin_and_print, save_stat
 from scripts.dict_functions import get_color_dic_35_violin
@@ -18,19 +18,19 @@ from scripts.dict_functions import get_color_dic_35_violin
 output_format = 'png'
 show_plots = True
 
-filter_criterion = 'All'
-filter_value = 'All'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_samples_limit5efficacy_260109.tsv'
-data_source = 'all_samples'
-project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
+# filter_criterion = 'All'
+# filter_value = 'All'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_samples_limit5efficacy_260109.tsv'
+# data_source = 'all_samples'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
 #####
-# filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
+filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
 # filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by
-# filter_value = 'nondividing'  # value of the parameter used to filter the df_dir table by
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260109.tsv'
+filter_value = 'nondividing'  # value of the parameter used to filter the df_dir table by
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260109.tsv'
 # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/nondividing_animal/04_split_cell_cycle_nondividing_260110.tsv'
-# data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
+data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
 
 #####
 # filter_criterion = 'Event_around_cut'
@@ -74,7 +74,7 @@ print(f"Loaded dataframe with shape {df.shape} from {df_dir}")
 file_number = '03'
 
 # Define list of indexes for pivot table
-default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism','replicate']
+default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
 list_of_events = ['upstream', 'both', 'downstream', 'cannot_be_determined', 'X']
 df_DEL_orientation = df[default_list + ['DEL_orientation', 'Gap_around_cut', '%Reads']]
 # Filter out rows where Gap_around_cut is False
@@ -233,6 +233,8 @@ save_stat(stat_info, name_to_save, project_output_dir)
 # Plot only 5' NOT blunt and 3' NOT blunt from the pivot_table_avg as x variables
 name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_violinplot_filtered'
 color_dic = get_color_dic_35_violin()
+import statannotations
+print(statannotations.__version__)
 plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'].isin(["5' NOT blunt", "3' NOT blunt"])], x='variable', y='value'\
     , number_of_columns=2\
     , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
@@ -248,7 +250,7 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'
     , y_legend_coordinate=-0.25, yaxis_formater=100\
     , x_max=None\
     , change_edge_color=False\
-    , add_stat=True, stat_pairs=[("5' NOT blunt", "3' NOT blunt")], stat_test='t-test_ind'\
+    , add_stat=True, stat_pairs=[("5' NOT blunt", "3' NOT blunt")], stat_test='t-test_ind', stat_format='simple', stat_correction=None\
     , name_to_save=name_to_save\
     , project_output_dir=project_output_dir\
     , data_source=data_source, output_format=output_format\
@@ -314,11 +316,13 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , number_of_columns=15\
     , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=True\
     , show_hue_medians=False\
+    , boxplot_distances_with = [0.8, 0.18]\
     , hue='4th_nt', hue_only_for_data_points=False \
     , hatches=False\
     , clip_right=True\
     , title=title, xtickt_rotation=-55, ylabel=ylabel\
     , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']\
+    , hue_order=['A', 'C','G','T']\
     , plot_legend=True\
     , integrated_properties_dic=True, color_dic=None\
     , text_bellow_chart=text_bellow_chart\

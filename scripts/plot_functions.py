@@ -25,7 +25,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 # TODO remove statannot once all works on statannotations bellow
-from statannot import add_stat_annotation
+# from statannot import add_stat_annotation
 from statannotations.Annotator import Annotator
 
 from .general_functions import write_into_report
@@ -102,13 +102,14 @@ def find_element_in_list(element, list_element):
         # Return None if the element is not found
         return None
 
-def adjust_box_widths(g, fac):
+def adjust_box_widths(g, fac, no_of_columns):
     """
     Adjust the widths of a seaborn-generated boxplot.
 
     Parameters:
     - g (seaborn.axisgrid.FacetGrid): The seaborn FacetGrid object containing the boxplot.
     - fac (float): The factor by which to adjust the width of the boxes.
+    - no_of_columns (integer): The script did not work when there were only 2 categories to be plotted, this is workaround.
 
     Requirements:
     - from matplotlib.patches import PathPatch
@@ -138,18 +139,20 @@ def adjust_box_widths(g, fac):
                 verts_sub[verts_sub[:, 0] == xmax, 0] = xmax_new
                 # Setting new width of median line
                 for l in ax.lines:
-                    xdata = l.get_xdata()
-                    if np.isclose(np.min(xdata), xmin) and np.isclose(np.max(xdata), xmax):
-                        l.set_xdata([xmin_new, xmax_new])
-                    # TODO delete next twlo lines once above if part works
-                    # if np.all(l.get_xdata() == [xmin, xmax]):
-                    #     l.set_xdata([xmin_new, xmax_new])
+                    if no_of_columns == 2:
+                        xdata = l.get_xdata()
+                        if np.isclose(np.min(xdata), xmin) and np.isclose(np.max(xdata), xmax):
+                            l.set_xdata([xmin_new, xmax_new])
+                    else:
+                        if np.all(l.get_xdata() == [xmin, xmax]):
+                            l.set_xdata([xmin_new, xmax_new])
                 
     return
 
 # TODO offset of datapoints does not work
 def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         , hue=None, hue_order=None, hue_only_for_data_points=True\
+        , boxplot_distances_with=[0.15, 0.9]\
         , ylabel=None, xlabel=None, title=None, xtickt_rotation=0\
         , order=None\
         , integrated_properties_dic=False, color_dic=None\
@@ -164,7 +167,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         , x_min=None, x_max=None\
         , plot_vertical_line_middle=False, middle_line_position=1\
         , plot_legend=False\
-        , add_stat=False, stat_pairs=None, stat_test='t-test_ind'\
+        , add_stat=False, stat_pairs=None, stat_test='t-test_ind', stat_format='star', stat_correction=None\
         , text_bellow_chart=None, y_legend_coordinate=0\
         , output_format='png', dpi=200, show_plots=False):
     """Plots violinplot and saves it.
@@ -176,6 +179,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     hue: hue or None
     hue_order: list or None, default None
     hue_only_for_data_points: True/False, default True
+    boxplot_distances_with: [distance, width], default [0.15, 0.9]
     ylabel: ylabel, default None
     xlabel: xlabel, default None
     title: title, default None
@@ -206,7 +210,9 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     plot_legend: True/False, default False
     add_stat: add t-test_ind statistic annotation, default False
     stat_pairs: [(('pairs'), ('to compare')), (('pairs'), ('to compare')), ...]
-    stat_test: t-test_ind, t-test_welch, t-test_paired, Mann-Whitney, Mann-Whitney-gt, Mann-Whitney-ls, Levene, Wilcoxon, Kruskal, default t-test_ind
+    stat_test: t-test_ind, t-test_welch, t-test_paired, anova, pearsonr, Mann-Whitney, Wilcoxon, Kruskal, Friedman, Spermanr, default t-test_ind
+    stat_correction: bonferroni (the most strict, for 1-3 comparisions), holm (2-20 comparisions, good one), fdr_bh (omice/multi-group experiments, more powerfull than holm), sidak (as bonferroni but les onservative), none, default None
+    stat_format: star, simple, full - format of statistic, default star
     text_bellow_chart: str() to comment chart bellow, default None
     y_legend_coordinate: int() coordinates of figure are 0-1, default 0
     output_format: png, svg,..., default 'png'
@@ -231,6 +237,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\'}\
             ,'cannot_be_determined':{'color':'white','edge_color':'gray', 'hatch':''}\
             ,'can_not_be_determined':{'color':'white','edge_color':'gray', 'hatch':''}\
+            ,'can not be determined':{'color':'white','edge_color':'gray', 'hatch':''}\
             ,'distal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'\\\\'}\
             ,'distal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
             ,'distal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'\\\\'}\
@@ -254,12 +261,15 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'U':{'color':'#f0d271','edge_color':'gray', 'hatch':''}\
             ,'B':{'color':'#808080','edge_color':'black', 'hatch':''}\
             ,'D':{'color':'#f5ad62','edge_color':'gray', 'hatch':''}\
+            ,'X':{'color':'#d3d3d3','edge_color':'black', 'hatch':''}\
             ,'upstream':{'color':'#f0d271','edge_color':'gray', 'hatch':''}\
             ,'upstream_both':{'color':'#C4C4C4','edge_color':'#f0d271', 'hatch':'\\\\\\'}\
             ,'upstream_both_downstream':{'color':'#979797','edge_color':'black', 'hatch':'xx'}\
             ,'both':{'color':'#808080','edge_color':'black', 'hatch':''}\
             ,'both_downstream':{'color':'#C4C4C4','edge_color':'#f5ad62', 'hatch':'////'}\
             ,'downstream':{'color':'#f5ad62','edge_color':'gray', 'hatch':''}\
+            ,'deletion_spans_analysed_window':{'color':'#a9a9a9','edge_color':'black', 'hatch':''}\
+            ,'deletion spans analysed window':{'color':'#a9a9a9','edge_color':'black', 'hatch':''}\
             ,'PAM_distal_nt_in_MH':{'color':'#52D8FF','edge_color':'gray', 'hatch':''}\
             ,'PAM_proximal_nt_in_MH':{'color':'#FADA52','edge_color':'gray', 'hatch':''}\
             ,'no_MH_likely':{'color':'#A9A9A9','edge_color':'gray', 'hatch':''}\
@@ -327,14 +337,15 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         hue_violin=None
 
     # Set withts for plotted boxplots
-    width_list = [0.15, 0.9]
-    if hue_only_for_data_points is False:
-        if hue is not None:
-            if len(data[hue].unique()) == 4:
-                width_list = [0.8, 0.4]
-            else:
-                width_list = [0.8, 0.4]
-                print('Problem with boxplot wisht could be in settings width_list.')
+    width_list = boxplot_distances_with
+    # TODO solve in the main CRISPRlysis.py code and set up the new parameter boxplot_distances_with likely as [0.8, 0.3]
+    # if hue_only_for_data_points is False:
+    #     if hue is not None:
+    #         if len(data[hue].unique()) == 4:
+    #             width_list = [0.8, 0.3]
+    #         else:
+    #             width_list = [0.8, 0.4]
+    #             print('Problem with boxplot wisht could be in settings width_list. Change values in the with_list = [0.8, 0.4]')
 
     # Plot Violinplot in order (True/False) with stripplot (True/False)
     if order is None:
@@ -521,8 +532,22 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         #     , box_pairs=stat_pairs,\
         #     test=stat_test, text_format='star', loc='outside', verbose=1, fontsize='large')
         annot = Annotator(ax, pairs=stat_pairs, data=data, x=x, y=y)
-        annot.configure(test=stat_test, text_format='star')
+        if stat_correction in [None, "none", "no_correction"]:
+            annot.configure(
+                test=stat_test,
+                text_format=stat_format
+            )
+        else:
+            annot.configure(
+                test=stat_test,
+                text_format=stat_format,
+                pvalue_correction_method=stat_correction
+            )
+
+        # After configuration:
+        test_used = annot.test
         annot.apply_and_annotate()
+        ax.text( 1.02, 0.00, f"Test: {test_used}\nCorrection: {stat_correction}\nα = 0.05", transform=ax.transAxes, ha='left', va='bottom', fontsize=10 )
 
     # Plot vertical middle line
     if plot_vertical_line_middle is True:
@@ -568,7 +593,10 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
     if yaxis_formater is not None:
         ax.yaxis.set_major_formatter(mtick.PercentFormatter(yaxis_formater, decimals=0))
     # makes gaps between boxes when hue is used
-    adjust_box_widths(fig, width_list[1])
+    # If order is None, get order from data
+    if order is None:
+        order = list(data[x].unique())
+    adjust_box_widths(fig, width_list[1], len(order))
     # Add text below chart
     if text_bellow_chart is not None:
         props = {'backgroundcolor':'lightgray', 'size':12}  # bbox features
@@ -1199,7 +1227,7 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
     
 #     ax.yaxis.set_major_formatter(mtick.PercentFormatter(yaxis_formater, decimals=0))
 #     # makes gaps between boxes when hue is used
-#     adjust_box_widths(f, 0.9) 
+#     adjust_box_widths(f, 0.9, len(order)) 
 #     # Add text below chart
 #     if text_bellow_chart != None:
 #         # at = AnchoredText(text_bellow_chart, prop=dict(size=12), frameon=True, loc='upper left'\

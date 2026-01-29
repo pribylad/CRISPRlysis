@@ -10,10 +10,14 @@ import pandas as pd
 from datetime import datetime
 import matplotlib.pyplot as plt
 ##########################################################################################
-input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/nondividing_animal/01_merged_02tables_NoFilter_260110.tsv'
-output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/nondividing_animal/'
 x=95  # efficacy threshold percentage
+input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_Plants_260126.tsv'
+output_directory = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_{x}/'
+output_tsv = f'03_filtered_efficacy_samples_limit{100-x}efficacy_Plants_{datetime.now().strftime("%y%m%d")}.tsv'
 ##########################################################################################
+# If output_directory does not exists, create on
+if not os.path.exists(output_directory):
+    os.makedirs(output_directory)
 # load the merged dataframe
 df = pd.read_csv(input_file, sep='\t')
 ##########################################################################################
@@ -53,7 +57,7 @@ with open(output_file, 'w') as f:
 # remove low efficacy samples from the original dataframe
 filtered_df = df[~df.set_index(['sample', 'gRNA_seq', 'replicate']).index.isin(low_efficacy_samples)]
 # save filtered dataframe to TSV
-output_file = os.path.join(output_directory, f'03_filtered_efficacy_samples_limit{100-x}efficacy_{datetime.now().strftime("%y%m%d")}.tsv')
+output_file = os.path.join(output_directory, output_tsv)
 filtered_df.to_csv(output_file, sep='\t', index=False)
 # %%
 pivot_table = pd.pivot_table(filtered_df, index=['sample', 'gRNA_seq', 'replicate'], columns=['Event'], values=['%Reads'], aggfunc='sum', fill_value=0)
