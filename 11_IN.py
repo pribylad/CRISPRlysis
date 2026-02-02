@@ -16,13 +16,13 @@ from scripts.plot_functions import plot_sns_violin_and_print, save_stat
 ##########################################################################################
 output_format = 'png'
 show_plots = True
-
+x = 95  # efficacy threshold percentage
 #####
-filter_criterion = 'Kingdom'
-filter_value = 'Animals'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Animals_260126.tsv'
-data_source = 'Animals'
-project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
+# filter_criterion = 'Kingdom'
+# filter_value = 'Animals'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Animals_260126.tsv'
+# data_source = 'Animals'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
 # #####
 # filter_criterion = 'Kingdom'
 # filter_value = 'Plants'
@@ -30,6 +30,17 @@ project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_
 # data_source = 'Plants'
 # project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
 #####
+# filter_criterion = 'HCT116'
+# filter_value = '48'
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit{100-x}efficacy_{filter_criterion}_RNP_{filter_value}_{datetime.now().strftime("%y%m%d")}.tsv'
+# data_source = f'{filter_criterion}_RNP_{filter_value}'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/time_series/{filter_criterion}_{filter_value}')
+
+filter_criterion = 'Kamoen'
+filter_value = 'WT'
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_{filter_criterion}_{filter_value}_{datetime.now().strftime("%y%m%d")}.tsv'
+data_source = f'{filter_criterion}_{filter_value}'
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/time_series/{filter_criterion}_{filter_value}')
 
 ##########################################################################################
 now = datetime.now()

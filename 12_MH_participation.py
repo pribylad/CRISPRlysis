@@ -19,20 +19,33 @@ from scripts.dict_functions import get_color_dic_35_violin
 ##########################################################################################
 output_format = 'png'
 show_plots = True
+plot_4th_nucleotide_chart = False
+x = 95  # efficacy threshold percentage
 
 #####
-filter_criterion = 'Kingdom'
-filter_value = 'Animals'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Animals_260126.tsv'
-data_source = 'Animals'
-project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
+# filter_criterion = 'Kingdom'
+# filter_value = 'Animals'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Animals_260126.tsv'
+# data_source = 'Animals'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
 # #####
 # filter_criterion = 'Kingdom'
 # filter_value = 'Plants'
 # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Plants_260126.tsv'
 # data_source = 'Plants'
 # project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
+#####
+# filter_criterion = 'HCT116'
+# filter_value = '48'
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit{100-x}efficacy_{filter_criterion}_RNP_{filter_value}_{datetime.now().strftime("%y%m%d")}.tsv'
+# data_source = f'{filter_criterion}_RNP_{filter_value}'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/time_series/{filter_criterion}_{filter_value}')
 
+filter_criterion = 'Kamoen'
+filter_value = 'WT'
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_{filter_criterion}_{filter_value}_{datetime.now().strftime("%y%m%d")}.tsv'
+data_source = f'{filter_criterion}_{filter_value}'
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/time_series/{filter_criterion}_{filter_value}')
 
 ##########################################################################################
 now = datetime.now()
@@ -74,7 +87,7 @@ df_end = df_end[df_end['Gap_around_cut'] == True]
 # Change values in End_3_5 to be 3', 5' and cannot_be_determined needed for plotting with color_dic
 df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'eider 3\' or 5\''})
 # Change True and False in  blunt_cut_with_MH_possible to 'possible blunt' and 'NOT possible blunt'
-df_end['blunt_cut_with_MH_possible'] = df_end['blunt_cut_with_MH_possible'].replace({'TRUE':'possible blunt', 'FALSE':'NOT blunt'})
+df_end['blunt_cut_with_MH_possible'] = df_end['blunt_cut_with_MH_possible'].replace({'TRUE':'possible blunt', 'FALSE':'NOT blunt', True:'possible blunt', False:'NOT blunt', 'True':'possible blunt', 'False':'NOT blunt'})
 
 # Make column where both End_3_5 and blunt_cut_with_MH_possible are combined
 df_end['End_3_5_blunt'] = df_end['End_3_5'] + ' ' + df_end['blunt_cut_with_MH_possible']
@@ -90,7 +103,6 @@ df_pivot.columns.name = None
 # Normalise rows to 100%
 df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
 df_pivot.head()
-
 # Melt dataframe
 df_pivot = pd.melt(df_pivot, id_vars=default_list, value_vars=list_of_events)
 # remove 'replicate' from default_list
@@ -100,7 +112,6 @@ pivot_table_avg = create_pivot_table(df_pivot, default_list, columns='variable',
 # Melt pivot table_avg reset index
 pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list, value_vars=list_of_events)
 pivot_table_avg
-# %%
 #########################################################################################
 # plot VIOLINPLOT
 ##########################################################################################
@@ -144,7 +155,6 @@ save_stat(stat_info, name_to_save, project_output_dir)
 ##########################################################################################
 # Statistical testing between 5' NOT blunt and 3' NOT blunt
 ##########################################################################################
-# %%
 file_number = '003_Supp'
 counter = 1
 
@@ -214,88 +224,87 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'
     , data_source=data_source, output_format=output_format\
     , dpi=200, y_min=0, y_max=119, show_plots=show_plots)
 
-
-# %%
 # Plot End participating on the repair with respect of the 4th nucleotid
-file_number = '003_Supp'
-counter = 3
-# Define list of indexes for pivot table
-default_list = ['source', 'gene', 'gRNA_seq', '4th_nt', 'mutant', 'replicate']
-list_of_events = ['3\' NOT blunt', '5\' possible blunt', '5\' NOT blunt', 'eider 3\' or 5\' possible blunt', 'eider 3\' or 5\' NOT blunt']
-df_end = df[default_list + ['Gap_around_cut', 'Maximal_MH_len', 'End_3_5', 'blunt_cut_with_MH_possible', '%Reads']]
-# Remove rows where Maximal_MH_len is 'no_gap', '0' or 'gap_out_of_cut'
-df_end = df_end[~df_end['Maximal_MH_len'].isin(['no_gap', '0', 'gap_out_of_cut'])]
-# filter out deletions which are not around the cut
-df_end = df_end[df_end['Gap_around_cut'] == True]
-# Change values in End_3_5 to be 3', 5' and cannot_be_determined needed for plotting with color_dic
-df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'eider 3\' or 5\''})
-# Change True and False in  blunt_cut_with_MH_possible to 'possible blunt' and 'NOT possible blunt'
-df_end['blunt_cut_with_MH_possible'] = df_end['blunt_cut_with_MH_possible'].replace({'TRUE':'possible blunt', 'FALSE':'NOT blunt'})
+if plot_4th_nucleotide_chart is True:
+    file_number = '003_Supp'
+    counter = 3
+    # Define list of indexes for pivot table
+    default_list = ['source', 'gene', 'gRNA_seq', '4th_nt', 'mutant', 'replicate']
+    list_of_events = ['3\' NOT blunt', '5\' possible blunt', '5\' NOT blunt', 'eider 3\' or 5\' possible blunt', 'eider 3\' or 5\' NOT blunt']
+    df_end = df[default_list + ['Gap_around_cut', 'Maximal_MH_len', 'End_3_5', 'blunt_cut_with_MH_possible', '%Reads']]
+    # Remove rows where Maximal_MH_len is 'no_gap', '0' or 'gap_out_of_cut'
+    df_end = df_end[~df_end['Maximal_MH_len'].isin(['no_gap', '0', 'gap_out_of_cut'])]
+    # filter out deletions which are not around the cut
+    df_end = df_end[df_end['Gap_around_cut'] == True]
+    # Change values in End_3_5 to be 3', 5' and cannot_be_determined needed for plotting with color_dic
+    df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'eider 3\' or 5\''})
+    # Change True and False in  blunt_cut_with_MH_possible to 'possible blunt' and 'NOT possible blunt'
+    df_end['blunt_cut_with_MH_possible'] = df_end['blunt_cut_with_MH_possible'].replace({'TRUE':'possible blunt', 'FALSE':'NOT blunt'})
 
-# Make column where both End_3_5 and blunt_cut_with_MH_possible are combined
-df_end['End_3_5_blunt'] = df_end['End_3_5'] + ' ' + df_end['blunt_cut_with_MH_possible']
-# remove columns End_3_5, blunt_cut_with_MH_possible
-df_end = df_end.drop(columns=['End_3_5', 'blunt_cut_with_MH_possible'], inplace=False)
+    # Make column where both End_3_5 and blunt_cut_with_MH_possible are combined
+    df_end['End_3_5_blunt'] = df_end['End_3_5'] + ' ' + df_end['blunt_cut_with_MH_possible']
+    # remove columns End_3_5, blunt_cut_with_MH_possible
+    df_end = df_end.drop(columns=['End_3_5', 'blunt_cut_with_MH_possible'], inplace=False)
 
-# Get data
-pivot = pd.pivot_table(df_end, index=default_list, columns='End_3_5_blunt', values='%Reads', aggfunc='sum', fill_value=0)
-# reset pivot and remove index
-df_pivot = pivot.reset_index()
-# remove index name
-df_pivot.columns.name = None
-# Normalise rows to 100%
-df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
-df_pivot.head()
+    # Get data
+    pivot = pd.pivot_table(df_end, index=default_list, columns='End_3_5_blunt', values='%Reads', aggfunc='sum', fill_value=0)
+    # reset pivot and remove index
+    df_pivot = pivot.reset_index()
+    # remove index name
+    df_pivot.columns.name = None
+    # Normalise rows to 100%
+    df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
+    df_pivot.head()
 
-# Melt dataframe
-df_pivot = pd.melt(df_pivot, id_vars=default_list, value_vars=list_of_events)
-# remove 'replicate' from default_list
-default_list.remove('replicate')
-# Make pivot table with all columns without column replicate and make average of values
-pivot_table_avg = create_pivot_table(df_pivot, default_list, columns='variable', values='value', aggfunc='mean')
-# Melt pivot table_avg reset index
-pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list, value_vars=list_of_events)
-pivot_table_avg
-# %%
-#########################################################################################
-# plot VIOLINPLOT
-##########################################################################################
-# NORMALISED 4th as hue
-# Set charts properties for violinplot
-title = 'Normalised ends participating on the repair, mean of replicates'
-ylabel = 'Normalised percentage of ends \n around cut events'
-text_bellow_chart = f'Only DELs around the cut are plotted.\
-                    \nNormalised to: SUM of all ends in individual sample = 100%\
-                    \n3\' possible blunt can not be in -2,0,0 setup -> it is eider 3\' or 5\' NOT blunt\
-                    \nNo of samples: {no_of_samples}'
-name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_4thnt_violinplot'
-color_dic = get_color_dic_35_violin()
-# TODO split it to True/False for can be blunt cut with MH
-plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
-    , number_of_columns=15\
-    , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=True\
-    , show_hue_medians=False\
-    , boxplot_distances_with = [0.8, 0.18]\
-    , hue='4th_nt', hue_only_for_data_points=False \
-    , hatches=False\
-    , clip_right=True\
-    , title=title, xtickt_rotation=-55, ylabel=ylabel\
-    , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']\
-    , hue_order=['A', 'C','G','T']\
-    , plot_legend=True\
-    , integrated_properties_dic=True, color_dic=None\
-    , text_bellow_chart=text_bellow_chart\
-    , y_legend_coordinate=-0.45, yaxis_formater=100\
-    , x_max=None\
-    , change_edge_color=False\
-    , name_to_save=name_to_save\
-    , project_output_dir=project_output_dir\
-    , data_source=data_source, output_format=output_format\
-    , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
-# Save pivot table as tsv
-pivot_table_avg.to_csv(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
-# Save statistics
-stat_info = pivot_table_avg.groupby('variable').value.describe()
-save_stat(stat_info, name_to_save, project_output_dir)
+    # Melt dataframe
+    df_pivot = pd.melt(df_pivot, id_vars=default_list, value_vars=list_of_events)
+    # remove 'replicate' from default_list
+    default_list.remove('replicate')
+    # Make pivot table with all columns without column replicate and make average of values
+    pivot_table_avg = create_pivot_table(df_pivot, default_list, columns='variable', values='value', aggfunc='mean')
+    # Melt pivot table_avg reset index
+    pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list, value_vars=list_of_events)
+    pivot_table_avg
+
+    #########################################################################################
+    # plot VIOLINPLOT
+    ##########################################################################################
+    # NORMALISED 4th as hue
+    # Set charts properties for violinplot
+    title = 'Normalised ends participating on the repair, mean of replicates'
+    ylabel = 'Normalised percentage of ends \n around cut events'
+    text_bellow_chart = f'Only DELs around the cut are plotted.\
+                        \nNormalised to: SUM of all ends in individual sample = 100%\
+                        \n3\' possible blunt can not be in -2,0,0 setup -> it is eider 3\' or 5\' NOT blunt\
+                        \nNo of samples: {no_of_samples}'
+    name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_4thnt_violinplot'
+    color_dic = get_color_dic_35_violin()
+    # TODO split it to True/False for can be blunt cut with MH
+    plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+        , number_of_columns=15\
+        , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=True\
+        , show_hue_medians=False\
+        , boxplot_distances_with = [0.8, 0.18]\
+        , hue='4th_nt', hue_only_for_data_points=False \
+        , hatches=False\
+        , clip_right=True\
+        , title=title, xtickt_rotation=-55, ylabel=ylabel\
+        , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']\
+        , hue_order=['A', 'C','G','T']\
+        , plot_legend=True\
+        , integrated_properties_dic=True, color_dic=None\
+        , text_bellow_chart=text_bellow_chart\
+        , y_legend_coordinate=-0.45, yaxis_formater=100\
+        , x_max=None\
+        , change_edge_color=False\
+        , name_to_save=name_to_save\
+        , project_output_dir=project_output_dir\
+        , data_source=data_source, output_format=output_format\
+        , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+    # Save pivot table as tsv
+    pivot_table_avg.to_csv(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
+    # Save statistics
+    stat_info = pivot_table_avg.groupby('variable').value.describe()
+    save_stat(stat_info, name_to_save, project_output_dir)
 
 # %%

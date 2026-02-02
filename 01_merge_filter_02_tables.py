@@ -7,8 +7,12 @@ from datetime import datetime
 ##########################################################################################
 # source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/part_A/Animals'
 # output_file_name = '01_merged_02tables_NoFilter_Animals_' + datetime.now().strftime('%y%m%d') + '.tsv'
-source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/part_A/Plants'
-output_file_name = '01_merged_02tables_NoFilter_Plants_' + datetime.now().strftime('%y%m%d') + '.tsv'
+# source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/part_A/Plants'
+# output_file_name = '01_merged_02tables_NoFilter_Plants_' + datetime.now().strftime('%y%m%d') + '.tsv'
+
+source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/Kamoen_2024/WT'
+output_file_name = '01_merged_02tables_NoFilter_Kamoen_WT_' + datetime.now().strftime('%y%m%d') + '.tsv'
+##########################################################################################
 
 output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/'
 if not os.path.exists(output_directory):
