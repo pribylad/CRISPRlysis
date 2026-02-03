@@ -35,13 +35,18 @@ x = 95  # efficacy threshold percentage
 # df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit{100-x}efficacy_{filter_criterion}_RNP_{filter_value}_{datetime.now().strftime("%y%m%d")}.tsv'
 # data_source = f'{filter_criterion}_RNP_{filter_value}'
 # project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/time_series/{filter_criterion}_{filter_value}')
-
-filter_criterion = 'Kamoen'
-filter_value = 'WT'
-df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_{filter_criterion}_{filter_value}_{datetime.now().strftime("%y%m%d")}.tsv'
+#####
+# filter_criterion = 'Kamoen'
+# filter_value = 'WT'
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_{filter_criterion}_{filter_value}_{datetime.now().strftime("%y%m%d")}.tsv'
+# data_source = f'{filter_criterion}_{filter_value}'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/time_series/{filter_criterion}_{filter_value}')
+#####
+filter_criterion = 'temperature'
+filter_value = '37'
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_PDS_WT_{filter_value}_260203.tsv'
 data_source = f'{filter_criterion}_{filter_value}'
-project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/time_series/{filter_criterion}_{filter_value}')
-
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/Illa-Berenguer/{filter_criterion}_{filter_value}')
 ##########################################################################################
 now = datetime.now()
 # Format the date to YYMMDD
@@ -93,13 +98,19 @@ df_pivot = df_pivot.drop(columns=[0], inplace=False)
 df_pivot['>6'] = df_pivot.iloc[:, len(default_list)+len(list_of_events)-1 : ].sum(axis=1)
 # Convert columns to string
 df_pivot.columns = df_pivot.columns.map(str)
+# If all list_of_events items are not in columns, create them with 0 values
+for item in list_of_events:
+    if item not in df_pivot.columns.tolist():
+        df_pivot[item] = int()
 # Keep only default_list + list_of_events columns
 df_pivot = df_pivot[default_list + list_of_events]
 # Normalise rows to 100%
 df_pivot[list_of_events] = df_pivot[list_of_events].div(df_pivot[list_of_events].sum(axis=1), axis=0) * 100
+
 # Melt dataframe
 df_pivot = pd.melt(df_pivot, id_vars=default_list, value_vars=list_of_events)
 df_pivot.head()
+# %%
 # Make pivot table with all columns without column replicate and make average of values
 pivot_table_avg = create_pivot_table(df_pivot, default_list[:-1], columns='variable', values='value', aggfunc='mean')
 # Met pivot table_avg reset index
@@ -135,6 +146,10 @@ df_pivot = pivot.reset_index()
 df_pivot.columns.name = None
 # Normalise rows to 100%
 df_pivot.iloc[:, len(list_4th_nt):] = df_pivot.iloc[:, len(list_4th_nt):].div(df_pivot.iloc[:, len(list_4th_nt):].sum(axis=1), axis=0) * 100
+# If all items are not in columns, create them with 0 values
+for item in [True, False]:
+    if item not in df_pivot.columns.tolist():
+        df_pivot[item] = int()
 # Melt dataframe
 df_pivot = pd.melt(df_pivot, id_vars=list_4th_nt, value_vars=[True, False])
 # remove from list_4th_nt the 'replicate' element

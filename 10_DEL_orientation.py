@@ -20,11 +20,11 @@ show_plots = True
 x = 95  # efficacy threshold percentage
 
 #####
-filter_criterion = 'Kingdom'
-filter_value = 'Animals'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Animals_260126.tsv'
-data_source = 'Animals'
-project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
+# filter_criterion = 'Kingdom'
+# filter_value = 'Animals'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Animals_260126.tsv'
+# data_source = 'Animals'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
 # #####
 # filter_criterion = 'Kingdom'
 # filter_value = 'Plants'
@@ -43,7 +43,12 @@ project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_
 # df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_{filter_criterion}_{filter_value}_{datetime.now().strftime("%y%m%d")}.tsv'
 # data_source = f'{filter_criterion}_{filter_value}'
 # project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/time_series/{filter_criterion}_{filter_value}')
-
+#####
+filter_criterion = 'temperature'
+filter_value = '37'
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_PDS_WT_{filter_value}_260203.tsv'
+data_source = f'{filter_criterion}_{filter_value}'
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/Illa-Berenguer/{filter_criterion}_{filter_value}')
 
 ##########################################################################################
 now = datetime.now()
@@ -116,6 +121,10 @@ print(df_pivot.head())
 df_pivot.to_csv(Path(str(project_output_dir) + '/' + file_number + '_DEL_orientation_NOTnormalised_pivot_' + date + '.tsv'), sep='\t')
 # Normalise rows to 100%
 df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
+# If all list_of_events items are not in columns, create them with 0 values
+for item in list_of_events:
+    if item not in df_pivot.columns.tolist():
+        df_pivot[item] = int()
 # Melt dataframe
 df_pivot = df_pivot.melt(id_vars=default_list, value_vars=list_of_events)
 # Remove 'replicate' from default_list
@@ -201,6 +210,10 @@ print(df_pivot.head())
 df_pivot.to_csv(Path(str(project_output_dir) + '/' + file_number + '_DEL_orientation_NOTnormalised_pivot_' + date + '.tsv'), sep='\t')
 # Normalise rows to 100%
 df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
+# If all list_of_events items are not in columns, create them with 0 values
+for item in list_of_events:
+    if item not in df_pivot.columns.tolist():
+        df_pivot[item] = int()
 # Melt dataframe
 df_pivot = df_pivot.melt(id_vars=default_list, value_vars=list_of_events)
 # Remove 'replicate' from default_list

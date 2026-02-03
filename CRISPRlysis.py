@@ -8,7 +8,6 @@ Output files will be stored in the 'project_output_dir' which is defined in the 
 Example: 'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022'
 """
 # %%
-# TODO do not use DEL_orientation_sober, but use the DEL-orientation from apply_return_cut_type_based_on_cut_categories
 
 import ast
 import csv
@@ -313,9 +312,14 @@ for key, value in tables_dic.items():
         # Get data
         df_IN = df
         pivot = pd.pivot_table(df_IN, index=['name', 'n_inserted', '4th_nt'], columns=(), values='%Reads', aggfunc='sum', fill_value=0)
+        pivot
+        # Find largest number in n_inserted and make in each sample all numbers from 0 to max present. If not present fill with 0.
+        max_n_inserted = df_IN['n_inserted'].max()
+        all_n_inserted_list = list(range(0, max_n_inserted+1))
+        index = pd.MultiIndex.from_product([df_IN['name'].unique(), all_n_inserted_list, df_IN['4th_nt'].unique()], names=['name', 'n_inserted', '4th_nt'])
+        pivot = pivot.reindex(index, fill_value=0)
         df_pivot = pivot.reset_index()
         df_pivot = df_pivot[df_pivot['n_inserted']!=0]
-
         ##########################################################################################
         # plot BARPLOT with number of inserted nucleotides
         ##########################################################################################
@@ -327,7 +331,6 @@ for key, value in tables_dic.items():
         stat_info = df_pivot.groupby('n_inserted').describe().unstack()
         save_stat(stat_info, name_to_save, project_output_subdir)
         counter+=1
-
         ##########################################################################################
         # SUM up IN>3 nt to single column, to change the number, change grater_than
         ##########################################################################################
@@ -340,7 +343,6 @@ for key, value in tables_dic.items():
         pivot = pd.crosstab(index=df_pivot['name'], columns=df_pivot['n_inserted'],\
                             values=df_pivot['%Reads'], aggfunc='sum', normalize='index')
         df_pivot = pivot.reset_index()
-
         # sum columns where n_inserted>IN_greater_than and discard n_inserted==0
         greater_than = IN_greater_than
         df_pivot[f'greater_than_{greater_than}'] = 0
@@ -550,8 +552,10 @@ for key, value in tables_dic.items():
         pivot = pd.crosstab(index=[df_orientation['name'], df_orientation['gRNA_seq']], \
                 columns=df_orientation['DEL_orientation'], values=df_orientation['%Reads'],\
                 aggfunc='sum')
-        df_pivot = pivot.reset_index()
-        print('The pivot is', df_pivot)
+        # reset index and NaN values to 0
+        df_pivot = pivot.fillna(0).reset_index()
+        ##########################################################################################
+        # print('The pivot is', df_pivot)
         # If df_pivot is Empty skip the next plot
         if df_pivot.empty:
             write_into_report('There is no DEL around the cut, skipping Not-normalised and normalised incidence of DEL according to the orientation plotting.', destination_folder=project_output_dir)
@@ -658,7 +662,7 @@ for key, value in tables_dic.items():
         df_CutType = df_CutType[df_CutType['Gap_around_cut'] == True]
         # make pivot, where all samples have individual row and values are sum of individual events
         pivot = pd.pivot_table(df_CutType, index=['name', 'gRNA_seq'], columns=['Cut_type', 'Likely_cut_type'], values='%Reads', aggfunc='sum', fill_value=0)
-        print('The pivot for Blunt/Staggered cuts is', pivot)
+        # print('The pivot for Blunt/Staggered cuts is', pivot)
         # If df_pivot is Empty skip the next plot
         if pivot.empty:
             write_into_report('There is no DEL for blunt/stagg, skipping Blunt/Staggered cut ratio plotting.', destination_folder=project_output_dir)
@@ -676,8 +680,6 @@ for key, value in tables_dic.items():
             df_Blunt_Stagg_samples_norm = pivot.reset_index()
             df_Blunt_Stagg_samples_norm = pd.melt(df_Blunt_Stagg_samples_norm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
             # Set charts properties
-            # TODO is order needed bellow?
-            # order=list_of_events
             ##########################################################################################
             # Horizontal bar charts for Blunt/Staggered cuts
             ##########################################################################################
@@ -742,7 +744,7 @@ for key, value in tables_dic.items():
         # TODO for columns add the orientation
         pivot = pd.pivot_table(df_CutType, index=['name', 'gRNA_seq'], columns=['DEL_orientation', 'Cut_type', 'Likely_cut_type'], values='%Reads', aggfunc='sum', fill_value=0)
         # make order for pivot table based on the upstream/downstream, cut maximum/minimum and likeliness of the cut
-        print('The pivot for plot VIOLINPLOTs with PAM proximal/distal orientation is', pivot)
+        # print('The pivot for plot VIOLINPLOTs with PAM proximal/distal orientation is', pivot)
         # If pivot is Empty skip the next plot
         if pivot.empty:
             write_into_report('There is no DEL for PAM proximal/distal orientation, skipping plotting.', destination_folder=project_output_dir)
@@ -866,7 +868,7 @@ for key, value in tables_dic.items():
         df_CutType = df_CutType[df_CutType['DEL_orientation'] != 'B']
         df_CutType = df_CutType[df_CutType['DEL_orientation'] != 'C']
         df_CutType = pd.concat([df_CutType, df_CutType_cannot_be_determined], ignore_index=True)
-        print(df_CutType)
+        # print(df_CutType)
         # If df_CutType has zero rows, skip the next plotting
         if df_CutType.empty:
             write_into_report('There is no DEL for Dino chart plotting, skipping plotting.', destination_folder=project_output_dir)  
@@ -880,11 +882,11 @@ for key, value in tables_dic.items():
         if plot_DEL_dinochart is True:
             subcounter=1
             for sample in order_list:
-                print(sample)
+                # print(sample)
                 # filter individual gRNA 
                 df_Cut_gRNA = df_CutType[df_CutType['sample'].str.contains(sample)]
                 seq_around = df_Cut_gRNA['Original_Sequence_around_cut'].unique()
-                print(seq_around)
+                # print(seq_around)
                 name_to_save= f'{file_number}_{counter}_Stagg_blunt_DEL_orientation_dino_30nt_NotNormalised_{subcounter}_' + sample
                 title = 'Stagg/blunt + DEL orientation analysis ' + str(sample) + '\n' + str(seq_around)
                 xlabel='Number of deleted nucleotides (minus = upstream from the probable cut, plus = downstream from the probable cut)'
@@ -905,10 +907,6 @@ for key, value in tables_dic.items():
                 # Order df_pivot according to the DEL_orientation_cut_type to have blunt first
                 df_pivot['Orientation'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[0]
                 df_pivot['Cut_type'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[1]
-                # Convert Cut_typet to int() to have it sorted correctly
-                # TODO it does not work when 'X' is present
-                # df_pivot['Cut_type'] = df_pivot['Cut_type'].astype(int)
-
                 df_pivot['Likely_cut_type'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[2]
                 df_pivot = df_pivot.sort_values(by=['Orientation', 'Cut_type', 'Likely_cut_type'], ascending=[True, False, False])
                 order=list(df_pivot['DEL_orientation_cut_type'].unique())
@@ -938,7 +936,6 @@ for key, value in tables_dic.items():
         df_CutType = df_CutType[df_CutType['Gap_around_cut'] == True]
         ## make pivot, where all samples have individual row and values are sum of individual events
         pivot = pd.pivot_table(df_CutType, index=['name', 'gRNA_seq', '4th_nt'], columns=['Cut_type', 'Likely_cut_type'], values='%Reads', aggfunc='sum', fill_value=0)
-        print(pivot)
         # if pivot is Empty skip the next plot
         if pivot.empty:
             write_into_report('There is no DEL for plotting, skipping Normalised Staggered/Blunt representation plotting.', destination_folder=project_output_dir)
@@ -949,16 +946,10 @@ for key, value in tables_dic.items():
             df_Blunt_Stagg_samples.columns = ['_'.join(map(str, col)).strip('_') for col in df_Blunt_Stagg_samples.columns]
             ## check if all events are present, if not, add missing column with 0
             df_Blunt_Stagg_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_Blunt_Stagg_samples, 'BluntStag', cut_maximum, cut_minimum)
-            # TODO do I need the bellow crossing?
-            # ## cross out unusable Cut_types as 'out_of_cut' and use only relevat ones
-            # df_Blunt_Stagg_samples = df_Blunt_Stagg_samples[['name', 'gRNA_seq', '4th_nt', 'stagg2nt', 'stagg2nt_likely', 'stagg1nt', 'stagg1nt_likely', 'blunt_likely', 'blunt', 'cannot_be_determined']]
-            ## make single column table
+            # make single column table
             df_Blunt_Stagg_samples = pd.melt(df_Blunt_Stagg_samples, id_vars=['name', 'gRNA_seq', '4th_nt'], value_vars=list_of_events)
             pivot = pd.crosstab(index=[df_Blunt_Stagg_samples['name'],df_Blunt_Stagg_samples['gRNA_seq'],df_Blunt_Stagg_samples['4th_nt']], columns=df_Blunt_Stagg_samples['variable'], values=df_Blunt_Stagg_samples['value'], aggfunc='sum', normalize='index')
             df_Blunt_Stagg_samples_norm = pivot.reset_index()
-            # TODO do I need the bellow crossing?
-            ## check if all events are present, if not, add missing column with 0
-            # df_Blunt_Stagg_samples_norm = check_if_all_events_are_present_after_pivot_reset_index(df_Blunt_Stagg_samples_norm, 'BluntStag')
             df_Blunt_Stagg_samples_norm = pd.melt(df_Blunt_Stagg_samples_norm, id_vars=['name', 'gRNA_seq', '4th_nt'], value_vars=list_of_events)
             ##########################################################################################
             # plot STACKED BARPLOT
@@ -1010,6 +1001,7 @@ for key, value in tables_dic.items():
                     , plot_legend=True \
                     , integrated_properties_dic=True, text_bellow_chart=text_bellow_chart\
                     , y_legend_coordinate=-0.15, yaxis_formater=1\
+                    , boxplot_distances_with=[0.8, 0.3]\
                     , x_max=None\
                     , name_to_save=name_to_save\
                     , project_output_dir=project_output_subdir \
@@ -1018,7 +1010,6 @@ for key, value in tables_dic.items():
             stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
             save_stat(stat_info, name_to_save, project_output_subdir)
             counter+=1
-
             name_to_save = f'{file_number}_{counter}_DEL_Stagg_blunt_summary_violinplot_4th_nt'
             color_dic = make_color_dic_CutType(list_of_events)
             plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='4th_nt', y='value'\
@@ -1033,6 +1024,7 @@ for key, value in tables_dic.items():
                     , plot_legend=True\
                     , integrated_properties_dic=False, color_dic=color_dic, text_bellow_chart=text_bellow_chart\
                     , y_legend_coordinate=-0.08, yaxis_formater=1\
+                    , boxplot_distances_with=[0.8, 0.3]\
                     , x_max=None\
                     , name_to_save=name_to_save\
                     , project_output_dir=project_output_subdir \
@@ -1044,7 +1036,6 @@ for key, value in tables_dic.items():
     ##########################################################################################
     ##########################################################################################
     ##########################################################################################
-    # TODO the part for analysin MH around the cut site was not implemented in this code and was replaced by the charts plotting the ends participating in the repair
     file_number = '05'
     counter=1
     if plot_participating_end is True:
@@ -1058,7 +1049,6 @@ for key, value in tables_dic.items():
         # Change values in End_3_5 to be 3', 5' and cannot_be_determined needed for plotting with color_dic
         df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'eider 3\' or 5\''})
         pivot = pd.pivot_table(df_end, index=['name', 'gRNA_seq'], columns=['End_3_5', 'blunt_cut_with_MH_possible'], values='%Reads', aggfunc='sum', fill_value=0)
-        print(pivot)
         # If pitvot is Empty skip the next plot
         if pivot.empty:
             write_into_report('There is no DEL for plotting, skipping Normalised nad Not-normalised ends participating on the repair.', destination_folder=project_output_dir)
@@ -1073,7 +1063,6 @@ for key, value in tables_dic.items():
             df_end_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_end_samples, ['3\' possible blunt', '5\' possible blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '5\' NOT blunt', 'eider 3\' or 5\' NOT blunt'], cut_maximum, cut_minimum)
             df_end_samples = pd.melt(df_end_samples, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
             pivot_normalised = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['variable'], values=df_end_samples['value'], aggfunc='sum', normalize='index')
-            pivot_normalised
             pivot_NOTnorm = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['variable'], values=df_end_samples['value'], aggfunc='sum')
             df_end_samples_norm = pivot_normalised.reset_index()
             df_end_samples_norm = pd.melt(df_end_samples_norm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
@@ -1192,7 +1181,7 @@ for key, value in tables_dic.items():
             df_end = df_end[df_end['n_deleted_around_cut'] != 0]
             # filter out deletions which are not around the cut
             df_end = df_end[df_end['Gap_around_cut'] == True]
-            print(df_end)
+            # print(df_end)
             # if df_end has zero rows, skip the next plotting
             if df_end.empty:
                 write_into_report('There is no DEL for Dino chart plotting, skipping plotting.', destination_folder=project_output_subdir)  
@@ -1261,4 +1250,3 @@ for key, value in tables_dic.items():
 end_time = time.time()
 total_time = end_time - start_time
 write_into_report(f'\n\nScript run time: {total_time/60:.2f} minutes.', destination_folder=project_output_subdir)
-# %%

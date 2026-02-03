@@ -934,6 +934,11 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
 
     # if you want to have continuous x-axis like 1,2,3,4,5,6,... -. works only for numbers
     if fill_empty_x:
+        # If min(df_pivot[x]) is empty skip the plot
+        if df_pivot[x].empty:
+            print(f'df["x"] are empty after pivot, plotting of the plot {name_to_save} was terminated.')
+            write_into_report(f'df["x"] are empty after pivot, plotting of the plot {name_to_save} was terminated.')
+            return
         if min(df_pivot[x]) > 0:
             list_of_x = list(range(max(df_pivot[x]) + 1))
         else:

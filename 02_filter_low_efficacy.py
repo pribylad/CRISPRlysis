@@ -25,11 +25,16 @@ output_directory = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_
 # output_tsv = f'03_filtered_efficacy_samples_limit{100-x}efficacy_{cell_line}_RNP_{hpt}_{datetime.now().strftime("%y%m%d")}.tsv'
 # output_low_efficacy_txt = f'03_low_efficacy_samples_limit{100-x}efficacy_{cell_line}_RNP_{hpt}_{datetime.now().strftime("%y%m%d")}.txt'
 
-input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_Kamoen_WT_260130.tsv'
-output_nofilter_tsv = f'02_pivot_table_no_filter_Kamoen_WT_{datetime.now().strftime("%y%m%d")}.tsv'
-output_tsv = f'03_filtered_efficacy_samples_limit{100-x}efficacy_Kamoen_WT_{datetime.now().strftime("%y%m%d")}.tsv'
-output_low_efficacy_txt = f'03_low_efficacy_samples_limit{100-x}efficacy_Kamoen_WT_{datetime.now().strftime("%y%m%d")}.txt'
+# input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_Kamoen_WT_260130.tsv'
+# output_nofilter_tsv = f'02_pivot_table_no_filter_Kamoen_WT_{datetime.now().strftime("%y%m%d")}.tsv'
+# output_tsv = f'03_filtered_efficacy_samples_limit{100-x}efficacy_Kamoen_WT_{datetime.now().strftime("%y%m%d")}.tsv'
+# output_low_efficacy_txt = f'03_low_efficacy_samples_limit{100-x}efficacy_Kamoen_WT_{datetime.now().strftime("%y%m%d")}.txt'
 
+filter_value = '37'
+input_file = f'/home/lefnui/CRISPRlysis_outputs/Illa_Berenguer_et_al_2023_{filter_value}/02_mastertable_PDS_WT_{filter_value}_260203.tsv'
+output_nofilter_tsv = f'02_pivot_table_no_filter_PDS_WT_{filter_value}_{datetime.now().strftime("%y%m%d")}.tsv'
+output_tsv = f'03_filtered_efficacy_samples_limit{100-x}efficacy_PDS_WT_{filter_value}_{datetime.now().strftime("%y%m%d")}.tsv'
+output_low_efficacy_txt = f'03_low_efficacy_samples_limit{100-x}efficacy_PDS_WT_{filter_value}_{datetime.now().strftime("%y%m%d")}.txt'
 ##########################################################################################
 # If output_directory does not exists, create on
 if not os.path.exists(output_directory):

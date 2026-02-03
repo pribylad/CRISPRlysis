@@ -211,7 +211,7 @@ def make_color_dic_Dino_end(list_of_events):
                 color_dic[l] = 'red'  # Default case if it doesn't match any criteria
                 print(f'Error in make_color_dic_Dnino_end function. Parameter: {l} is not in the colour decision list.')
         elif split[1] == str(0):
-            color_dic[l] = '#FFFFFF'
+            color_dic[l] = "#CCCCCC"
         else:
             color_dic[l] = 'red'  # Default case if it doesn't match any criteria
             print(f'Error in make_color_dic_Dnino function. Parameter: {l} is not in the colour decision list.')
