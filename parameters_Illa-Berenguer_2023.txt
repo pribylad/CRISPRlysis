@@ -37,13 +37,12 @@
 #############################################
 #                 DICTIONARY                #
 #############################################
-{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/03_maybe_to use/Illa_Berenguer_et_al_2023/04_CRISPResso2_output/CRISPRessoBatch_on_batch_260203_filtered_small_37/',
-   'project_output_dir':'../../CRISPRlysis_outputs/Illa_Berenguer_et_al_2023_37',
+{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/03_maybe_to use/Illa_Berenguer_et_al_2023/04_CRISPResso2_output/CRISPRessoBatch_on_batch_260203_filtered/',
+   'project_output_dir':'../../CRISPRlysis_outputs/Illa_Berenguer_et_al_2023',
    'add_columns':{'organism':'Oryza sativa',
       'hours_post_inoculation':840,
       'deliver_of_nuclease':'biolistic',
-      'cell_cycle':'dividing',
-      'heat_treatment':'37'          
+      'cell_cycle':'dividing'          
       },
    'data_source_original':'Illa-Berenguer et al., 2023',
    'cut_position':90,
@@ -53,12 +52,13 @@
    'minimum_Reads':5,
    'output_format':'png',
    'make_mastertable_00':False,
-   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Illa_Berenguer_et_al_2023_37/00_mastertable_260203.tsv',
+   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Illa_Berenguer_et_al_2023/00_mastertable_260204.tsv',
    'filter_out_values':{},
    'make_mastertable_01':False,
-   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Illa_Berenguer_et_al_2023_37/01_mastertable_260203.tsv',
+   'list_of_columns':['order', 'Cas_variant', 'gene', 'TergetNum', 'mutant', 'no_of_targets', 'overhang', 'replicate', 'cell_line', 'temperature'],
+   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Illa_Berenguer_et_al_2023/01_mastertable_260204.tsv',
    'make_subtables':True,
-   'subtables_param':['gene', 'mutant', 'heat_treatment'],
+   'subtables_param':['gene', 'mutant', 'temperature'],
    'show_plots':False,
    'plot_INDELs':True,
    'plot_INs':True,
