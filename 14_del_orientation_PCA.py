@@ -54,6 +54,8 @@ if 'Unnamed: 0' in df.columns:
 df['organism_cell_line_hpi'] = df['organism'] + ' - ' + df['cell_line'] + ' - ' + df['hours_post_inoculation']
 df
 # %%
+df['organism_cell_line_hpi'].unique()
+# %%
 # Make PCA analysis where vlues are from column values and categories are from column variable, hue is from column organism_cell_line_hpi and style is from column variable
 # remove columns source, mutant, gene, gRNA_seq, ID_no_rep
 df_pca = df.drop(columns=['source', 'mutant', 'gene', 'gRNA_seq', 'ID_no_rep', 'kingdom', 'organism', 'cell_line', 'hours_post_inoculation'])
@@ -84,6 +86,13 @@ properties_dict = {
     'Petunia hybrida - xxx - 24': {'color': 'green', 'marker': '>'},
     'Silene latifoliaa - xxx - xx': {'color': 'green', 'marker': '<'},
     'Solanum lycopersicum - xxx - 24': {'color': 'green', 'marker': 's'}}
+
+# Check if all index values in df_pca are in properties_dict
+missing_indices = [index for index in df_pca.index if index not in properties_dict]
+if missing_indices:
+    raise ValueError(f"Missing indices in properties_dict: {missing_indices}")
+# Remove from poperties_dict any indices that are not in df_pca
+properties_dict = {key: value for key, value in properties_dict.items() if key in df_pca.index}
 
 # Data are normalised, so we can directly apply PCA without standardisation
 pca = PCA(n_components=2)

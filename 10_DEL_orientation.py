@@ -19,44 +19,40 @@ output_format = 'png'
 show_plots = True
 x = 95  # efficacy threshold percentage
 
-#####
-# filter_criterion = 'Kingdom'
-# filter_value = 'Animals'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Animals_260126.tsv'
-# data_source = 'Animals'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
-# #####
-# filter_criterion = 'Kingdom'
-# filter_value = 'Plants'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Plants_260126.tsv'
-# data_source = 'Plants'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
-#####
-# filter_criterion = 'HCT116'
-# filter_value = '48'
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit{100-x}efficacy_{filter_criterion}_RNP_{filter_value}_{datetime.now().strftime("%y%m%d")}.tsv'
-# data_source = f'{filter_criterion}_RNP_{filter_value}'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/time_series/{filter_criterion}_{filter_value}')
-#####
-# filter_criterion = 'Kamoen'
-# filter_value = 'WT'
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_{filter_criterion}_{filter_value}_{datetime.now().strftime("%y%m%d")}.tsv'
-# data_source = f'{filter_criterion}_{filter_value}'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/time_series/{filter_criterion}_{filter_value}')
-#####
-filter_criterion = 'temperature'
-filter_value = '37'
-df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_PDS_WT_{filter_value}_260203.tsv'
-data_source = f'{filter_criterion}_{filter_value}'
-project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/Illa-Berenguer/{filter_criterion}_{filter_value}')
+# # 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs
+# filter_criterion = 'None'
+# filter_value = 'None'
+# data_source = 'all_samples_no_filters'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260225.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples')
+
+# # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
+# filter_criterion = 'efficacy'
+# filter_value = '95'
+# data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260226.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}')
+
+# 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
+filter_criterion = 'efficacy_1ntIN'
+filter_value = '95_80'
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_filtered_efficacy_95_samples_260226.tsv'
+data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/03_filtered_{filter_criterion}_{filter_value}')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_{filter_criterion}_{filter_value}')
 
 ##########################################################################################
 now = datetime.now()
 # Format the date to YYMMDD
 date = now.strftime('%y%m%d')
 
-if project_output_dir.exists() is False:
-    os.makedirs(project_output_dir)
+if charts_output_dir.exists() is False:
+    os.makedirs(charts_output_dir)
+
+if table_output_dir.exists() is False:
+    os.makedirs(table_output_dir)
 ##########################################################################################
 def create_pivot_table(df, list_of_indexes, columns, values, aggfunc):
     pivot_table = pd.pivot_table(
@@ -71,6 +67,7 @@ def create_pivot_table(df, list_of_indexes, columns, values, aggfunc):
 ##########################################################################################
 # Load datafreame
 df = pd.read_csv(df_dir, sep='\t')
+df['hours_post_inoculation'] = df['hours_post_inoculation'].astype(str)
 print(f"Loaded dataframe with shape {df.shape} from {df_dir}")
 ##########################################################################################
 #               DDDD    EEEEEE  L
@@ -83,7 +80,8 @@ print(f"Loaded dataframe with shape {df.shape} from {df_dir}")
 file_number = '001_Supp'
 
 # Define list of indexes for pivot table
-default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
+# default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
+default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'replicate']
 list_of_events = ['upstream', 'both', 'downstream', 'cannot be determined', 'deletion spans analysed window']
 df_DEL_orientation = df[default_list + ['DEL_orientation', 'Gap_around_cut', '%Reads']]
 # Filter out rows where Gap_around_cut is False
@@ -106,7 +104,7 @@ properties_dic = {'upstream':{'color':'#f0d271','edge_color':'gray', 'hatch':''}
 # Make color dic from properties_dic
 color_dic = {key: properties_dic[key]['color'] for key in properties_dic.keys()}
 df_DEL_orientation
-
+# %%
 ##########################################################################################
 #        Deletion orientation around the cut site
 ##########################################################################################
@@ -116,9 +114,8 @@ pivot = pd.pivot_table(df_DEL_orientation, index=default_list, columns='DEL_orie
 df_pivot = pivot.reset_index()
 # remove index name
 df_pivot.columns.name = None
-print(df_pivot.head())
 # Save pivot table as tsv
-df_pivot.to_csv(Path(str(project_output_dir) + '/' + file_number + '_DEL_orientation_NOTnormalised_pivot_' + date + '.tsv'), sep='\t')
+df_pivot.to_csv(Path(str(table_output_dir) + '/' + file_number + '_DEL_orientation_NOTnormalised_pivot_' + filter_criterion + '_' + filter_value + '_' + date + '.tsv'), sep='\t')
 # Normalise rows to 100%
 df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
 # If all list_of_events items are not in columns, create them with 0 values
@@ -133,7 +130,7 @@ default_list.remove('replicate')
 pivot_table_avg = create_pivot_table(df_pivot, default_list, columns='variable', values='value', aggfunc='mean')
 # Met pivot table_avg reset index
 pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list, value_vars=list_of_events)
-pivot_table_avg.to_csv(Path(str(project_output_dir) + '/' + file_number + '_DEL_orientation_normalised_pivot_' + date + '.tsv'), sep='\t')
+pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + file_number + '_DEL_orientation_normalised_pivot_' + filter_criterion + '_' + filter_value + '_' + date + '.tsv'), sep='\t')
 
 # %%
 counter = 1
@@ -145,7 +142,7 @@ text_bellow_chart = f'Only DELs around the cut are plotted.\
                     \nNormalised to: SUM of all DEL orientation in individual sample = 100%\
                     \nAny replicates are averaged prior plotting.\
                     \nNo of samples: {no_of_samples}'
-name_to_save = f'{file_number}_{counter}_2_DEL_orientation_summary_violinplot'
+name_to_save = f'{file_number}_{counter}_2_DEL_orientation_summary_violinplot_{filter_criterion}_{filter_value}'
 plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , number_of_columns=len(pivot_table_avg['variable'].unique())/2\
     , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
@@ -162,17 +159,18 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , x_max=None\
     , change_edge_color=False\
     , name_to_save=name_to_save\
-    , project_output_dir=project_output_dir\
+    , project_output_dir=charts_output_dir\
     , data_source=data_source, output_format=output_format\
     , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 stat_info = pivot_table_avg.groupby('variable').value.describe()
-save_stat(stat_info, name_to_save, project_output_dir)
+save_stat(stat_info, name_to_save, charts_output_dir)
 # %%
 # Plot main figure without 'deletion spans analysed window'
 file_number = '001_Fig'
 
 # Define list of indexes for pivot table
-default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism','replicate']
+# default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism','replicate']
+default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'replicate']
 list_of_events = ['upstream', 'both', 'downstream', 'cannot be determined']
 df_DEL_orientation = df[default_list + ['DEL_orientation', 'Gap_around_cut', '%Reads']]
 # Filter out rows where Gap_around_cut is False
@@ -205,9 +203,8 @@ pivot = pd.pivot_table(df_DEL_orientation, index=default_list, columns='DEL_orie
 df_pivot = pivot.reset_index()
 # remove index name
 df_pivot.columns.name = None
-print(df_pivot.head())
 # Save pivot table as tsv
-df_pivot.to_csv(Path(str(project_output_dir) + '/' + file_number + '_DEL_orientation_NOTnormalised_pivot_' + date + '.tsv'), sep='\t')
+df_pivot.to_csv(Path(str(table_output_dir) + '/' + file_number + '_DEL_orientation_NOTnormalised_pivot_' + filter_criterion + '_' + filter_value + '_' + date + '.tsv'), sep='\t')
 # Normalise rows to 100%
 df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
 # If all list_of_events items are not in columns, create them with 0 values
@@ -232,7 +229,7 @@ text_bellow_chart = f'Only DELs around the cut are plotted. Without "deletion sp
                     \nNormalised to: SUM of all DEL orientation in individual sample = 100%\
                     \nAny replicates are averaged prior plotting.\
                     \nNo of samples: {no_of_samples}'
-name_to_save = f'{file_number}_{counter}_2_DEL_orientation_summary_violinplot'
+name_to_save = f'{file_number}_{counter}_2_DEL_orientation_summary_violinplot_{filter_criterion}_{filter_value}'
 plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , number_of_columns=len(pivot_table_avg['variable'].unique())/2\
     , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
@@ -249,11 +246,12 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , x_max=None\
     , change_edge_color=False\
     , name_to_save=name_to_save\
-    , project_output_dir=project_output_dir\
+    , project_output_dir=charts_output_dir\
     , data_source=data_source, output_format=output_format\
     , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 stat_info = pivot_table_avg.groupby('variable').value.describe()
-save_stat(stat_info, name_to_save, project_output_dir)
+save_stat(stat_info, name_to_save, charts_output_dir)
+# %%
 # ##################################################################################
 # #       Ends participating on the repair
 # ##################################################################################

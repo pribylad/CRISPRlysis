@@ -12,7 +12,7 @@ from datetime import date, datetime
 import matplotlib.pyplot as plt
 from scripts.plot_functions import plot_sns_violin_and_print, save_stat
 ##########################################################################################
-output_format = 'svg'
+output_format = 'png'
 show_plots = True
 maximum_to_view = 2
 
@@ -58,12 +58,11 @@ list_of_events.append(f'>{maximum_to_view}')
 # %%
 # Load datafreame
 df = pd.read_csv(df_dir, sep='\t')
-df
-# %%
-df['hours_post_inoculation'].unique()
-# %%
 df['hours_post_inoculation'] = df['hours_post_inoculation'].astype(str)
-df['hours_post_inoculation'].unique()
+df['blunt_cut_with_MH_possible'] = df['blunt_cut_with_MH_possible'].astype(str)
+# change TRUE to True and FALSE to False in blunt_cut_with_MH_possible column
+df['blunt_cut_with_MH_possible'] = df['blunt_cut_with_MH_possible'].replace({'TRUE':'True', 'FALSE':'False'})
+df
 # %%
 print(f'{df.shape} -> Original dataframe shape.')
 print(f"{len(df['name'].unique())} -> No of unique samples where each replicate is one sample.")
