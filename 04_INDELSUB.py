@@ -25,20 +25,20 @@ show_plots = True
 # data_source = 'Animals'
 # project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
 # #####
-filter_criterion = 'Kingdom'
-filter_value = 'Plants'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Plants_260126.tsv'
-data_source = 'Plants'
+# filter_criterion = 'Kingdom'
+# filter_value = 'Plants'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Plants_260126.tsv'
+# data_source = 'Plants'
 project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
 
 
 #####
 
-# filter_criterion = 'All'
-# filter_value = 'All'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_samples_limit5efficacy_260109.tsv'
-# data_source = 'all_samples'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
+filter_criterion = 'All'
+filter_value = 'All'
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_samples_limit5efficacy_260109.tsv'
+data_source = 'all_samples'
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
 #####
 # filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
 # filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by

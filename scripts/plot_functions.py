@@ -229,63 +229,85 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         properties_dic = integrated_properties_dic
         print(properties_dic)
     elif integrated_properties_dic is True:
-        properties_dic = {'stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
-            ,'stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'//'}\
-            ,'stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':''}\
-            ,'stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'////'}\
-            ,'blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':''}\
-            ,'blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\'}\
-            ,'cannot_be_determined':{'color':'white','edge_color':'gray', 'hatch':''}\
-            ,'can_not_be_determined':{'color':'white','edge_color':'gray', 'hatch':''}\
-            ,'can not be determined':{'color':'white','edge_color':'gray', 'hatch':''}\
-            ,'distal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'\\\\'}\
-            ,'distal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
-            ,'distal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'\\\\'}\
-            ,'distal_stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':''}\
-            ,'distal_blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\'}\
-            ,'distal_blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':''}\
-            ,'proximal_blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':''}\
-            ,'proximal_blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'//'}\
-            ,'proximal_stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':''}\
-            ,'proximal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'//'}\
-            ,'proximal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':''}\
-            ,'proximal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'//'}\
-            ,'gap_out_of_cut':{'color':'gray','edge_color':'gray', 'hatch':''}\
-            ,'IN':{'color':'#091f92','edge_color':'gray', 'hatch':''}\
-            ,'INs':{'color':'#091f92','edge_color':'gray', 'hatch':''}\
-            ,'DEL':{'color':'#ba8759','edge_color':'gray', 'hatch':''}\
-            ,'DELs':{'color':'#ba8759','edge_color':'gray', 'hatch':''}\
-            ,'SUB':{'color':'#ffcc33','edge_color':'gray', 'hatch':''}\
-            ,'OTHERS':{'color':'#808080','edge_color':'gray', 'hatch':''}\
-            ,'no_mutation':{'color':'#111111','edge_color':'gray', 'hatch':''}\
-            ,'U':{'color':'#f0d271','edge_color':'gray', 'hatch':''}\
-            ,'B':{'color':'#808080','edge_color':'black', 'hatch':''}\
-            ,'D':{'color':'#f5ad62','edge_color':'gray', 'hatch':''}\
-            ,'X':{'color':'#d3d3d3','edge_color':'black', 'hatch':''}\
-            ,'upstream':{'color':'#f0d271','edge_color':'gray', 'hatch':''}\
-            ,'upstream_both':{'color':'#C4C4C4','edge_color':'#f0d271', 'hatch':'\\\\\\'}\
-            ,'upstream_both_downstream':{'color':'#979797','edge_color':'black', 'hatch':'xx'}\
-            ,'both':{'color':'#808080','edge_color':'black', 'hatch':''}\
-            ,'both_downstream':{'color':'#C4C4C4','edge_color':'#f5ad62', 'hatch':'////'}\
-            ,'downstream':{'color':'#f5ad62','edge_color':'gray', 'hatch':''}\
-            ,'deletion_spans_analysed_window':{'color':'#a9a9a9','edge_color':'black', 'hatch':''}\
-            ,'deletion spans analysed window':{'color':'#a9a9a9','edge_color':'black', 'hatch':''}\
-            ,'PAM_distal_nt_in_MH':{'color':'#52D8FF','edge_color':'gray', 'hatch':''}\
-            ,'PAM_proximal_nt_in_MH':{'color':'#FADA52','edge_color':'gray', 'hatch':''}\
-            ,'no_MH_likely':{'color':'#A9A9A9','edge_color':'gray', 'hatch':''}\
-            ,'no_MH':{'color':'#D3D3D3','edge_color':'gray', 'hatch':''}\
-            ,'A':{'color':'#70c936','edge_color':'gray', 'hatch':''}\
-            ,'C':{'color':'#ff0000','edge_color':'gray', 'hatch':''}\
-            ,'G':{'color':'#ffd42a','edge_color':'gray', 'hatch':''}\
-            ,'T':{'color':'#9955ff','edge_color':'gray', 'hatch':''}\
-            ,True:{'color':'#D3D3D3','edge_color':'gray', 'hatch':''}\
-            ,False:{'color':'#B8BEDB','edge_color':'gray', 'hatch':''}\
-            ,'True':{'color':'#D3D3D3','edge_color':'gray', 'hatch':''}\
-            ,'False':{'color':'#B8BEDB','edge_color':'gray', 'hatch':''}\
-            ,'unmethylated':{'color':'#000000','edge_color':'gray', 'hatch':''}\
-            ,'CG_only':{'color':'#4D4D4D','edge_color':'gray', 'hatch':''}\
-            ,'heterochromatin':{'color':'#999999','edge_color':'gray', 'hatch':''}\
-            ,'RdDM':{'color':'#fafafa','edge_color':'gray', 'hatch':''}}
+        # TODO warning, markers does not work, yet...
+        properties_dic = {'stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'//', 'marker':'o'}
+            ,'stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'////', 'marker':'o'}
+            ,'blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\', 'marker':'o'}
+            ,'cannot_be_determined':{'color':'white','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'can_not_be_determined':{'color':'white','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'can not be determined':{'color':'white','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'distal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'\\\\', 'marker':'o'}
+            ,'distal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'distal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'\\\\', 'marker':'o'}
+            ,'distal_stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'distal_blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\', 'marker':'o'}
+            ,'distal_blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'proximal_blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'proximal_blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'//', 'marker':'o'}
+            ,'proximal_stagg1nt':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'proximal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'//', 'marker':'o'}
+            ,'proximal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'proximal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'//', 'marker':'o'}
+            ,'gap_out_of_cut':{'color':'gray','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'IN':{'color':'#091f92','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'INs':{'color':'#091f92','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'DEL':{'color':'#ba8759','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'DELs':{'color':'#ba8759','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'SUB':{'color':'#ffcc33','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'OTHERS':{'color':'#808080','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'no_mutation':{'color':'#111111','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'U':{'color':'#f0d271','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'B':{'color':'#808080','edge_color':'black', 'hatch':'', 'marker':'o'}
+            ,'D':{'color':'#f5ad62','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'X':{'color':'#d3d3d3','edge_color':'black', 'hatch':'', 'marker':'o'}
+            ,'upstream':{'color':'#f0d271','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'upstream_both':{'color':'#C4C4C4','edge_color':'#f0d271', 'hatch':'\\\\\\', 'marker':'o'}
+            ,'upstream_both_downstream':{'color':'#979797','edge_color':'black', 'hatch':'xx', 'marker':'o'}
+            ,'both':{'color':'#808080','edge_color':'black', 'hatch':'', 'marker':'o'}
+            ,'both_downstream':{'color':'#C4C4C4','edge_color':'#f5ad62', 'hatch':'////', 'marker':'o'}
+            ,'downstream':{'color':'#f5ad62','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'deletion_spans_analysed_window':{'color':'#a9a9a9','edge_color':'black', 'hatch':'', 'marker':'o'}
+            ,'deletion spans analysed window':{'color':'#a9a9a9','edge_color':'black', 'hatch':'', 'marker':'o'}
+            ,'PAM_distal_nt_in_MH':{'color':'#52D8FF','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'PAM_proximal_nt_in_MH':{'color':'#FADA52','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'no_MH_likely':{'color':'#A9A9A9','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'no_MH':{'color':'#D3D3D3','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'A':{'color':'#70c936','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'C':{'color':'#ff0000','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'G':{'color':'#ffd42a','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'T':{'color':'#9955ff','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,True:{'color':'#D3D3D3','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,False:{'color':'#B8BEDB','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'True':{'color':'#D3D3D3','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'False':{'color':'#B8BEDB','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'unmethylated':{'color':'#000000','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'CG_only':{'color':'#4D4D4D','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'heterochromatin':{'color':'#999999','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'RdDM':{'color':'#fafafa','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'Homo sapiens - HCT116 - 8': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'Homo sapiens - HCT116 - 24': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': '^'}
+            ,'Homo sapiens - HCT116 - 48': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Homo sapiens - HEK293 - 8': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'Homo sapiens - HEK293 - 24': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': '^'}
+            ,'Homo sapiens - HEK293 - 48': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Homo sapiens - K562 - 8': {'color': '#520047', 'edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'Homo sapiens - K562 - 24': {'color': "#520047", 'edge_color':'gray', 'hatch':'', 'marker':'^'}
+            ,'Homo sapiens - K562 - 48': {'color': '#520047', 'edge_color':'gray', 'hatch':'', 'marker':'s'}
+            ,'Homo sapiens - HAP1 - 48to72': {'color': 'pink', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Homo sapiens - Jurkat - 48to72': {'color': 'purple', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Homo sapiens - Hela - 72': {'color': 'brown', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Arabidopsis thaliana - xxx - 504': {'color': 'green', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'Arabidopsis thaliana - xxx - unknown': {'color': 'green', 'edge_color':'gray', 'hatch':'', 'marker': '*'}
+            ,'Nicotiana benthamiana - xxx - 120': {'color': 'green', 'edge_color':'gray', 'hatch':'', 'marker': 'v'}
+            ,'Petunia hybrida - xxx - 24': {'color': 'green', 'edge_color':'gray', 'hatch':'', 'marker': '>'}
+            ,'Silene latifoliaa - xxx - xx': {'color': 'green', 'edge_color':'gray', 'hatch':'', 'marker': '<'}
+            ,'Solanum lycopersicum - xxx - 24': {'color': 'green', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'plant': {'color': 'lightgreen', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'animal': {'color': '#910089', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            }
     else:
         print('The properties_dic is not a dictionary, and also the integrated dictionary is not going to be used.')
 

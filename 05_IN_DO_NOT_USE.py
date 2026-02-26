@@ -19,7 +19,7 @@ show_plots = True
 
 filter_criterion = 'All'
 filter_value = 'All'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_samples_limit5efficacy_260109.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_All_260223.tsv%%'
 data_source = 'all_samples'
 project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
 #####
@@ -73,7 +73,10 @@ file_number = '02'
 
 # Define list
 default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
-list_of_events = ['1', '2', '3', '4', '5', '>6']
+maximum_to_view = 2
+# Make a list of events with numbers from 1 to maximum_to_view and >maximum_to_view
+list_of_events = [str(i) for i in range(1, maximum_to_view+1)]
+list_of_events.append(f'>{maximum_to_view}')
 df_IN = df[default_list + ['n_inserted', '4th_nt', '4th_nt_inserted', '%Reads']]
 
 #########################################################################################
@@ -88,7 +91,7 @@ df_pivot.columns.name = None
 # remove column 0
 df_pivot = df_pivot.drop(columns=[0], inplace=False)
 # Make sum from the column len(default_list)+len(list_of_events) to the end as >6
-df_pivot['>6'] = df_pivot.iloc[:, len(default_list)+len(list_of_events)-1 : ].sum(axis=1)
+df_pivot[f'>{maximum_to_view}'] = df_pivot.iloc[:, len(default_list)+len(list_of_events)-1 : ].sum(axis=1)
 # Convert columns to string
 df_pivot.columns = df_pivot.columns.map(str)
 # Keep only default_list + list_of_events columns
@@ -105,23 +108,23 @@ pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list[:-
 
 counter = 2
 color_dic = {'0':'#ffffff', '1':'#A8B7FF', '2':'#536CE8', '3':'#466270', '4':'#514C7A', '5':'#4E8387'\
-                    , '>6':'#6F79A8'}
+                    , f'>{maximum_to_view}':"#AAAAAA"}
 title='Normalised numbers of inserted nucleotides around the cut site, mean of replicates'
 ylabel='Normalised percentage\n of inserted nucleotides'
 no_of_samples = len(pivot_table_avg[['source', 'gRNA_seq', 'organism']].drop_duplicates())
 text_bellow_chart = f'Only IN events around cut.\
                     \nSum of all IN in one sample = 100%\
                     \nNo of samples: {no_of_samples}'
-name_to_save=f'{file_number}_{counter}_IN_no_of_IN_nucleotides_summary_violinplot'
-plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value', number_of_columns=6, show_datapoints=True, jitter=0.1, stripplot_offset=12, dodge=False, clip_right=True, order=None, project_output_dir=project_output_dir, hue=None, integrated_properties_dic=False, color_dic=color_dic, show_hue_medians=False, title=title, xtickt_rotation=0, ylabel=ylabel, xlabel='No. of inserted nucleotides', yaxis_formater=100, name_to_save=name_to_save, text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.05, data_source=data_source, y_min=0, y_max=102, output_format=output_format, show_plots=show_plots)
+name_to_save=f'{file_number}_{counter}_IN_no_of_IN_nucleotides_summary_violinplot_{maximum_to_view}inserted'
+plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value', number_of_columns=len(list_of_events), show_datapoints=True, jitter=0.1, stripplot_offset=12, dodge=False, clip_right=True, order=None, project_output_dir=project_output_dir, hue=None, integrated_properties_dic=False, color_dic=color_dic, show_hue_medians=False, title=title, xtickt_rotation=0, ylabel=ylabel, xlabel='No. of inserted nucleotides', yaxis_formater=100, name_to_save=name_to_save, text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.05, data_source=data_source, y_min=0, y_max=102, output_format=output_format, show_plots=show_plots)
 # Save pivot table as tsv
 pivot_table_avg.to_csv(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
 stat_info = pivot_table_avg.groupby('variable').value.describe().unstack()
 save_stat(stat_info, name_to_save, project_output_dir)
-
 ##########################################################################################
 #        Is the 4th nucleotide the inserted nucleotide?
 ##########################################################################################
+# %%
 list_4th_nt = default_list + ['4th_nt']
 # Filter df_IN for 1nd insertion only
 df_1IN = df_IN[df_IN['n_inserted'] == 1]

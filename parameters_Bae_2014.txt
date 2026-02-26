@@ -39,9 +39,10 @@
 #############################################
 {'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/animals/Bae_et_al_2014/02_CRISPResso2/CRISPRessoBatch_on_batch_221208',
    'project_output_dir':'../../CRISPRlysis_outputs/Bae_et_al_2014',
-   'add_columns':{'organism':'Hela cell lines',
+   'add_columns':{'organism':'Homo sapiens',
       'hours_post_inoculation':'72',
       'deliver_of_nuclease':'xx',
+      'cell_line':'Hela',
       'cell_cycle':'dividing'      
       },
    'data_source_original':'Bae et al., 2014',
