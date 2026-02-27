@@ -5,7 +5,7 @@ import glob
 import pandas as pd
 from datetime import datetime
 ##########################################################################################
-source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260223'
+source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260227'
 output_file_name = '01_merged_02tables_NoFilter_All_' + datetime.now().strftime('%y%m%d') + '.tsv'
 # source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/part_A/Animals'
 # output_file_name = '01_merged_02tables_NoFilter_Animals_' + datetime.now().strftime('%y%m%d') + '.tsv'

@@ -27,7 +27,7 @@ show_plots = True
 # filter_criterion = 'None'
 # filter_value = 'None'
 # data_source = 'all_samples_no_filters'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260225.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260227.tsv'
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples')
 
@@ -35,27 +35,27 @@ show_plots = True
 # filter_criterion = 'efficacy'
 # filter_value = '95'
 # data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260226.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260227.tsv'
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}')
 
-# # 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
-# filter_criterion = 'efficacy_1ntIN'
-# filter_value = '95_80'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_filtered_efficacy_95_samples_260226.tsv'
-# data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/03_filtered_{filter_criterion}_{filter_value}')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_{filter_criterion}_{filter_value}')
+# 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
+filter_criterion = 'efficacy_1ntIN'
+filter_value = '95_80'
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_filtered_efficacy_95_samples_260227.tsv'
+data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/03_filtered_{filter_criterion}_{filter_value}')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_{filter_criterion}_{filter_value}')
 
-# 4 with data based on PCA custering, input tables are result from 03_split_table_by_parameter.py script
-filter_criterion = 'Cluster'
+# # 4 with data based on PCA custering, input tables are result from 03_split_table_by_parameter.py script
+# filter_criterion = 'Cluster'
 # filter_value = '1'
-# filter_value = '2'
-filter_value = '3'
-df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_1ntIN_95_80/07_split_{filter_criterion}_{filter_value}_260226.tsv'
-data_source = 'Filter' + filter_criterion + '_' + filter_value
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}')
+# # filter_value = '2'
+# # filter_value = '3'
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_1ntIN_95_80/07_split_{filter_criterion}_{filter_value}_260227.tsv'
+# data_source = 'Filter' + filter_criterion + '_' + filter_value
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}')
 
 ##########################################################################################
 now = datetime.now()
@@ -165,9 +165,15 @@ hue_order=[
             ,'Petunia hybrida - xxx - 24'
             ,'Silene latifoliaa - xxx - xx'
             ,'Solanum lycopersicum - xxx - 24'
+            ,'Homo sapiens - HCT116 - 4'
+            ,'Homo sapiens - HEK293 - 4'
+            ,'Homo sapiens - K562 - 4'
             ,'Homo sapiens - HCT116 - 8'
             ,'Homo sapiens - HEK293 - 8'
             ,'Homo sapiens - K562 - 8'
+            ,'Homo sapiens - HCT116 - 16'
+            ,'Homo sapiens - HEK293 - 16'
+            ,'Homo sapiens - K562 - 16'
             ,'Homo sapiens - HCT116 - 24'
             ,'Homo sapiens - HEK293 - 24'
             ,'Homo sapiens - K562 - 24'
@@ -211,7 +217,7 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
 name_to_save = f'{file_number}_{panel}_DEL_orientation_summary_violinplot_plant_animals_{filter_criterion}_{filter_value}'
 plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , number_of_columns=3\
-    , show_datapoints=True, jitter=0.05, stripplot_offset=12, dodge=True\
+    , show_datapoints=True, jitter=0.05, stripplot_offset=12, dodge=False\
     , show_hue_medians=False\
     , hue='kingdom', hue_only_for_data_points=True \
     , hatches=False\
@@ -309,7 +315,7 @@ df_pivot
 # If all list_of_events items are not in columns, create them with 0 values
 for item in list_of_events:
     if item not in df_pivot.columns.tolist():
-        df_pivot[item] = int()
+        df_pivot[item] = 0
 # Melt dataframe
 df_pivot = pd.melt(df_pivot, id_vars=default_list, value_vars=list_of_events)
 # remove 'replicate' from default_list
@@ -372,7 +378,8 @@ df_stats = pivot_table_avg[pivot_table_avg['variable'].isin(["5' NOT blunt", "3'
 # Pivot the dataframe to have separate columns for each variable
 df_stats = df_stats.pivot_table(index=default_list, columns='variable', values='value').reset_index()
 # Calculate ALR transformation log(x1/x2) and avoid division by zero by adding a small constant 1e-12
-df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'] = np.log((df_stats["5' NOT blunt"] + 1e-12) / (df_stats["3' NOT blunt"] + 1e-12))
+# df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'] = np.log((df_stats["5' NOT blunt"] + 1e-12) / (df_stats["3' NOT blunt"] + 1e-12))
+df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'] = np.log((df_stats["5' NOT blunt"] + 1e-6) / (df_stats["3' NOT blunt"] + 1e-6))
 
 # Perform Wilcoxon signed-rank test on ALR values
 statistic, p_value = stats.wilcoxon(df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'])

@@ -16,7 +16,8 @@ filter_criterion = 'efficacy'
 filter_value = str(x)
 output_directory = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}'
 
-input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260225.tsv'
+# input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260225.tsv'
+input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260227.tsv'
 output_nofilter_tsv = f'02_pivot_table_no_filter_All_{datetime.now().strftime("%y%m%d")}.tsv'
 output_tsv = f'03_filtered_efficacy_samples_limit{100-x}efficacy_All_{datetime.now().strftime("%y%m%d")}.tsv'
 output_low_efficacy_txt = f'03_low_efficacy_samples_limit{100-x}efficacy_All_{datetime.now().strftime("%y%m%d")}.txt'

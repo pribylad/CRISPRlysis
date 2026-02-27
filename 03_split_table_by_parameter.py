@@ -10,7 +10,7 @@ from datetime import datetime
 # input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/nondividing_animal/03_filtered_efficacy_samples_limit5efficacy_260110.tsv'
 
 output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_1ntIN_95_80'
-input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_filtered_efficacy_95_samples_260226.tsv'
+input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_filtered_efficacy_95_samples_260227.tsv'
 
 
 # load the filtered dataframe

@@ -287,14 +287,20 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'CG_only':{'color':'#4D4D4D','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'heterochromatin':{'color':'#999999','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'RdDM':{'color':'#fafafa','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'Homo sapiens - HCT116 - 4': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': '*'}
             ,'Homo sapiens - HCT116 - 8': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
-            ,'Homo sapiens - HCT116 - 24': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': '^'}
+            ,'Homo sapiens - HCT116 - 16': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': '^'}
+            ,'Homo sapiens - HCT116 - 24': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': '<'}
             ,'Homo sapiens - HCT116 - 48': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Homo sapiens - HEK293 - 4': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': '*'}
             ,'Homo sapiens - HEK293 - 8': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
-            ,'Homo sapiens - HEK293 - 24': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': '^'}
+            ,'Homo sapiens - HEK293 - 16': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': '^'}
+            ,'Homo sapiens - HEK293 - 24': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': '<'}
             ,'Homo sapiens - HEK293 - 48': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Homo sapiens - K562 - 4': {'color': '#520047', 'edge_color':'gray', 'hatch':'', 'marker':'*'}
             ,'Homo sapiens - K562 - 8': {'color': '#520047', 'edge_color':'gray', 'hatch':'', 'marker':'o'}
-            ,'Homo sapiens - K562 - 24': {'color': "#520047", 'edge_color':'gray', 'hatch':'', 'marker':'^'}
+            ,'Homo sapiens - K562 - 16': {'color': '#520047', 'edge_color':'gray', 'hatch':'', 'marker':'^'}
+            ,'Homo sapiens - K562 - 24': {'color': "#520047", 'edge_color':'gray', 'hatch':'', 'marker':'<'}
             ,'Homo sapiens - K562 - 48': {'color': '#520047', 'edge_color':'gray', 'hatch':'', 'marker':'s'}
             ,'Homo sapiens - HAP1 - 48to72': {'color': 'pink', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
             ,'Homo sapiens - Jurkat - 48to72': {'color': 'purple', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
