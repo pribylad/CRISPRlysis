@@ -14,19 +14,19 @@ from sklearn.preprocessing import StandardScaler
 import os
 
 from scripts.dict_functions import get_color_dic_35_violin
-from scripts.plot_functions import plot_sns_violin_and_print
+from scripts.plot_functions import plot_sns_violin_and_print, save_stat
 # %%
 ##########################################################################################
 output_format = 'png'
 show_plots = True
 
-# # 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs
-# filter_criterion = 'None'
-# filter_value = 'None'
-# data_source = 'all_samples_no_filters'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260227.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples')
+# 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs
+filter_criterion = 'None'
+filter_value = 'None'
+data_source = 'all_samples_no_filters'
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260227.tsv'
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples')
 
 # # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
 # filter_criterion = 'efficacy'
@@ -36,13 +36,13 @@ show_plots = True
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}')
 
-# 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
-filter_criterion = 'efficacy_1ntIN'
-filter_value = '95_80'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_filtered_efficacy_95_samples_260227.tsv'
-data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/03_filtered_{filter_criterion}_{filter_value}')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_{filter_criterion}_{filter_value}')
+# # 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
+# filter_criterion = 'efficacy_1ntIN'
+# filter_value = '95_80'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_filtered_efficacy_95_samples_260227.tsv'
+# data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/03_filtered_{filter_criterion}_{filter_value}')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_{filter_criterion}_{filter_value}')
 
 ##########################################################################################
 now = datetime.now()
@@ -70,12 +70,12 @@ df['blunt_cut_with_MH_possible'] = df['blunt_cut_with_MH_possible'].astype(str)
 # change TRUE to True and FALSE to False in blunt_cut_with_MH_possible column
 df['blunt_cut_with_MH_possible'] = df['blunt_cut_with_MH_possible'].replace({'TRUE':'True', 'FALSE':'False'})
 df.columns
-df['Maximal_MH_len'].unique()
+# df['Maximal_MH_len'].unique()
 # %%
 ##########################################################################################
-default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'Maximal_MH_len', 'replicate']
+default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'replicate']
 list_of_events = ['3\' NOT blunt', '5\' possible blunt', '5\' NOT blunt', 'eider 3\' or 5\' possible blunt', 'eider 3\' or 5\' NOT blunt']
-df_end = df[default_list + ['Gap_around_cut', 'End_3_5', 'blunt_cut_with_MH_possible', '%Reads']]
+df_end = df[default_list + ['Gap_around_cut', 'End_3_5', 'blunt_cut_with_MH_possible', 'Maximal_MH_len', '%Reads']]
 # Remove rows where Maximal_MH_len is 'no_gap', '0' or 'gap_out_of_cut'
 df_end = df_end[~df_end['Maximal_MH_len'].isin(['no_gap', '0', 'gap_out_of_cut'])]
 # filter out deletions which are not around the cut
@@ -92,11 +92,24 @@ df_end = df_end.drop(columns=['End_3_5', 'blunt_cut_with_MH_possible'], inplace=
 # Make column Maximal_MH_len integer
 df_end['Maximal_MH_len'] = df_end['Maximal_MH_len'].astype(int)
 df_end['Maximal_MH_len'].unique()
+
+# %%
+# Make list_of_events, for each event in current list_of_events add unique values from Maximal_MH_len column with event name, for example '3\' NOT blunt 1', '3\' NOT blunt 2' etc. This is needed for plotting with color_dic
+new_list_of_events = []
+for event in list_of_events:
+    for MH_len in df_end['Maximal_MH_len'].unique():
+        new_list_of_events.append(event + '_' + str(MH_len))
+list_of_events = new_list_of_events
+list_of_events
 # %%
 # Get data
-pivot = pd.pivot_table(df_end, index=default_list, columns='End_3_5_blunt', values='%Reads', aggfunc='sum', fill_value=0)
+pivot = pd.pivot_table(df_end, index=default_list, columns=['End_3_5_blunt', 'Maximal_MH_len'], values='%Reads', aggfunc='sum', fill_value=0)
 # reset pivot and remove index
 df_pivot = pivot.reset_index()
+# Make multiindex columns to strings
+df_pivot.columns = df_pivot.columns.map(lambda x: '_'.join(map(str, x)) if isinstance(x, tuple) else x)
+# If column name ends with '_', remove it
+df_pivot.columns = df_pivot.columns.str.rstrip('_')
 # remove index name
 df_pivot.columns.name = None
 # Normalise rows to 100%
@@ -113,6 +126,9 @@ default_list.remove('replicate')
 pivot_table_avg = create_pivot_table(df_pivot, default_list, columns='variable', values='value', aggfunc='mean')
 # Melt pivot table_avg reset index
 pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list, value_vars=list_of_events)
+# Make column Maximal_MH_len by splitting variable column by '_' and taking last element and converting it to integer
+pivot_table_avg['Maximal_MH_len'] = pivot_table_avg['variable'].apply(lambda x: int(x.split('_')[-1]))
+pivot_table_avg['variable'] = pivot_table_avg['variable'].apply(lambda x: '_'.join(x.split('_')[:-1]))
 pivot_table_avg
 # %%
 #########################################################################################
@@ -129,7 +145,7 @@ text_bellow_chart = f'Only DELs around the cut are plotted.\
                     \nNo of samples: {no_of_samples}\
                     \nUnique MH lengths: {pivot_table_avg["Maximal_MH_len"].unique()}'
 
-name_to_save = f'07_DEL_end_summary_norm_violinplot_{filter_criterion}_{filter_value}'
+name_to_save = f'15a_DEL_end_MH_norm_violinplot_{filter_criterion}_{filter_value}'
 color_dic = get_color_dic_35_violin()
 # Upend color dict besed on the sns.color_palette('Set2') for no of unique values in Maximal_MH_len column
 unique_MH_len = df_end['Maximal_MH_len'].unique()
@@ -162,4 +178,137 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , project_output_dir=charts_output_dir\
     , data_source=data_source, output_format=output_format\
     , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+# Save pivot table as tsv
+pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
+# Save statistics
+stat_info = pivot_table_avg.groupby(['variable', 'Maximal_MH_len']).value.describe()
+save_stat(stat_info, name_to_save, charts_output_dir)
+
+
+
+##########################################################################################
+# ONLY 5' and 3' without splitting for NOT blunt and possible blunt
+##########################################################################################
+# %%
+##########################################################################################
+default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'replicate']
+list_of_events = ['3 end', '5 end', 'eider 3\' or 5\'']
+df_end = df[default_list + ['Gap_around_cut', 'End_3_5', 'Maximal_MH_len', '%Reads']]
+# Remove rows where Maximal_MH_len is 'no_gap', '0' or 'gap_out_of_cut'
+df_end = df_end[~df_end['Maximal_MH_len'].isin(['no_gap', '0', 'gap_out_of_cut'])]
+# filter out deletions which are not around the cut
+df_end = df_end[df_end['Gap_around_cut'] == True]
+# Change values in End_3_5 to be 3', 5' and cannot_be_determined needed for plotting with color_dic
+df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3 end', 5:'5 end', 0:'eider 3\' or 5\''})
+
+# Make column Maximal_MH_len integer
+df_end['Maximal_MH_len'] = df_end['Maximal_MH_len'].astype(int)
+df_end['Maximal_MH_len'].unique()
+
+# %%
+# Make list_of_events, for each event in current list_of_events add unique values from Maximal_MH_len column with event name, for example '3\' NOT blunt 1', '3\' NOT blunt 2' etc. This is needed for plotting with color_dic
+new_list_of_events = []
+for event in list_of_events:
+    for MH_len in df_end['Maximal_MH_len'].unique():
+        new_list_of_events.append(event + '_' + str(MH_len))
+list_of_events = new_list_of_events
+list_of_events
+# %%
+# Get data
+pivot = pd.pivot_table(df_end, index=default_list, columns=['End_3_5', 'Maximal_MH_len'], values='%Reads', aggfunc='sum', fill_value=0)
+# reset pivot and remove index
+df_pivot = pivot.reset_index()
+# %%
+df_pivot.columns
+# %%
+df_pivot.columns
+# %%
+# Make multiindex columns to strings
+df_pivot.columns = df_pivot.columns.map(lambda x: '_'.join(map(str, x)) if isinstance(x, tuple) else x)
+df_pivot.columns
+# %%
+# If column name ends with '_', remove it
+df_pivot.columns = df_pivot.columns.str.rstrip('_')
+df_pivot.columns
+# %%
+# remove index name
+df_pivot.columns.name = None
+# Normalise rows to 100%
+df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
+# If all list_of_events items are not in columns, create them with 0 values
+for item in list_of_events:
+    if item not in df_pivot.columns.tolist():
+        df_pivot[item] = 0
+df_pivot
+# %%
+# Melt dataframe
+df_pivot = pd.melt(df_pivot, id_vars=default_list, value_vars=list_of_events)
+# remove 'replicate' from default_list
+default_list.remove('replicate')
+# Make pivot table with all columns without column replicate and make average of values
+pivot_table_avg = create_pivot_table(df_pivot, default_list, columns='variable', values='value', aggfunc='mean')
+# Melt pivot table_avg reset index
+pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list, value_vars=list_of_events)
+# Make column Maximal_MH_len by splitting variable column by '_' and taking last element and converting it to integer
+pivot_table_avg['Maximal_MH_len'] = pivot_table_avg['variable'].apply(lambda x: int(x.split('_')[-1]))
+pivot_table_avg['variable'] = pivot_table_avg['variable'].apply(lambda x: '_'.join(x.split('_')[:-1]))
+# Change values in variable column from 3 to 3' and from 5 to 5'
+pivot_table_avg['variable'] = pivot_table_avg['variable'].replace({'3':'3\'', '5':'5\''})
+pivot_table_avg
+# %%
+pivot_table_avg['variable'].unique()
+# %%
+#########################################################################################
+# plot VIOLINPLOT
+##########################################################################################
+# NORMALISED
+# Set charts properties for violinplot
+title = 'Normalised ends participating on the repair, mean of replicates, MH length'
+ylabel = 'Normalised percentage of ends \n around cut events'
+no_of_samples = pivot_table_avg['ID_no_rep'].nunique()
+text_bellow_chart = f'Only DELs around the cut are plotted.\
+                    \nNormalised to: SUM of all ends in individual sample = 100%\
+                    \n3\' possible blunt can not be in -2,0,0 setup -> it is eider 3\' or 5\' NOT blunt\
+                    \nNo of samples: {no_of_samples}\
+                    \nUnique MH lengths: {pivot_table_avg["Maximal_MH_len"].unique()}'
+
+name_to_save = f'15b_DEL_end_MH_norm_violinplot_{filter_criterion}_{filter_value}'
+color_dic = get_color_dic_35_violin()
+# Upend color dict besed on the sns.color_palette('Set2') for no of unique values in Maximal_MH_len column
+unique_MH_len = df_end['Maximal_MH_len'].unique()
+palette = sns.color_palette('Set2', n_colors=len(unique_MH_len))
+# Convert palette to hexadecimal
+palette = palette.as_hex()
+MH_colour_dic = dict(zip(unique_MH_len, palette))
+# Join color_dic with MH_colour_dic
+color_dic.update(MH_colour_dic)
+color_dic
+# %%
+
+plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+    , number_of_columns=20\
+    , show_datapoints=True, jitter=0.1, stripplot_offset=5, dodge=True\
+    , show_hue_medians=False\
+    , boxplot_distances_with=[0.8, 0.3]\
+    , hue='Maximal_MH_len', hue_only_for_data_points=False \
+    , hatches=False\
+    , clip_right=True\
+    , title=title, xtickt_rotation=-55, ylabel=ylabel\
+    , order=['5 end', '3 end', 'eider 3\' or 5\'']\
+    , plot_legend=True\
+    , integrated_properties_dic=False, color_dic=color_dic\
+    , text_bellow_chart=text_bellow_chart\
+    , y_legend_coordinate=-0.45, yaxis_formater=100\
+    , x_max=None\
+    , change_edge_color=False\
+    , name_to_save=name_to_save\
+    , project_output_dir=charts_output_dir\
+    , data_source=data_source, output_format=output_format\
+    , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+# %%
+# Save pivot table as tsv
+pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
+# Save statistics
+stat_info = pivot_table_avg.groupby(['variable', 'Maximal_MH_len']).value.describe()
+save_stat(stat_info, name_to_save, charts_output_dir)
 # %%
