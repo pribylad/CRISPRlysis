@@ -42,7 +42,8 @@
    'add_columns':{'organism':'Solanum lycopersicum',
       'hours_post_inoculation':24,
       'deliver_of_nuclease':'protoplasts transfection',
-      'cell_cycle':'nondividing'            
+      'cell_cycle':'nondividing'
+      'cell_line':'leaf protoplasts'          
       },
    'data_source_original':'Slaman et al., 2024',
    'cut_position':49,

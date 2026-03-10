@@ -5,7 +5,7 @@ import glob
 import pandas as pd
 from datetime import datetime
 ##########################################################################################
-source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260227'
+source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260305'
 output_file_name = '01_merged_02tables_NoFilter_All_' + datetime.now().strftime('%y%m%d') + '.tsv'
 # source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/part_A/Animals'
 # output_file_name = '01_merged_02tables_NoFilter_Animals_' + datetime.now().strftime('%y%m%d') + '.tsv'
@@ -14,6 +14,9 @@ output_file_name = '01_merged_02tables_NoFilter_All_' + datetime.now().strftime(
 
 # source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/Kamoen_2024/WT'
 # output_file_name = '01_merged_02tables_NoFilter_Kamoen_WT_' + datetime.now().strftime('%y%m%d') + '.tsv'
+
+# source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/Weiss_0_8_7_4'
+# output_file_name = '01_merged_02tables_NoFilter_Weiss_0874_' + datetime.now().strftime('%y%m%d') + '.tsv'
 ##########################################################################################
 
 output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/'
@@ -23,6 +26,7 @@ if not os.path.exists(output_directory):
 # Make dictionary to assign plant/animal/yeast origin and colour for scatter plot
 organism_dict = {
     'A. thaliana Col-0': 'plant',
+    'A. thaliana': 'plant',
     'Arabidopsis thaliana': 'plant',
     'HCT116': 'animal',
     'HEK293': 'animal',

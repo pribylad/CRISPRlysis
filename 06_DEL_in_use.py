@@ -20,25 +20,30 @@ from statannotations.Annotator import Annotator
 from scripts.plot_functions import plot_sns_violin_and_print, save_stat
 from scripts.dict_functions import get_color_dic_35_violin
 ##########################################################################################
-output_format = 'svg'
+output_format = 'png'
 show_plots = True
+individual_dataset = False    # If False (for settings 1, 2, and 3), Kingdom and ID_no_reps is used in the default_list and additional plots for them are made.
 
-# # 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs
-# filter_criterion = 'None'
-# filter_value = 'None'
-# data_source = 'all_samples_no_filters'
+# TODO individual_dataset must be False
+# 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs
+filter_criterion = 'None'
+filter_value = 'None'
+data_source = 'all_samples_no_filters'
 # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260227.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples')
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260305.tsv'
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples')
 
-# 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
-filter_criterion = 'efficacy'
-filter_value = '95'
-data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260227.tsv'
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}')
+# TODO individual_dataset must be False
+# # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
+# filter_criterion = 'efficacy'
+# filter_value = '95'
+# data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260227.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}')
 
+# TODO individual_dataset must be False
 # # 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
 # filter_criterion = 'efficacy_1ntIN'
 # filter_value = '95_80'
@@ -47,15 +52,37 @@ table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_f
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/03_filtered_{filter_criterion}_{filter_value}')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_{filter_criterion}_{filter_value}')
 
-# # 4 with data based on PCA custering, input tables are result from 03_split_table_by_parameter.py script
-# filter_criterion = 'Cluster'
-# filter_value = '1'
-# # filter_value = '2'
-# # filter_value = '3'
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_1ntIN_95_80/07_split_{filter_criterion}_{filter_value}_260227.tsv'
-# data_source = 'Filter' + filter_criterion + '_' + filter_value
+# TODO individual_dataset must be True
+# # 4 with data from 02_mastertable outputs from CRISPRlysis.py
+# filter_criterion = 'HEK293'
+# # filter_value = '8'
+# # filter_value = '16'
+# filter_value = '48'
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/02_mastertable_{filter_criterion}_RNP_{filter_value}_260305.tsv'
+# data_source = 'Filter ' + filter_criterion + '_' + filter_value
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}')
+
+# filter_criterion = 'N-benthamiana'
+# filter_value = '120'
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/Pribylova_et_al_2022/02_mastertable_P35S_WT_260206.tsv'
+# data_source = 'Filter ' + filter_criterion + '_' + filter_value
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Pribylova')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Pribylova')
+
+# filter_criterion = 'A-thaliana'
+# filter_value = '504'
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/Kamoen_et_al_2024/02_mastertable_WT_260305.tsv'
+# data_source = 'Filter ' + filter_criterion + '_' + filter_value
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Kamoen')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Kamoen')
+
+# filter_criterion = 'A-thaliana'
+# filter_value = 'T1'
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_Weiss_0874_260305.tsv'
+# data_source = 'Filter ' + filter_criterion + '_' + filter_value
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Weiss')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Weiss')
 
 ##########################################################################################
 now = datetime.now()
@@ -102,7 +129,10 @@ file_number = '002_Fig'
 
 # Define list of indexes for pivot table
 # default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
-default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'replicate']
+if individual_dataset == False:
+    default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'replicate']
+else:
+    default_list = ['source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'replicate']
 list_of_events = ['upstream', 'both', 'downstream', 'cannot_be_determined', 'X']
 df_DEL_orientation = df[default_list + ['DEL_orientation', 'Gap_around_cut', '%Reads']]
 # Filter out rows where Gap_around_cut is False
@@ -133,6 +163,10 @@ df_pivot.to_csv(Path(str(table_output_dir) + '/' + file_number + '_DEL_orientati
 # Normalise rows to 100%
 df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
 # Melt dataframe
+# Check if all list_of_events items are in columns, if not create them with 0 values
+for item in list_of_events:
+    if item not in df_pivot.columns.tolist():
+        df_pivot[item] = 0
 df_pivot = df_pivot.melt(id_vars=default_list, value_vars=list_of_events)
 # Remove 'replicate' from default_list
 default_list.remove('replicate')
@@ -142,7 +176,6 @@ pivot_table_avg = create_pivot_table(df_pivot, default_list, columns='variable',
 pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list, value_vars=list_of_events)
 # Save pivot table as tsv
 pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + '05_pivot_DEL_orientation_normalised_avg' + filter_criterion + '_' + filter_value + '_' + date + '.tsv'), sep='\t')
-# %%
 # Make column combining organism and cell_line for better visualisation in the plot
 pivot_table_avg['organism_cell_line_hpi'] = pivot_table_avg['organism'] + ' - ' + pivot_table_avg['cell_line'] + ' - ' + pivot_table_avg['hours_post_inoculation']
 pivot_table_avg
@@ -160,8 +193,12 @@ name_to_save = f'{file_number}_{panel}_DEL_orientation_summary_violinplot_all_gr
 # hue order
 hue_order=[
             'Arabidopsis thaliana - xxx - 504'
+            ,'Arabidopsis thaliana - root culture - 504'
             ,'Arabidopsis thaliana - xxx - unknown'
+            ,'A. thaliana - embryo - unknown'
+            ,'A. thaliana - embryo - T1'
             ,'Nicotiana benthamiana - xxx - 120'
+            ,'Nicotiana benthamiana - leaf - 120'
             ,'Petunia hybrida - xxx - 24'
             ,'Silene latifoliaa - xxx - xx'
             ,'Solanum lycopersicum - xxx - 24'
@@ -192,49 +229,49 @@ if missing_hue_values:
 # If there are more values in hue_order and they are missing in organism_cell_line_hpi.unique() remove them from hue_order
 hue_order = [value for value in hue_order if value in unique_hue_values]
 
+if individual_dataset == False:
+    plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+        , number_of_columns=15\
+        , show_datapoints=True, jitter=0.0, stripplot_offset=0, dodge=True\
+        , show_hue_medians=False\
+        , hue='organism_cell_line_hpi', hue_only_for_data_points=True \
+        , hue_order=hue_order
+        , hatches=False\
+        , clip_right=True\
+        , title=title, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
+        , order=order\
+        , plot_legend=True\
+        , integrated_properties_dic=True, color_dic=None\
+        , text_bellow_chart=text_bellow_chart\
+        , y_legend_coordinate=-0.4, yaxis_formater=100\
+        , x_max=None\
+        , change_edge_color=True\
+        , name_to_save=name_to_save\
+        , project_output_dir=charts_output_dir\
+        , data_source=data_source, output_format=output_format\
+        , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 
-plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
-    , number_of_columns=15\
-    , show_datapoints=True, jitter=0.0, stripplot_offset=0, dodge=True\
-    , show_hue_medians=False\
-    , hue='organism_cell_line_hpi', hue_only_for_data_points=True \
-    , hue_order=hue_order
-    , hatches=False\
-    , clip_right=True\
-    , title=title, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
-    , order=order\
-    , plot_legend=True\
-    , integrated_properties_dic=True, color_dic=None\
-    , text_bellow_chart=text_bellow_chart\
-    , y_legend_coordinate=-0.4, yaxis_formater=100\
-    , x_max=None\
-    , change_edge_color=True\
-    , name_to_save=name_to_save\
-    , project_output_dir=charts_output_dir\
-    , data_source=data_source, output_format=output_format\
-    , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
-# %%
-name_to_save = f'{file_number}_{panel}_DEL_orientation_summary_violinplot_plant_animals_{filter_criterion}_{filter_value}'
-color_dic = {'upstream':'#f0d271', 'both':'#808080', 'downstream':'#cccccc', 'cannot_be_determined':'#ffffff', 'plant':'#008000', 'animal':'#d15e8c'}
-plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
-    , number_of_columns=3\
-    , show_datapoints=True, jitter=0.05, stripplot_offset=0, dodge=True\
-    , show_hue_medians=True\
-    , hue='kingdom', hue_only_for_data_points=True \
-    , hatches=False\
-    , clip_right=True\
-    , title=title, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
-    , order=order\
-    , plot_legend=True\
-    , integrated_properties_dic=False, color_dic=color_dic\
-    , text_bellow_chart=text_bellow_chart\
-    , y_legend_coordinate=-0.4, yaxis_formater=100\
-    , x_max=None\
-    , change_edge_color=False\
-    , name_to_save=name_to_save\
-    , project_output_dir=charts_output_dir\
-    , data_source=data_source, output_format=output_format\
-    , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+    name_to_save = f'{file_number}_{panel}_DEL_orientation_summary_violinplot_plant_animals_{filter_criterion}_{filter_value}'
+    color_dic = {'upstream':'#f0d271', 'both':'#808080', 'downstream':'#cccccc', 'cannot_be_determined':'#ffffff', 'plant':'#009d73', 'animal':'#cc79a6'}
+    plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+        , number_of_columns=3\
+        , show_datapoints=True, jitter=0.05, stripplot_offset=0, dodge=True\
+        , show_hue_medians=True\
+        , hue='kingdom', hue_only_for_data_points=True \
+        , hatches=False\
+        , clip_right=True\
+        , title=title, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
+        , order=order\
+        , plot_legend=True\
+        , integrated_properties_dic=False, color_dic=color_dic\
+        , text_bellow_chart=text_bellow_chart\
+        , y_legend_coordinate=-0.4, yaxis_formater=100\
+        , x_max=None\
+        , change_edge_color=False\
+        , name_to_save=name_to_save\
+        , project_output_dir=charts_output_dir\
+        , data_source=data_source, output_format=output_format\
+        , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 
 # %%
 panel = 'D'
@@ -286,7 +323,10 @@ counter = 2
 
 # Define list of indexes for pivot table
 # default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
-default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'replicate']
+if individual_dataset == False:
+    default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'replicate']
+else:
+    default_list = ['source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'replicate']
 list_of_events = ['3\' NOT blunt', '5\' possible blunt', '5\' NOT blunt', 'eider 3\' or 5\' possible blunt', 'eider 3\' or 5\' NOT blunt']
 df_end = df[default_list + ['Gap_around_cut', 'Maximal_MH_len', 'End_3_5', 'blunt_cut_with_MH_possible', '%Reads']]
 # Remove rows where Maximal_MH_len is 'no_gap', '0' or 'gap_out_of_cut'

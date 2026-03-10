@@ -42,7 +42,8 @@
    'add_columns':{'organism':'Nicotiana benthamiana',
       'hours_post_inoculation':120,
       'deliver_of_nuclease':'Agroinfiltration',
-      'cell_cycle':'nondividing'      
+      'cell_cycle':'nondividing'
+      'cell_line':'leaf'      
       },
    'data_source_original':'Pribylova et al., 2022',
    'cut_position':120,

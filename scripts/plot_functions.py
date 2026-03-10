@@ -287,32 +287,34 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'CG_only':{'color':'#4D4D4D','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'heterochromatin':{'color':'#999999','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'RdDM':{'color':'#fafafa','edge_color':'gray', 'hatch':'', 'marker':'o'}
-            ,'Homo sapiens - HCT116 - 4': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': '*'}
-            ,'Homo sapiens - HCT116 - 8': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
-            ,'Homo sapiens - HCT116 - 16': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': '^'}
-            ,'Homo sapiens - HCT116 - 24': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': '<'}
-            ,'Homo sapiens - HCT116 - 48': {'color': "#FF00F2", 'edge_color':'gray', 'hatch':'', 'marker': 's'}
-            ,'Homo sapiens - HEK293 - 4': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': '*'}
-            ,'Homo sapiens - HEK293 - 8': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
-            ,'Homo sapiens - HEK293 - 16': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': '^'}
-            ,'Homo sapiens - HEK293 - 24': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': '<'}
-            ,'Homo sapiens - HEK293 - 48': {'color': "#910089", 'edge_color':'gray', 'hatch':'', 'marker': 's'}
-            ,'Homo sapiens - K562 - 4': {'color': '#520047', 'edge_color':'gray', 'hatch':'', 'marker':'*'}
-            ,'Homo sapiens - K562 - 8': {'color': '#520047', 'edge_color':'gray', 'hatch':'', 'marker':'o'}
-            ,'Homo sapiens - K562 - 16': {'color': '#520047', 'edge_color':'gray', 'hatch':'', 'marker':'^'}
-            ,'Homo sapiens - K562 - 24': {'color': "#520047", 'edge_color':'gray', 'hatch':'', 'marker':'<'}
-            ,'Homo sapiens - K562 - 48': {'color': '#520047', 'edge_color':'gray', 'hatch':'', 'marker':'s'}
-            ,'Homo sapiens - HAP1 - 48to72': {'color': 'pink', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
-            ,'Homo sapiens - Jurkat - 48to72': {'color': 'purple', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
-            ,'Homo sapiens - Hela - 72': {'color': 'brown', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
-            ,'Arabidopsis thaliana - xxx - 504': {'color': 'green', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
-            ,'Arabidopsis thaliana - xxx - unknown': {'color': 'green', 'edge_color':'gray', 'hatch':'', 'marker': '*'}
-            ,'Nicotiana benthamiana - xxx - 120': {'color': 'green', 'edge_color':'gray', 'hatch':'', 'marker': 'v'}
-            ,'Petunia hybrida - xxx - 24': {'color': 'green', 'edge_color':'gray', 'hatch':'', 'marker': '>'}
-            ,'Silene latifoliaa - xxx - xx': {'color': 'green', 'edge_color':'gray', 'hatch':'', 'marker': '<'}
-            ,'Solanum lycopersicum - xxx - 24': {'color': 'green', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
-            ,'plant': {'color': 'lightgreen', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
-            ,'animal': {'color': '#910089', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'Homo sapiens - HCT116 - 4': {'color': "#E8B3D1", 'edge_color':'gray', 'hatch':'', 'marker': '*'}
+            ,'Homo sapiens - HCT116 - 8': {'color': "#E8B3D1", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'Homo sapiens - HCT116 - 16': {'color': "#E8B3D1", 'edge_color':'gray', 'hatch':'', 'marker': '^'}
+            ,'Homo sapiens - HCT116 - 24': {'color': "#E8B3D1", 'edge_color':'gray', 'hatch':'', 'marker': '<'}
+            ,'Homo sapiens - HCT116 - 48': {'color': "#E8B3D1", 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Homo sapiens - HEK293 - 4': {'color': "#CC79A7", 'edge_color':'gray', 'hatch':'', 'marker': '*'}
+            ,'Homo sapiens - HEK293 - 8': {'color': "#CC79A7", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'Homo sapiens - HEK293 - 16': {'color': "#CC79A7", 'edge_color':'gray', 'hatch':'', 'marker': '^'}
+            ,'Homo sapiens - HEK293 - 24': {'color': "#CC79A7", 'edge_color':'gray', 'hatch':'', 'marker': '<'}
+            ,'Homo sapiens - HEK293 - 48': {'color': "#CC79A7", 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Homo sapiens - K562 - 4': {'color': '#A55D84', 'edge_color':'gray', 'hatch':'', 'marker':'*'}
+            ,'Homo sapiens - K562 - 8': {'color': '#A55D84', 'edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'Homo sapiens - K562 - 16': {'color': '#A55D84', 'edge_color':'gray', 'hatch':'', 'marker':'^'}
+            ,'Homo sapiens - K562 - 24': {'color': "#A55D84", 'edge_color':'gray', 'hatch':'', 'marker':'<'}
+            ,'Homo sapiens - K562 - 48': {'color': '#A55D84', 'edge_color':'gray', 'hatch':'', 'marker':'s'}
+            ,'Homo sapiens - HAP1 - 48to72': {'color': '#7D3E60', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Homo sapiens - Jurkat - 48to72': {'color': '#810F72', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Homo sapiens - Hela - 72': {'color': '#520047', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Arabidopsis thaliana - xxx - 504': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'Arabidopsis thaliana - root culture - 504': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'Arabidopsis thaliana - xxx - unknown': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '*'}
+            ,'A. thaliana - embryo - unknown': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '*'}
+            ,'Nicotiana benthamiana - xxx - 120': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 'v'}
+            ,'Petunia hybrida - xxx - 24': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '>'}
+            ,'Silene latifoliaa - xxx - xx': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '<'}
+            ,'Solanum lycopersicum - xxx - 24': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'plant': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'animal': {'color': '#cc79a6', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
             }
     else:
         print('The properties_dic is not a dictionary, and also the integrated dictionary is not going to be used.')
