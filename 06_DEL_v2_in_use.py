@@ -20,8 +20,8 @@ from statannotations.Annotator import Annotator
 from scripts.plot_functions import plot_sns_violin_and_print, save_stat
 from scripts.dict_functions import get_color_dic_35_violin
 ##########################################################################################
-# output_format = 'png'
-output_format = 'svg'
+output_format = 'png'
+# output_format = 'svg'
 show_plots = True
 individual_dataset = True    # If False (for settings 1, 2, and 3), Kingdom and ID_no_reps is used in the default_list and additional plots for them are made.
 
@@ -56,19 +56,20 @@ individual_dataset = True    # If False (for settings 1, 2, and 3), Kingdom and 
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/03_filtered_{filter_criterion}_{filter_value}')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_{filter_criterion}_{filter_value}')
 
-# # TODO individual_dataset must be True
-# # 4 with data from 02_mastertable outputs from CRISPRlysis.py
+# TODO individual_dataset must be True
+# 4 with data from 02_mastertable outputs from CRISPRlysis.py
 # filter_criterion = 'HEK293'
-# # filter_criterion = 'K562'
-# # filter_value = '8'
-# # filter_value = '16'
+filter_criterion = 'K562'
+filter_value = '4'
+# filter_value = '8'
+# filter_value = '16'
 # filter_value = '48'
-# individual_dataset = True 
+individual_dataset = True 
 # df_dir = f'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/02_mastertable_{filter_criterion}_RNP_{filter_value}_260305.tsv'
-# # df_dir = f'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/02_mastertable_{filter_criterion}_RNP_{filter_value}_260225.tsv'
-# data_source = 'Filter ' + filter_criterion + '_' + filter_value
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}')
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/02_mastertable_{filter_criterion}_RNP_{filter_value}_260225.tsv'
+data_source = 'Filter ' + filter_criterion + '_' + filter_value
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}')
 
 # filter_criterion = 'N-benthamiana'
 # filter_value = '120'
@@ -86,13 +87,13 @@ individual_dataset = True    # If False (for settings 1, 2, and 3), Kingdom and 
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Kamoen')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Kamoen')
 
-filter_criterion = 'A-thaliana'
-filter_value = 'T1'
-individual_dataset = True
-df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_Weiss_0874_260305.tsv'
-data_source = 'Filter ' + filter_criterion + '_' + filter_value
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Weiss')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Weiss')
+# filter_criterion = 'A-thaliana'
+# filter_value = 'T1'
+# individual_dataset = True
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_Weiss_0874_260305.tsv'
+# data_source = 'Filter ' + filter_criterion + '_' + filter_value
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Weiss')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Weiss')
 
 ##########################################################################################
 now = datetime.now()
