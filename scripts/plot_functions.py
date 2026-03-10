@@ -239,6 +239,8 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'cannot_be_determined':{'color':'white','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'can_not_be_determined':{'color':'white','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'can not be determined':{'color':'white','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'cannot_be_determined_ambiguous':{'color':'white','edge_color':'gray', 'hatch':'//', 'marker':'o'}
+            ,'cannot_be_determined_NO_ambi':{'color':'white','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'distal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'\\\\', 'marker':'o'}
             ,'distal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'distal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'\\\\', 'marker':'o'}
@@ -263,12 +265,19 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'B':{'color':'#808080','edge_color':'black', 'hatch':'', 'marker':'o'}
             ,'D':{'color':'#f5ad62','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'X':{'color':'#d3d3d3','edge_color':'black', 'hatch':'', 'marker':'o'}
+            ,'X_gap_out_of_cut':{'color':'#d3d3d3','edge_color':'black', 'hatch':'', 'marker':'o'}
             ,'upstream':{'color':'#f0d271','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'upstream_ambiguous':{'color':'#f0d271','edge_color':'gray', 'hatch':'//', 'marker':'o'}
+            ,'upstream_NO_ambi':{'color':'#f0d271','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'upstream_both':{'color':'#C4C4C4','edge_color':'#f0d271', 'hatch':'\\\\\\', 'marker':'o'}
             ,'upstream_both_downstream':{'color':'#979797','edge_color':'black', 'hatch':'xx', 'marker':'o'}
             ,'both':{'color':'#808080','edge_color':'black', 'hatch':'', 'marker':'o'}
+            ,'both_ambiguous':{'color':'#808080','edge_color':'gray', 'hatch':'//', 'marker':'o'}
+            ,'both_NO_ambi':{'color':'#808080','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'both_downstream':{'color':'#C4C4C4','edge_color':'#f5ad62', 'hatch':'////', 'marker':'o'}
             ,'downstream':{'color':'#f5ad62','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'downstream_ambiguous':{'color':'#f5ad62','edge_color':'gray', 'hatch':'//', 'marker':'o'}
+            ,'downstream_NO_ambi':{'color':'#f5ad62','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'deletion_spans_analysed_window':{'color':'#a9a9a9','edge_color':'black', 'hatch':'', 'marker':'o'}
             ,'deletion spans analysed window':{'color':'#a9a9a9','edge_color':'black', 'hatch':'', 'marker':'o'}
             ,'PAM_distal_nt_in_MH':{'color':'#52D8FF','edge_color':'gray', 'hatch':'', 'marker':'o'}

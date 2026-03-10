@@ -12,14 +12,16 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import os
 ##########################################################################################
-output_format = 'svg'
+output_format = 'png'
+# output_format = 'svg'
 show_plots = True
 
 # 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs and generating 05_tables by 06_DEL.py script
 filter_criterion = 'None'
 filter_value = 'None'
 data_source = 'all_samples_no_filters'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_pivot_DEL_orientation_normalised_avgNone_None_260305.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_pivot_DEL_orientation_normalised_avgNone_None_260305.tsv'
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_pivot_DEL_orientation_normalised_avgNone_None_260310.tsv'
 # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260305.tsv'
 charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples')
 table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples')
@@ -103,26 +105,7 @@ if missing_indices:
 # Remove from poperties_dict any indices that are not in df_pca
 properties_dict = {key: value for key, value in properties_dict.items() if key in df_pca.index}
 # %%
-# # Data are normalised, so we can directly apply PCA without standardisation
-# pca = PCA(n_components=2)
-# pca_result = pca.fit_transform(df_pca)
-# # Create a new dataframe with PCA results and index from df_pca
-# df_pca_result = pd.DataFrame(data=pca_result, columns=['PC1', 'PC2'], index=df_pca.index)
-# df_pca_result
-# # %%
-# # Print the explained variance ratio for each principal component
-# explained_variance_ratio = pca.explained_variance_ratio_
-# print(f"Explained variance ratio: PC1: {explained_variance_ratio[0]:.2f}, PC2: {explained_variance_ratio[1]:.2f}")
-# # %%
-# # Plot PCA results with seaborn, hue is from index and style is from index
-# sns.set_theme(style='whitegrid')
-# plt.figure(figsize=(5, 5))
-# # plot wit properties_dict
-# for index in df_pca_result.index:
-#     color = properties_dict[index]['color']
-#     marker = properties_dict[index]['marker']
-#     plt.scatter(df_pca_result.loc[index, 'PC1'], df_pca_result.loc[index, 'PC2'], c=color, marker=marker, s=100)
-
+# Plot with clusters based on PCA results and properties_dict styling
 # Data are normalised, so we can directly apply PCA without standardisation
 pca = PCA(n_components=2)
 pca_result = pca.fit_transform(df_pca)
@@ -160,7 +143,27 @@ plt.title('PCA with K-means Clusters')
 plt.legend(*plt.gca().get_legend_handles_labels(), title='Clusters')
 plt.show()
 
-# Make and plot clusters
+# %%
+# Plot based on the samples
+# Data are normalised, so we can directly apply PCA without standardisation
+# pca = PCA(n_components=2)
+# pca_result = pca.fit_transform(df_pca)
+# # Create a new dataframe with PCA results and index from df_pca
+# df_pca_result = pd.DataFrame(data=pca_result, columns=['PC1', 'PC2'], index=df_pca.index)
+# df_pca_result
+# %%
+# Print the explained variance ratio for each principal component
+explained_variance_ratio = pca.explained_variance_ratio_
+print(f"Explained variance ratio: PC1: {explained_variance_ratio[0]:.2f}, PC2: {explained_variance_ratio[1]:.2f}")
+# %%
+# Plot PCA results with seaborn, hue is from index and style is from index
+sns.set_theme(style='whitegrid')
+plt.figure(figsize=(5, 5))
+# plot wit properties_dict
+for index in df_pca_result.index:
+    color = properties_dict[index]['color']
+    marker = properties_dict[index]['marker']
+    plt.scatter(df_pca_result.loc[index, 'PC1'], df_pca_result.loc[index, 'PC2'], c=color, marker=marker, s=100)
 
 plt.title('PCA of DEL orientation normalised average')
 # plot x and y labels as PC1 and PC2 with explained variance ratio*100 in brackets

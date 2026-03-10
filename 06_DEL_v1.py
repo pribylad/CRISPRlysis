@@ -230,26 +230,26 @@ if missing_hue_values:
 hue_order = [value for value in hue_order if value in unique_hue_values]
 
 if individual_dataset == False:
-    plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
-        , number_of_columns=15\
-        , show_datapoints=True, jitter=0.0, stripplot_offset=0, dodge=True\
-        , show_hue_medians=False\
-        , hue='organism_cell_line_hpi', hue_only_for_data_points=True \
-        , hue_order=hue_order
-        , hatches=False\
-        , clip_right=True\
-        , title=title, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
-        , order=order\
-        , plot_legend=True\
-        , integrated_properties_dic=True, color_dic=None\
-        , text_bellow_chart=text_bellow_chart\
-        , y_legend_coordinate=-0.4, yaxis_formater=100\
-        , x_max=None\
-        , change_edge_color=True\
-        , name_to_save=name_to_save\
-        , project_output_dir=charts_output_dir\
-        , data_source=data_source, output_format=output_format\
-        , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+    # plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+    #     , number_of_columns=15\
+    #     , show_datapoints=True, jitter=0.0, stripplot_offset=0, dodge=True\
+    #     , show_hue_medians=False\
+    #     , hue='organism_cell_line_hpi', hue_only_for_data_points=True \
+    #     , hue_order=hue_order
+    #     , hatches=False\
+    #     , clip_right=True\
+    #     , title=title, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
+    #     , order=order\
+    #     , plot_legend=True\
+    #     , integrated_properties_dic=True, color_dic=None\
+    #     , text_bellow_chart=text_bellow_chart\
+    #     , y_legend_coordinate=-0.4, yaxis_formater=100\
+    #     , x_max=None\
+    #     , change_edge_color=True\
+    #     , name_to_save=name_to_save\
+    #     , project_output_dir=charts_output_dir\
+    #     , data_source=data_source, output_format=output_format\
+    #     , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 
     name_to_save = f'{file_number}_{panel}_DEL_orientation_summary_violinplot_plant_animals_{filter_criterion}_{filter_value}'
     color_dic = {'upstream':'#f0d271', 'both':'#808080', 'downstream':'#cccccc', 'cannot_be_determined':'#ffffff', 'plant':'#009d73', 'animal':'#cc79a6'}
