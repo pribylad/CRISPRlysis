@@ -24,6 +24,7 @@ output_format = 'png'
 # output_format = 'svg'
 show_plots = True
 individual_dataset = True    # If False (for settings 1, 2, and 3), Kingdom and ID_no_reps is used in the default_list and additional plots for them are made.
+use_3_5_possible = False
 
 # # TODO individual_dataset must be False
 # # 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs
@@ -32,7 +33,8 @@ individual_dataset = True    # If False (for settings 1, 2, and 3), Kingdom and 
 # data_source = 'all_samples_no_filters'
 # individual_dataset = False
 # # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260227.tsv'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260305.tsv'
+# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260305.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260320.tsv'
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples')
 
@@ -42,7 +44,8 @@ individual_dataset = True    # If False (for settings 1, 2, and 3), Kingdom and 
 # filter_value = '95'
 # individual_dataset = False
 # data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260227.tsv'
+# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260227.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260320.tsv'
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}')
 
@@ -56,20 +59,28 @@ individual_dataset = True    # If False (for settings 1, 2, and 3), Kingdom and 
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/03_filtered_{filter_criterion}_{filter_value}')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_{filter_criterion}_{filter_value}')
 
-# TODO individual_dataset must be True
-# 4 with data from 02_mastertable outputs from CRISPRlysis.py
-# filter_criterion = 'HEK293'
-filter_criterion = 'K562'
-filter_value = '4'
-# filter_value = '8'
-# filter_value = '16'
-# filter_value = '48'
-individual_dataset = True 
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/02_mastertable_{filter_criterion}_RNP_{filter_value}_260305.tsv'
-df_dir = f'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/02_mastertable_{filter_criterion}_RNP_{filter_value}_260225.tsv'
+# # TODO individual_dataset must be True
+# # 4 with data from 02_mastertable outputs from CRISPRlysis.py
+# # filter_criterion = 'HEK293'
+# filter_criterion = 'K562'
+# filter_value = '4'
+# # filter_value = '8'
+# # filter_value = '16'
+# # filter_value = '48'
+# individual_dataset = True 
+# # df_dir = f'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/02_mastertable_{filter_criterion}_RNP_{filter_value}_260305.tsv'
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/02_mastertable_{filter_criterion}_RNP_{filter_value}_260225.tsv'
+# data_source = 'Filter ' + filter_criterion + '_' + filter_value
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}')
+
+filter_criterion = 'Xenopus-tropicalis'
+filter_value = 'xxx'
+individual_dataset = True
+df_dir = f'/home/lefnui/CRISPRlysis_outputs/Iida_et_al_2020/02_mastertable_WT_260320.tsv'
 data_source = 'Filter ' + filter_criterion + '_' + filter_value
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}')
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Iida')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Iida')
 
 # filter_criterion = 'N-benthamiana'
 # filter_value = '120'
@@ -95,6 +106,20 @@ table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_f
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Weiss')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Weiss')
 
+# filter_criterion = 'Random_dataset'
+# use_3_5_possible = True
+# # filter_value = '-2_50_0'
+# # filter_value = '-2_50_2'
+# filter_value = '0_50_2'
+# individual_dataset = True
+# data_source = filter_criterion + '_' + filter_value
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/random_2025/251020_PAM/01_mastertable_PAM_{filter_value}_251020.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_{filter_criterion}_{filter_value}_random_PAM')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_{filter_criterion}_{filter_value}_random_PAM')
+
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/random_2025/251019_noPAM/01_mastertable_251019_{filter_value}_noPAM.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_{filter_criterion}_{filter_value}_random_noPAM')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_{filter_criterion}_{filter_value}_random_noPAM')
 ##########################################################################################
 now = datetime.now()
 # Format the date to YYMMDD
@@ -247,6 +272,8 @@ hue_order=[
             ,'Homo sapiens - HAP1 - 48to72'
             ,'Homo sapiens - Hela - 72'
             ,'Homo sapiens - Jurkat - 48to72'
+            ,'UniCorn - random_dataset - 0'
+            ,'Xenopus tropicalis - xxx - xxx'
 ]
 # Test if all organism_cell_line_hpi.unique() are present in the hue order
 unique_hue_values = pivot_table_avg['organism_cell_line_hpi'].unique()
@@ -356,7 +383,12 @@ if individual_dataset == False:
     default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'replicate']
 else:
     default_list = ['source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'replicate']
-list_of_events = ['3\' NOT blunt', '5\' possible blunt', '5\' NOT blunt', 'eider 3\' or 5\' possible blunt', 'eider 3\' or 5\' NOT blunt']
+
+# For random dataset also use 3' possible blunt
+if use_3_5_possible == True:
+    list_of_events = ['3\' possible blunt', '3\' NOT blunt', '5\' possible blunt', '5\' NOT blunt', 'eider 3\' or 5\' possible blunt', 'eider 3\' or 5\' NOT blunt']
+else:
+    list_of_events = ['3\' NOT blunt', '5\' possible blunt', '5\' NOT blunt', 'eider 3\' or 5\' possible blunt', 'eider 3\' or 5\' NOT blunt']
 df_end = df[default_list + ['Gap_around_cut', 'Maximal_MH_len', 'End_3_5', 'blunt_cut_with_MH_possible', '%Reads']]
 # Remove rows where Maximal_MH_len is 'no_gap', '0' or 'gap_out_of_cut'
 df_end = df_end[~df_end['Maximal_MH_len'].isin(['no_gap', '0', 'gap_out_of_cut'])]
@@ -412,6 +444,11 @@ text_bellow_chart = f'Only DELs around the cut are plotted.\
 
 name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_violinplot_{filter_criterion}_{filter_value}'
 color_dic = get_color_dic_35_violin()
+if use_3_5_possible == True:
+    order = ['5\' NOT blunt', '5\' possible blunt', '3\' NOT blunt', '3\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']
+else:
+    order = ['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']
+
 # TODO split it to True/False for can be blunt cut with MH
 plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , number_of_columns=3\
@@ -421,7 +458,7 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , hatches=False\
     , clip_right=True\
     , title=title, xtickt_rotation=-55, ylabel=ylabel\
-    , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']\
+    , order=order\
     , plot_legend=False\
     , integrated_properties_dic=False, color_dic=color_dic\
     , text_bellow_chart=text_bellow_chart\

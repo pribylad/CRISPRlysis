@@ -324,6 +324,8 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'Solanum lycopersicum - xxx - 24': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
             ,'plant': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
             ,'animal': {'color': '#cc79a6', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'UniCorn - random_dataset - 0;': {'color': '#FFD700', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}  
+            ,'Xenopus tropicalis  - xxx - xxx': {'color': "#181766", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
             }
     else:
         print('The properties_dic is not a dictionary, and also the integrated dictionary is not going to be used.')

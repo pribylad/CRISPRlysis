@@ -5,8 +5,11 @@ import glob
 import pandas as pd
 from datetime import datetime
 ##########################################################################################
-source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260305'
+source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260320'
 output_file_name = '01_merged_02tables_NoFilter_All_' + datetime.now().strftime('%y%m%d') + '.tsv'
+
+# source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260305'
+# output_file_name = '01_merged_02tables_NoFilter_All_' + datetime.now().strftime('%y%m%d') + '.tsv'
 # source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/part_A/Animals'
 # output_file_name = '01_merged_02tables_NoFilter_Animals_' + datetime.now().strftime('%y%m%d') + '.tsv'
 # source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/part_A/Plants'
@@ -36,7 +39,8 @@ organism_dict = {
     'Petunia hybrida': 'plant',
     'Silene latifoliaa': 'plant',
     'Solanum lycopersicum': 'plant',
-    'Homo sapiens': 'animal'
+    'Homo sapiens': 'animal',
+    'Xenopus tropicalis ': 'animal'
 }
 ##########################################################################################
 def load_tsv_files_from_directory(directory_path):
