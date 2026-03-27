@@ -494,6 +494,41 @@ def make_seq_around_optimum_cut(Original_Sequence, cut_position, distance):
     seq = Original_Sequence[cut_position - distance:cut_position] + '|' + Original_Sequence[cut_position:cut_position + distance]
     return seq
 
+def create_first_row_in_alleles_freq_table_with_wt_seq(df):
+    """
+    Create the first row in the alleles frequency table with the wild-type sequence.
+
+    Parameters:
+    df (DataFrame): The DataFrame containing the data, including 'Reference_Sequence' and 'Aligned_Sequence' columns.
+
+    Returns:
+    DataFrame: A new DataFrame with the first row containing the wild-type sequence.
+    """
+    # Find row in the df where Aligned_Sequence is the same as Reference_Sequence and both does not containg '-' and copy it to make the first row of the alleles frequency table with the wild-type sequence. If there are more rows with the same Reference_Sequence and Aligned_Sequence, take the first one. If there is no such row, use the most frequent Reference_Sequence as the wild-type sequence.
+    # Try to find the wild-type row based on the criteria, if not found, use the most frequent Reference_Sequence as the wild-type sequence and create the first row based on it.
+    try:
+        # Search for row where Aligned_Sequence is the same as Reference_Sequence and both does not containg '-'
+        wt_row = df[(df['Aligned_Sequence'] == df['Reference_Sequence']) & (~df['Aligned_Sequence'].str.contains('-')) & (~df['Reference_Sequence'].str.contains('-'))].iloc[0].copy()
+    except IndexError:
+        # If no such row is found, use the most frequent Reference_Sequence as the wild-type sequence for Aligned_Sequence and Reference_Sequence. If there are more rows with the same most frequent Reference_Sequence, take the first one.
+        # Make empty wt_row with the same columns as df
+        wt_row = pd.Series({col: None for col in df.columns})
+        most_frequent_ref_seq = df['Reference_Sequence'].mode()[0]
+        wt_row['Aligned_Sequence'] = most_frequent_ref_seq
+        wt_row['Reference_Sequence'] = most_frequent_ref_seq
+    wt_row['Unedited'] = True
+    wt_row['n_deleted'] = 0
+    wt_row['n_inserted'] = 0
+    wt_row['n_mutated'] = 0
+    wt_row['#Reads'] = 0
+    wt_row['%Reads'] = 0
+    # Add the wt_row to the top of the df
+    df = pd.concat([pd.DataFrame([wt_row]), df], ignore_index=True)
+    # print the df to check if the wt_row was added correctly
+    print(df.head())
+    return df
+
+
 def size_of_del_around_the_cut (gap_around_cut_starts, gap_around_cut_ends):
     """
     Calculate the size of a deletion around the cut.
@@ -1094,6 +1129,8 @@ def create_mastertable (project_dir, project_output_dir, parameters_dic):
         sample_name = gRNA_name + '_' + folder_name[14:]
         # nuclease = filepath.split('/')[-2].split('_')[3]
         table = pd.read_csv(filepath, sep='\t')
+        # Add first row to the table by create_first_row_in_alleles_freq_table_with_wt_seq 
+        table = create_first_row_in_alleles_freq_table_with_wt_seq(table)
         table = process_table(table, filepath[-24:-4], sample_name, parameters_dic)
         # the name of the Allels_frequency_table_* must have sequence of the gRNA at the end of the name
         # it is there automatically if the name of the gRNA is not given into CRISPResso2 tool
