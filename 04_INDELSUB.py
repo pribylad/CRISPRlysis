@@ -1,12 +1,12 @@
 # pylint: disable=line-too-long
 # pylint: disable=invalid-name
-
-
-
-
-
-# TODO this code does not reflects the samples from individual times like 24h, 48h etc. but only the mean of all replicates.
-
+# Description: This script takes the  dataframe from 01_merge_filter_02_tables.py and creates a pivot table with the percentage of each event (IN, DEL, SUB, OTHERS) for each sample. Then it creates a violin plot to show the distribution of each event across all samples.
+# The script also checks if the sum of all events and no_mutation is 100% for each sample, if not it raises a ValueError and prints the rows where it is not the case.
+# The script also checks if all unique values in the 'organism' column of the merged dataframe are present in the organism_dict, if not it raises a ValueError and prints the missing organism.
+# The script also adds a column 'OTHERS' to the pivot table which is the sum of all events that are not IN, DEL or SUB (INDEL, INSUB, INDELSUB, DELSUB).
+# The script also creates a pivot table with the average of each event for each sample, without the replicate column, and saves it as a tsv file.
+# The script also creates a violin plot for the INDEL category only, by removing the OTHERS and SUB rows from the pivot table, and saves it as a png file.
+# The script also saves the statistics of the pivot table as a tsv file.
 
 # %%
 # import necessary libraries
@@ -41,34 +41,24 @@ show_plots = True
 
 
 #####
-
-filter_criterion = 'All'
-filter_value = 'All'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260330.tsv'
-print(df_dir)
-data_source = 'all_samples'
-project_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
-#####
-# filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
-# filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by
-# filter_value = 'nondividing'  # value of the parameter used to filter the df_dir table by
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_{filter_criterion}_{filter_value}_260109.tsv'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/nondividing_animal/04_split_cell_cycle_nondividing_260110.tsv'
-# data_source = filter_criterion + '_' + filter_value  # 'dividing' or 'nondividing'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}')
+# Analysis for data without filtering for 5% efficacy
+# filter_criterion = 'All'
+# filter_value = 'All'
+# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260330.tsv'
+# df_dir = '/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260330.tsv'
+# data_source = 'all_samples'
+# project_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/01_no_filter_all_samples')
 
 #####
-# filter_criterion = 'Event_around_cut'
-# filter_value = 'IN'
+# Analysis for data with filtering for 5% efficacy
+filter_criterion = 'Efficacy'
+filter_value = '95'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260330.tsv'
+df_dir = '/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260330.tsv'
+data_source = 'all_samples_filtered_95'
+project_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/01_all_samples')
 
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_above_treshold_260106.tsv'
-# data_source = filter_criterion + '_' + filter_value + '_above_treshold'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}_above_treshold')
-
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_split_Event_around_cut_IN_below_treshold_260106.tsv'
-# data_source = filter_criterion + '_' + filter_value + '_below_treshold'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/{filter_criterion}_{filter_value}_below_treshold')
-#####
+# %%
 ##########################################################################################
 now = datetime.now()
 # Format the date to YYMMDD
@@ -101,8 +91,6 @@ df['hours_post_inoculation'].unique()
 #            I   N   NN   D   D   E       L           S   U   U   B   B
 #            I   N    N   DDDD    EEEEEE  LLLLLL  SSSS     UUU    BBBB
 ##########################################################################################
-file_number = '001'
-counter = 1
 # Define lists
 default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'name', 'replicate']
 list_of_events = ['IN', 'DEL', 'SUB', 'OTHERS']
@@ -116,8 +104,8 @@ df_INDELSUB = df[default_list + ['Event_around_cut', '%Reads']]
 list_of_others = ['INDEL', 'INSUB', 'INDELSUB', 'DELSUB']
 
 pivot = pd.pivot_table(df_INDELSUB, index=default_list, columns='Event_around_cut', values='%Reads', aggfunc='sum', fill_value=0)
-# Save pivot table as tsv
-pivot.to_csv(Path(str(project_output_dir) + '/' + f'{file_number}_{counter}_INDELSUB_pivot_table_{date}.tsv'), sep='\t')
+# Save pivot table as tsv into same folder as file from df_dir came from when df_dir is sting to a file
+pivot.to_csv(Path(df_dir.rsplit('/', 1)[0] + '/' + f'02_INDELSUB_pivot_table_{date}.tsv'), sep='\t')
 pivot
 # %%
 # Check if the sum of all events and no_mutation is 100% for each sample, if not print exit with VALUEERROR and print the rows where it is not the case
@@ -149,19 +137,25 @@ df_INDELSUB_summ = df_INDELSUB_summ[default_list + list_of_events]
 df_INDELSUB_summ
 # %%
 df_INDELSUB_summ = pd.melt(df_INDELSUB_summ, id_vars=default_list, value_vars=list_of_events)
+# MERGE REPLICATES BY TAKING THE MEAN OF THE VALUES
 # Make pivot table with all columns without column replicate and make average of values
 pivot_table_avg = create_pivot_table(df_INDELSUB_summ, default_list_NOreplicate, columns=None, values='value', aggfunc='mean')
 pivot_table_avg.reset_index(inplace=True)
-print(pivot_table_avg)
+print(pivot_table_avg.head())
 print(pivot_table_avg['source'].unique())
-
+# %%
+# get no of samples by taking no of rows in pivot_table_avg and dividing by unique values in column 'Event_around_cut'
+no_of_samples = len(pivot_table_avg) / pivot_table_avg['Event_around_cut'].nunique()
+print(f"No of samples: {no_of_samples}")
+# %%
 ##########################################################################################
 # plot VIOLINPLOT
 ##########################################################################################
+file_number = '001'
+counter = 1
 # Set charts properties
 title = 'INDELSUB representation in all samples, mean of replicates'
 ylabel = 'Percentage'
-no_of_samples = len(pivot_table_avg[['source', 'gRNA_seq', 'organism']].drop_duplicates())
 text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around the cut.\
                     \nOTHERS are combinations of INs, DELs and SUBs (INDELs etc.).\
                     \nIN+DEL+SUB+OTHERS+no_mutation = 100%.\
@@ -189,7 +183,8 @@ save_stat(stat_info, name_to_save, project_output_dir)
 pivot_table_avg = pivot_table_avg[~pivot_table_avg['Event_around_cut'].isin(['OTHERS', 'SUB'])]
 pivot_table_avg
 # %%
-file_number = '002_Fig'
+file_number = '001'
+counter = 2
 text_bellow_chart = f'INDEL category clasified only for events around the cut - full data in the Supplement.\
                     \nIN+DEL+SUB+OTHERS+no_mutation = 100%.\
                     \nNo of samples: {no_of_samples}'
@@ -209,3 +204,4 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='Event_around_cut', y='
         , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 # Save pivot table as tsv
 pivot_table_avg.to_csv(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
+# %%

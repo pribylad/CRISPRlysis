@@ -3,6 +3,8 @@
 
 # %%
 # Load table /home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/05_pivot_DEL_orientation_normalised_avg260225.tsv
+
+
 import pandas as pd
 from pathlib import Path
 from datetime import datetime
@@ -12,8 +14,8 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import os
 ##########################################################################################
-output_format = 'png'
-# output_format = 'svg'
+# output_format = 'png'
+output_format = 'svg'
 show_plots = True
 
 # # 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs and generating 05_tables by 06_DEL.py script
@@ -30,11 +32,10 @@ show_plots = True
 # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
 filter_criterion = 'efficacy'
 filter_value = '95'
-data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/05_pivot_DEL_orientation_normalised_avgefficacy_95_260227.tsv'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/05_pivot_DEL_orientation_normalised_avgefficacy_95_260320.tsv'
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}')
+data_source = 'all_samples_filtered_95'
+df_dir = '/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/01_all_samples/05_pivot_DEL_orientation_normalised_avgefficacy_95_260331.tsv'
+charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
 
 # # 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
 # filter_criterion = 'efficacy_1ntIN'
@@ -54,6 +55,8 @@ df = pd.read_csv(df_dir, sep='\t')
 # Remove the columne Unnamed: 0 if it exists
 if 'Unnamed: 0' in df.columns:
     df = df.drop(columns=['Unnamed: 0'])    
+# Convert df['hours_post_inoculation'] to string
+df['hours_post_inoculation'] = df['hours_post_inoculation'].astype(str)
 
 # Make column combining organism and cell_line and hours_post_inoculation for better visualisation in the plot
 df['organism_cell_line_hpi'] = df['organism'] + ' - ' + df['cell_line'] + ' - ' + df['hours_post_inoculation']
@@ -97,9 +100,14 @@ properties_dict = {
     'A. thaliana - embryo - unknown': {'color': '#009d73', 'marker': '*'},
     'Nicotiana benthamiana - xxx - 120': {'color': '#009d73', 'marker': 'v'},
     'Petunia hybrida - xxx - 24': {'color': '#009d73', 'marker': '>'},
-    'Silene latifoliaa - xxx - xx': {'color': '#009d73', 'marker': '<'},
+    'Silene latifolia - xxx - xx': {'color': '#009d73', 'marker': '<'},
     'Solanum lycopersicum - xxx - 24': {'color': '#009d73', 'marker': 's'},
-    'Xenopus tropicalis  - xxx - xxx': {'color': "#181766", 'marker': 'o'}}
+    'Solanum lycopersicum - M82 - 48': {'color': '#009d73', 'marker': '^'},
+    'Xenopus tropicalis - xxx - xxx': {'color': "#181766", 'marker': 'o'},
+    'Pleurodeles waltl - xxx - xxx': {'color': "#272592", 'marker': 's'},
+
+}
+
 
 # Check if all index values in df_pca are in properties_dict
 missing_indices = [index for index in df_pca.index if index not in properties_dict]
@@ -144,6 +152,9 @@ plt.xlabel('PC1')
 plt.ylabel('PC2')
 plt.title('PCA with K-means Clusters')
 plt.legend(*plt.gca().get_legend_handles_labels(), title='Clusters')
+# Save PCA plot with clusters
+output_file = os.path.join(charts_output_dir, f'004_1_PCA_DEL_orientation_normalised_avg_with_clusters_{date}.png')
+plt.savefig(output_file, bbox_inches='tight', dpi=300)
 plt.show()
 
 # %%
@@ -182,7 +193,7 @@ plt.legend(handles=legend_elements, bbox_to_anchor=(1.05, 1), loc='upper left')
 # plot grid in the background
 plt.grid(axis='both', alpha=0.5)
 # Save PCA plot
-output_file = os.path.join(charts_output_dir, f'06_PCA_DEL_orientation_normalised_avg_{date}.{output_format}')
+output_file = os.path.join(charts_output_dir, f'004_2_PCA_DEL_orientation_normalised_avg_{date}.{output_format}')
 plt.savefig(output_file, bbox_inches='tight', dpi=300)
 # Save PCA results to TSV
 output_file = os.path.join(table_output_dir, f'06_PCA_DEL_orientation_normalised_avg_{date}.tsv')

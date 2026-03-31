@@ -16,6 +16,7 @@ import scipy.stats as stats
 import seaborn as sns
 import statannotations
 from statannotations.Annotator import Annotator
+import statsmodels
 
 from scripts.plot_functions import plot_sns_violin_and_print, save_stat
 from scripts.dict_functions import get_color_dic_35_violin
@@ -26,7 +27,6 @@ show_plots = True
 individual_dataset = True    # If False (for settings 1, 2, and 3), Kingdom and ID_no_reps is used in the default_list and additional plots for them are made.
 use_3_5_possible = False
 
-# # TODO individual_dataset must be False
 # # 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs
 # filter_criterion = 'None'
 # filter_value = 'None'
@@ -38,16 +38,33 @@ use_3_5_possible = False
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples')
 
-# # TODO individual_dataset must be False
 # # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
 # filter_criterion = 'efficacy'
 # filter_value = '95'
 # individual_dataset = False
-# data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
-# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260227.tsv'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260320.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}')
+# data_source = 'all_samples_filtered_95'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260330.tsv'
+# charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/01_all_samples')
+# table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/01_all_samples')
+
+# # 3 with data filtered for overall efficacy >=5% and kingdom = plant, input table is result from 02_filter_low_efficacy.py script
+# filter_criterion = 'efficacy_and_kingdom'
+# filter_value = '95_and_plant'
+# individual_dataset = True
+# data_source = 'plants_filtered_95'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_plant_260331.tsv'
+# charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/02_plants')
+# table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/02_plants')
+
+# 4 with data filtered for overall efficacy >=5% and kingdom = animal, input table is result from 02_filter_low_efficacy.py script
+filter_criterion = 'efficacy_and_kingdom'
+filter_value = '95_and_animal'
+individual_dataset = True
+data_source = 'animals_filtered_95'
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal_260331.tsv'
+charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/02_animals')
+table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/02_animals')
+
 
 # # TODO individual_dataset must be False
 # # 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
@@ -74,13 +91,13 @@ use_3_5_possible = False
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}')
 
-filter_criterion = 'Xenopus-tropicalis'
-filter_value = 'xxx'
-individual_dataset = True
-df_dir = f'/home/lefnui/CRISPRlysis_outputs/Iida_et_al_2020/02_mastertable_WT_260320.tsv'
-data_source = 'Filter ' + filter_criterion + '_' + filter_value
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Iida')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Iida')
+# filter_criterion = 'Xenopus-tropicalis'
+# filter_value = 'xxx'
+# individual_dataset = True
+# df_dir = f'/home/lefnui/CRISPRlysis_outputs/Iida_et_al_2020/02_mastertable_WT_260320.tsv'
+# data_source = 'Filter ' + filter_criterion + '_' + filter_value
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Iida')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Iida')
 
 # filter_criterion = 'N-benthamiana'
 # filter_value = '120'
@@ -163,7 +180,6 @@ df['Maximal_MH_len'].unique()
 #               D   D   E       L
 #               DDDD    EEEEEE  LLLLLL
 ##########################################################################################
-file_number = '002_Fig'
 
 # Define list of indexes for pivot table
 # default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
@@ -209,7 +225,7 @@ df_pivot
 # remove index name
 df_pivot.columns.name = None
 # Save pivot table as tsv
-df_pivot.to_csv(Path(str(table_output_dir) + '/' + file_number + '_DEL_orientation_NOTnormalised_pivot_' + filter_criterion + '_' + filter_value + '_' + date + '.tsv'), sep='\t')
+df_pivot.to_csv(Path(str(table_output_dir) + '/' + '05' + '_DEL_orientation_NOTnormalised_pivot_' + filter_criterion + '_' + filter_value + '_' + date + '.tsv'), sep='\t')
 # Normalise rows to 100%
 df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
 df_pivot
@@ -232,7 +248,6 @@ pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + '05_pivot_DEL_orientat
 pivot_table_avg['organism_cell_line_hpi'] = pivot_table_avg['organism'] + ' - ' + pivot_table_avg['cell_line'] + ' - ' + pivot_table_avg['hours_post_inoculation']
 pivot_table_avg
 # %%
-panel = 'D'
 # Set charts properties
 title = 'Normalised incidence of DEL according to the orientation,\n mean of replicates'
 ylabel = 'Normalised percentage \nof DEL around the cut'
@@ -241,7 +256,7 @@ text_bellow_chart = f'Only DELs around the cut are plotted. Without gaps spannin
                     \n - see table with source data.\
                     \nNormalised to: SUM of all DEL orientation in individual sample = 100%\
                     \nNo of samples: {no_of_samples}'
-name_to_save = f'{file_number}_{panel}_DEL_orientation_summary_violinplot_all_groups_{filter_criterion}_{filter_value}'
+name_to_save = f'003_1_DEL_orientation_summary_violinplot_all_groups_{filter_criterion}_{filter_value}'
 # hue order
 hue_order=[
             'Arabidopsis thaliana - xxx - 504'
@@ -252,8 +267,9 @@ hue_order=[
             ,'Nicotiana benthamiana - xxx - 120'
             ,'Nicotiana benthamiana - leaf - 120'
             ,'Petunia hybrida - xxx - 24'
-            ,'Silene latifoliaa - xxx - xx'
+            ,'Silene latifolia - xxx - xx'
             ,'Solanum lycopersicum - xxx - 24'
+            ,'Solanum lycopersicum - M82 - 48'
             ,'Homo sapiens - HCT116 - 4'
             ,'Homo sapiens - HEK293 - 4'
             ,'Homo sapiens - K562 - 4'
@@ -274,6 +290,7 @@ hue_order=[
             ,'Homo sapiens - Jurkat - 48to72'
             ,'UniCorn - random_dataset - 0'
             ,'Xenopus tropicalis - xxx - xxx'
+            ,'Pleurodeles waltl - xxx - xxx'
 ]
 # Test if all organism_cell_line_hpi.unique() are present in the hue order
 unique_hue_values = pivot_table_avg['organism_cell_line_hpi'].unique()
@@ -283,6 +300,7 @@ if missing_hue_values:
 # If there are more values in hue_order and they are missing in organism_cell_line_hpi.unique() remove them from hue_order
 hue_order = [value for value in hue_order if value in unique_hue_values]
 
+# %%
 if individual_dataset == False:
     # color_dic = {'upstream':'#f0d271', 'both':'#808080', 'downstream':'#cccccc', 'cannot_be_determined':'#ffffff', 'plant':'#009d73', 'animal':'#cc79a6'}
     colour_dic = {'upstream_ambiguous':'#f0d271', 'upstream_NO_ambi':'#f0d271', 'both_ambiguous':'#808080', 'both_NO_ambi':'#808080', 'downstream_ambiguous':'#cccccc', 'downstream_NO_ambi':'#cccccc', 'cannot_be_determined_ambiguous':'#ffffff', 'cannot_be_determined_NO_ambi':'#ffffff', 'X_gap_out_of_cut':'#000000', 'plant':'#009d73', 'animal':'#cc79a6'}
@@ -304,10 +322,10 @@ if individual_dataset == False:
         , change_edge_color=True\
         , name_to_save=name_to_save\
         , project_output_dir=charts_output_dir\
-        , data_source=data_source, output_format=output_format\
+        , data_source=data_source, output_format='png'\
         , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 
-    name_to_save = f'{file_number}_{panel}_DEL_orientation_summary_violinplot_plant_animals_{filter_criterion}_{filter_value}'
+    name_to_save = f'003_2_DEL_orientation_summary_violinplot_plant_animals_{filter_criterion}_{filter_value}'
     plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
         , number_of_columns=6\
         , show_datapoints=True, jitter=0.05, stripplot_offset=0, dodge=True\
@@ -325,11 +343,10 @@ if individual_dataset == False:
         , change_edge_color=False\
         , name_to_save=name_to_save\
         , project_output_dir=charts_output_dir\
-        , data_source=data_source, output_format=output_format\
+        , data_source=data_source, output_format='png'\
         , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 
 # %%
-panel = 'D'
 # Set charts properties
 title = 'Normalised incidence of DEL according to the orientation,\n mean of replicates'
 ylabel = 'Normalised percentage \nof DEL around the cut'
@@ -338,9 +355,12 @@ text_bellow_chart = f'Only DELs around the cut are plotted. Without gaps spannin
                     \n - see table with source data.\
                     \nNormalised to: SUM of all DEL orientation in individual sample = 100%\
                     \nNo of samples: {no_of_samples}'
-name_to_save = f'{file_number}_{panel}_2_DEL_orientation_summary_violinplot_{filter_criterion}_{filter_value}'
+name_to_save = f'003_3_DEL_orientation_summary_violinplot_{filter_criterion}_{filter_value}'
 # colour_dic = {'upstream':'#f0d271', 'both':'#808080', 'downstream':'#cccccc', 'cannot_be_determined':'#ffffff'}
 colour_dic = {'upstream_ambiguous':'#f0d271', 'upstream_NO_ambi':'#f0d271', 'both_ambiguous':'#808080', 'both_NO_ambi':'#808080', 'downstream_ambiguous':'#cccccc', 'downstream_NO_ambi':'#cccccc', 'cannot_be_determined_ambiguous':'#ffffff', 'cannot_be_determined_NO_ambi':'#ffffff', 'X_gap_out_of_cut':'#000000', 'plant':'#009d73', 'animal':'#cc79a6'}
+
+# Full plot as png
+name_to_save = f'003_3_DEL_orientation_summary_violinplot_{filter_criterion}_{filter_value}'
 plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , number_of_columns=len(pivot_table_avg['variable'].unique())/2\
     , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
@@ -360,6 +380,51 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , project_output_dir=charts_output_dir\
     , data_source=data_source, output_format=output_format\
     , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+
+# Without legend etc as png
+name_to_save = f'003_4_DEL_orientation_summary_violinplot_{filter_criterion}_{filter_value}_small'
+plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+    , number_of_columns=len(pivot_table_avg['variable'].unique())/2\
+    , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
+    , show_hue_medians=False\
+    , hue=None, hue_only_for_data_points=False \
+    , hatches=False\
+    , clip_right=True\
+    , title=None, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
+    , order=order\
+    , plot_legend=False\
+    , integrated_properties_dic=False, color_dic=colour_dic\
+    , text_bellow_chart=None\
+    , y_legend_coordinate=-0.4, yaxis_formater=100\
+    , x_max=None\
+    , change_edge_color=False\
+    , name_to_save=name_to_save\
+    , project_output_dir=charts_output_dir\
+    , data_source=data_source, output_format='png'\
+    , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+
+# Without legend etc as svg
+name_to_save = f'003_4_DEL_orientation_summary_violinplot_{filter_criterion}_{filter_value}_small'
+plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+    , number_of_columns=len(pivot_table_avg['variable'].unique())/2\
+    , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
+    , show_hue_medians=False\
+    , hue=None, hue_only_for_data_points=False \
+    , hatches=False\
+    , clip_right=True\
+    , title=None, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
+    , order=order\
+    , plot_legend=False\
+    , integrated_properties_dic=False, color_dic=colour_dic\
+    , text_bellow_chart=None\
+    , y_legend_coordinate=-0.4, yaxis_formater=100\
+    , x_max=None\
+    , change_edge_color=False\
+    , name_to_save=name_to_save\
+    , project_output_dir=charts_output_dir\
+    , data_source=data_source, output_format='svg'\
+    , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+
 stat_info = pivot_table_avg.groupby('variable').value.describe()
 save_stat(stat_info, name_to_save, charts_output_dir)
 # %%
@@ -374,8 +439,6 @@ save_stat(stat_info, name_to_save, charts_output_dir)
 ##################################################################################
 #       Ends participating on the repair
 ##################################################################################
-file_number = '003_Supp'
-counter = 2
 
 # Define list of indexes for pivot table
 # default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
@@ -442,14 +505,14 @@ text_bellow_chart = f'Only DELs around the cut are plotted.\
                     \n3\' possible blunt can not be in -2,0,0 setup -> it is eider 3\' or 5\' NOT blunt\
                     \nNo of samples: {no_of_samples}'
 
-name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_violinplot_{filter_criterion}_{filter_value}'
 color_dic = get_color_dic_35_violin()
 if use_3_5_possible == True:
     order = ['5\' NOT blunt', '5\' possible blunt', '3\' NOT blunt', '3\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']
 else:
     order = ['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']
 
-# TODO split it to True/False for can be blunt cut with MH
+# Full plot as png
+name_to_save = f'003_4_DEL_end_summary_norm_violinplot_{filter_criterion}_{filter_value}'
 plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , number_of_columns=3\
     , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
@@ -469,6 +532,49 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
     , project_output_dir=charts_output_dir\
     , data_source=data_source, output_format=output_format\
     , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+
+# Without legend etc as png
+name_to_save = f'003_4_DEL_end_summary_norm_violinplot_{filter_criterion}_{filter_value}_small'
+plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+    , number_of_columns=3\
+    , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
+    , show_hue_medians=False\
+    , hue=None, hue_only_for_data_points=False \
+    , hatches=False\
+    , clip_right=True\
+    , title=None, xtickt_rotation=-55, ylabel=ylabel\
+    , order=order\
+    , plot_legend=False\
+    , integrated_properties_dic=False, color_dic=color_dic\
+    , text_bellow_chart=None\
+    , y_legend_coordinate=-0.45, yaxis_formater=100\
+    , x_max=None\
+    , change_edge_color=False\
+    , name_to_save=name_to_save\
+    , project_output_dir=charts_output_dir\
+    , data_source=data_source, output_format='png'\
+    , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+
+# Without legend etc as svg
+plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+    , number_of_columns=3\
+    , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
+    , show_hue_medians=False\
+    , hue=None, hue_only_for_data_points=False \
+    , hatches=False\
+    , clip_right=True\
+    , title=None, xtickt_rotation=-55, ylabel=ylabel\
+    , order=order\
+    , plot_legend=False\
+    , integrated_properties_dic=False, color_dic=color_dic\
+    , text_bellow_chart=None\
+    , y_legend_coordinate=-0.45, yaxis_formater=100\
+    , x_max=None\
+    , change_edge_color=False\
+    , name_to_save=name_to_save\
+    , project_output_dir=charts_output_dir\
+    , data_source=data_source, output_format='svg'\
+    , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 # Save pivot table as tsv
 pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
 # Save statistics
@@ -478,16 +584,17 @@ save_stat(stat_info, name_to_save, charts_output_dir)
 ##########################################################################################
 # Statistical testing between 5' NOT blunt and 3' NOT blunt
 ##########################################################################################
-file_number = '003_Supp'
-counter = 1
 
 # Count statistics for 5' NOT blunt and 3' NOT blunt, those data are compositional, so must be transformed before statistical testing as ALR=log(x1/x2)
 df_stats = pivot_table_avg[pivot_table_avg['variable'].isin(["5' NOT blunt", "3' NOT blunt"])]
 # Pivot the dataframe to have separate columns for each variable
 df_stats = df_stats.pivot_table(index=default_list, columns='variable', values='value').reset_index()
+# export df_stats to tsv
+df_stats.to_csv(Path(str(table_output_dir) + '/' + f'05_DEL_end_summary_norm_violinplot_filtered_stats_{filter_criterion}_{filter_value}' + '_' + date + '.tsv'), sep='\t', index=False)
+
 # Calculate ALR transformation log(x1/x2) and avoid division by zero by adding a small constant 1e-12
-# df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'] = np.log((df_stats["5' NOT blunt"] + 1e-12) / (df_stats["3' NOT blunt"] + 1e-12))
-df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'] = np.log((df_stats["5' NOT blunt"] + 1e-6) / (df_stats["3' NOT blunt"] + 1e-6))
+df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'] = np.log((df_stats["5' NOT blunt"] + 1e-12) / (df_stats["3' NOT blunt"] + 1e-12))
+
 
 # Perform Wilcoxon signed-rank test on ALR values
 statistic, p_value = stats.wilcoxon(df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'])
@@ -502,7 +609,7 @@ else:
 print(f'Median is {median_lf}. Interpretation based on median log-fold change: {interpretation}')
 # Save statistics
 stat_info = pd.DataFrame({'statistic': [statistic], 'p_value': [p_value]})
-save_stat(stat_info, f'{file_number}_{counter}_DEL_end_summary_norm_violinplot_filtered_stats_{filter_criterion}_{filter_value}', charts_output_dir)
+save_stat(stat_info, f'003_5_DEL_end_summary_norm_violinplot_filtered_stats_{filter_criterion}_{filter_value}', charts_output_dir)
 stat_info
 # %%
 
@@ -516,23 +623,21 @@ plt.ylabel("Count of samples")
 plt.title(f"{filter_value}\nDistribution of log-ratios: 5’ microhomology staggered cut vs 3’ microhomology staggered cut")
 plt.legend()
 plt.tight_layout()
-plt.savefig(Path(str(table_output_dir) + f'/{file_number}_{counter}_DEL_end_summary_stats_histogram_' + filter_criterion + '_' + filter_value + '_' + date + f'.{output_format}'), dpi=200)
+plt.savefig(Path(str(charts_output_dir) + f'/003_6_DEL_end_summary_stats_histogram_' + filter_criterion + '_' + filter_value + '_' + date + f'.{output_format}'), dpi=200)
 plt.show()
 # %%
 # Plot only 5' NOT blunt and 3' NOT blunt from the pivot_table_avg as x variables
-file_number = '003_Fig'
-counter = 1
-name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_violinplot_filtered_{filter_criterion}_{filter_value}'
 color_dic = get_color_dic_35_violin()
 text_bellow_chart = f'Only DELs around the cut are plotted.\
                     \nNormalised to: SUM of all DELs with MH in individual sample = 100%\
                     \nInterpretation based on median log-fold change:\n    {interpretation}\
                     \n    Wilcoxon signed-rank test statistic: {statistic}, p-value: {p_value}\
                     \nNo of samples: {no_of_samples}'
-
+# Full plot as png
+name_to_save = f'003_7_DEL_end_summary_norm_violinplot_filtered_{filter_criterion}_{filter_value}'
 plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'].isin(["5' NOT blunt", "3' NOT blunt"])], x='variable', y='value'\
     , number_of_columns=2\
-    , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
+    , show_datapoints=True, jitter=0.05, stripplot_offset=10, dodge=False\
     , show_hue_medians=False\
     , hue=None, hue_only_for_data_points=False \
     , hatches=False\
@@ -549,5 +654,50 @@ plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'
     , name_to_save=name_to_save\
     , project_output_dir=charts_output_dir\
     , data_source=data_source, output_format=output_format\
+    , dpi=200, y_min=0, y_max=119, show_plots=show_plots)
+# %%
+# Without legend etc as png
+name_to_save = f'003_7_DEL_end_summary_norm_violinplot_filtered_{filter_criterion}_{filter_value}_small'
+plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'].isin(["5' NOT blunt", "3' NOT blunt"])], x='variable', y='value'\
+    , number_of_columns=2\
+    , show_datapoints=True, jitter=0.05, stripplot_offset=10, dodge=False\
+    , show_hue_medians=False\
+    , hue=None, hue_only_for_data_points=False \
+    , hatches=False\
+    , clip_right=True\
+    , title=None, xtickt_rotation=-55, ylabel=ylabel\
+    , order=['5\' NOT blunt', '3\' NOT blunt']\
+    , plot_legend=False\
+    , integrated_properties_dic=False, color_dic=color_dic\
+    , text_bellow_chart=None\
+    , y_legend_coordinate=-0.25, yaxis_formater=100\
+    , x_max=None\
+    , change_edge_color=False\
+    , add_stat=True, stat_pairs=[("5' NOT blunt", "3' NOT blunt")], stat_test='Wilcoxon', stat_format='star', stat_correction='BH'\
+    , name_to_save=name_to_save\
+    , project_output_dir=charts_output_dir\
+    , data_source=data_source, output_format='png'\
+    , dpi=200, y_min=0, y_max=119, show_plots=show_plots)
+# %%
+# Without legend etc as svg
+plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'].isin(["5' NOT blunt", "3' NOT blunt"])], x='variable', y='value'\
+    , number_of_columns=2\
+    , show_datapoints=True, jitter=0.05, stripplot_offset=10, dodge=False\
+    , show_hue_medians=False\
+    , hue=None, hue_only_for_data_points=False \
+    , hatches=False\
+    , clip_right=True\
+    , title=None, xtickt_rotation=-55, ylabel=ylabel\
+    , order=['5\' NOT blunt', '3\' NOT blunt']\
+    , plot_legend=False\
+    , integrated_properties_dic=False, color_dic=color_dic\
+    , text_bellow_chart=None\
+    , y_legend_coordinate=-0.25, yaxis_formater=100\
+    , x_max=None\
+    , change_edge_color=False\
+    , add_stat=True, stat_pairs=[("5' NOT blunt", "3' NOT blunt")], stat_test='Wilcoxon', stat_format='star', stat_correction='BH'\
+    , name_to_save=name_to_save\
+    , project_output_dir=charts_output_dir\
+    , data_source=data_source, output_format='svg'\
     , dpi=200, y_min=0, y_max=119, show_plots=show_plots)
 # %%

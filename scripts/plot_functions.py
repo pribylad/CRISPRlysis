@@ -15,6 +15,7 @@ import sys
 
 import matplotlib
 from matplotlib.offsetbox import AnchoredText
+import statsmodels
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -320,12 +321,14 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'A. thaliana - embryo - unknown': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '*'}
             ,'Nicotiana benthamiana - xxx - 120': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 'v'}
             ,'Petunia hybrida - xxx - 24': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '>'}
-            ,'Silene latifoliaa - xxx - xx': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '<'}
+            ,'Silene latifolia - xxx - xx': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '<'}
             ,'Solanum lycopersicum - xxx - 24': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
+            ,'Solanum lycopersicum - M82 - 48': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '^'}
             ,'plant': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
             ,'animal': {'color': '#cc79a6', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
-            ,'UniCorn - random_dataset - 0;': {'color': '#FFD700', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}  
-            ,'Xenopus tropicalis  - xxx - xxx': {'color': "#181766", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'UniCorn - random_dataset - 0;': {'color': '#FFD700', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'Xenopus tropicalis - xxx - xxx': {'color': "#181766", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'Pleurodeles waltl - xxx - xxx': {'color': "#272592", 'edge_color':'gray', 'hatch':'', 'marker': 's'}
             }
     else:
         print('The properties_dic is not a dictionary, and also the integrated dictionary is not going to be used.')
@@ -582,7 +585,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             annot.configure(
                 test=stat_test,
                 text_format=stat_format,
-                pvalue_correction_method=stat_correction
+                comparisons_correction=stat_correction
             )
 
         # After configuration:
@@ -620,10 +623,11 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                     labels[int(len(labels)/2):int(len(labels))],\
                     loc='center left', bbox_to_anchor=(1, 0.5))    
     # Plot labels, set lims, etc.
-    plt.title(title + '\n(' + date + ')\n' + data_source)
+    if title is not None:
+        plt.title(title + '\n(' + date + ')\n' + data_source)
+
     plt.ylabel(ylabel)
-    if xlabel is not None:
-        plt.xlabel(xlabel)
+    plt.xlabel(xlabel)
     plt.ylim(y_min, y_max)
     plt.xlim(x_min, x_max)
     plt.xticks(rotation=xtickt_rotation, ha='left', rotation_mode='anchor')
