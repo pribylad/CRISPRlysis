@@ -1,5 +1,13 @@
 # pylint: disable=line-too-long
 # pylint: disable=invalid-name
+
+
+
+
+
+# TODO this code does not reflects the samples from individual times like 24h, 48h etc. but only the mean of all replicates.
+
+
 # %%
 # import necessary libraries
 from datetime import datetime
@@ -29,16 +37,17 @@ show_plots = True
 # filter_value = 'Plants'
 # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/filtered_95/03_filtered_efficacy_samples_limit5efficacy_Plants_260126.tsv'
 # data_source = 'Plants'
-project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
 
 
 #####
 
 filter_criterion = 'All'
 filter_value = 'All'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_efficacy_samples_limit5efficacy_260109.tsv'
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260330.tsv'
+print(df_dir)
 data_source = 'all_samples'
-project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
+project_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/all_main_samples/{filter_criterion}_{filter_value}')
 #####
 # filter_criterion = 'cell_cycle'  # parameter used to filter the df_dir table by
 # filter_value = 'dividing'  # value of the parameter used to filter the df_dir table by
@@ -81,7 +90,10 @@ def create_pivot_table(df, list_of_indexes, columns, values, aggfunc):
 ##########################################################################################
 # Load datafreame
 df = pd.read_csv(df_dir, sep='\t')
+df['hours_post_inoculation'] = df['hours_post_inoculation'].astype(str)
 print(f"Loaded dataframe with shape {df.shape} from {df_dir}")
+df['hours_post_inoculation'].unique()
+# %%
 ##########################################################################################
 #            I   N    N   DDDD    EEEEEE  L        SSSS   U   U   BBBB
 #            I   N N  N   D   D   E       L       S       U   U   B   B
@@ -89,10 +101,10 @@ print(f"Loaded dataframe with shape {df.shape} from {df_dir}")
 #            I   N   NN   D   D   E       L           S   U   U   B   B
 #            I   N    N   DDDD    EEEEEE  LLLLLL  SSSS     UUU    BBBB
 ##########################################################################################
-file_number = '002_Supp'
+file_number = '001'
 counter = 1
 # Define lists
-default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
+default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'name', 'replicate']
 list_of_events = ['IN', 'DEL', 'SUB', 'OTHERS']
 
 default_list_NOreplicate = default_list.copy()
@@ -104,6 +116,20 @@ df_INDELSUB = df[default_list + ['Event_around_cut', '%Reads']]
 list_of_others = ['INDEL', 'INSUB', 'INDELSUB', 'DELSUB']
 
 pivot = pd.pivot_table(df_INDELSUB, index=default_list, columns='Event_around_cut', values='%Reads', aggfunc='sum', fill_value=0)
+# Save pivot table as tsv
+pivot.to_csv(Path(str(project_output_dir) + '/' + f'{file_number}_{counter}_INDELSUB_pivot_table_{date}.tsv'), sep='\t')
+pivot
+# %%
+# Check if the sum of all events and no_mutation is 100% for each sample, if not print exit with VALUEERROR and print the rows where it is not the case
+pivot['total'] = pivot.sum(axis=1)
+if (pivot['total'] >= 100).any():
+    print("Error: The sum of all events and no_mutation is not 100% for the following rows:")
+    print(pivot['total'].max())
+    raise ValueError("The sum of all events and no_mutation is not 100% for some samples. Please check the data.")
+
+else:
+    print("The sum of all events and no_mutation is 100% for all samples.")
+# %%
 df_INDELSUB_summ = pivot.reset_index()
 
 # check if all columns exists, if not make an empty one
@@ -117,8 +143,11 @@ df_INDELSUB_summ['OTHERS'] = int()
 for event in list_of_others:
     if event in df_INDELSUB_summ.columns.tolist():
         df_INDELSUB_summ['OTHERS'] = df_INDELSUB_summ['OTHERS'] + df_INDELSUB_summ[event]
+# %%
 
 df_INDELSUB_summ = df_INDELSUB_summ[default_list + list_of_events]
+df_INDELSUB_summ
+# %%
 df_INDELSUB_summ = pd.melt(df_INDELSUB_summ, id_vars=default_list, value_vars=list_of_events)
 # Make pivot table with all columns without column replicate and make average of values
 pivot_table_avg = create_pivot_table(df_INDELSUB_summ, default_list_NOreplicate, columns=None, values='value', aggfunc='mean')

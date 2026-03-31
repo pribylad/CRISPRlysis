@@ -40,9 +40,10 @@
 {'source_dir':'/mnt/d/Lab_Edin/data/02_Cas9_Chlamydomonas/05_CRISPResso2_output/CRISPRessoBatch_on_batch_260115',
    'project_output_dir':'../../CRISPRlysis_outputs/Ponce_unpublished',
    'add_columns':{'organism':'Chlamydomonas reinhardtii',
-      'hours_post_inoculation':'n',
+      'hours_post_inoculation':'48',
       'deliver_of_nuclease':'RNP',
-      'cell_cycle':'dividing'      
+      'cell_cycle':'dividing',
+      'cell_line':'xxx' 
       },
    'data_source_original':'Cristina Ponce Lilly (unpublished)',
    'cut_position':100,

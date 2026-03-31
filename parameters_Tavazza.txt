@@ -40,9 +40,10 @@
 {'source_dir':'/mnt/d/Lab_Edin/data/03_elF4E1_potato/NGS/06_CRISPResso2/StNGS1_BA13',
    'project_output_dir':'../../CRISPRlysis_outputs/Tavazza_unpublished',
    'add_columns':{'organism':'Solanum tuberosum L. cv Desirée',
-      'hours_post_inoculation':'n',
+      'hours_post_inoculation':'xxx',
       'deliver_of_nuclease':'RNP',
-      'cell_cycle':'nondividing'            
+      'cell_cycle':'nondividing',
+      'cell_line':'Desirée'            
       },
    'data_source_original':'Mario Tavazza (unpublished)',
    'cut_position':60,

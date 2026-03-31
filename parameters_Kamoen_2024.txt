@@ -43,7 +43,7 @@
       'hours_post_inoculation':'504',
       'deliver_of_nuclease':'Agroinfiltration',
       'cell_cycle':'dividing',
-      'cell_line':'root culture'   
+      'cell_line':'xxx'   
       },
    'data_source_original':'Kamoen et al., 2024',
    'cut_position':70,

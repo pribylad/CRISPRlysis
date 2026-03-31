@@ -40,9 +40,10 @@
 {'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/03_maybe_to use/dePeter_et_al_2024/Cas12/CRISPRessoBatch_on_batch_240821/',
    'project_output_dir':'../../CRISPRlysis_outputs/dePeter_et_al_2024_Cas12a',
    'add_columns':{'organism':'Arabidopsis thaliana',
-      'hours_post_inoculation':504,
+      'hours_post_inoculation':'504',
       'deliver_of_nuclease':'Agroinfiltration',
-      'cell_cycle':'dividing'      
+      'cell_cycle':'dividing',
+      'cell_line':'xxx'     
       },
    'data_source_original':'de Peter et al., 2024 - Cas12a',
    'cut_position':97,

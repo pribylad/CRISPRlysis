@@ -40,9 +40,10 @@
 {'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/palnts/Slaman_et_al_2024/Cas12a/02_CRISPResso2/CRISPRessoBatch_on_batch_260119/',
    'project_output_dir':'../../CRISPRlysis_outputs/Slaman_et_al_Cas12a_2024',
    'add_columns':{'organism':'Solanum lycopersicum',
-      'hours_post_inoculation':24,
+      'hours_post_inoculation':'24',
       'deliver_of_nuclease':'protoplasts transfection',
-      'cell_cycle':'nondividing'            
+      'cell_cycle':'nondividing',
+      'cell_line':'xxx'           
       },
    'data_source_original':'Slaman et al., 2024',
    'cut_position':50,

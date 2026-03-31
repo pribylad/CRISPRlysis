@@ -37,15 +37,15 @@
 #############################################
 #                 DICTIONARY                #
 #############################################
-{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/03_maybe_to use/Iida_et_al_2020/02_CRISPResso2/CRISPRessoBatch_on_batch_260327_filtered_small/XT',
-   'project_output_dir':'../../CRISPRlysis_outputs/Iida_et_al_2020_XT',
-   'add_columns':{'organism':'Xenopus tropicalis',
-      'hours_post_inoculation':'xxx',
+{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/palnts/Cucuy_et_al_2026_filtered_small_Pro/',
+   'project_output_dir':'../../CRISPRlysis_outputs/Cucuy_et_al_2026_Pro',
+   'add_columns':{'organism':'Solanum lycopersicum',
+      'hours_post_inoculation':'48',
       'deliver_of_nuclease':'RNP',
-      'cell_cycle':'dividing',
-      'cell_line':'xxx'      
+      'cell_cycle':'nondividing',
+      'cell_line':'M82'
       },
-   'data_source_original':'Iida et al., 2020',
+   'data_source_original':'Cucuy et al., 2026',
    'cut_position':50,
    'cut_maximum':-2,
    'cut_minimum':0,
@@ -53,10 +53,11 @@
    'minimum_Reads':5,
    'output_format':'png',
    'make_mastertable_00':True,
-   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Iida_et_al_2020_XT/00_mastertable_260327.tsv',
+   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Cucuy_et_al_2026_Pro/00_mastertable_260327.tsv',
    'filter_out_values':{},
    'make_mastertable_01':True,
-   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Iida_et_al_2020_XT/01_mastertable_260320.tsv',
+   'list_of_columns':['order', 'Cas_variant', 'gene', 'TergetNum', 'mutant', 'no_of_targets', 'overhang', 'replicate', 'ProExoInt'],
+   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Cucuy_et_al_2026_Pro/01_mastertable_260327.tsv',
    'make_subtables':True,
    'subtables_param':['mutant', 'organism'],
    'show_plots':False,

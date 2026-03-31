@@ -494,7 +494,7 @@ def make_seq_around_optimum_cut(Original_Sequence, cut_position, distance):
     seq = Original_Sequence[cut_position - distance:cut_position] + '|' + Original_Sequence[cut_position:cut_position + distance]
     return seq
 
-def create_first_row_in_alleles_freq_table_with_wt_seq(df):
+def create_first_row_in_alleles_freq_table_with_wt_seq(df, project_output_dir):
     """
     Create the first row in the alleles frequency table with the wild-type sequence.
 
@@ -503,6 +503,7 @@ def create_first_row_in_alleles_freq_table_with_wt_seq(df):
 
     Returns:
     DataFrame: A new DataFrame with the first row containing the wild-type sequence.
+    original_seq (str): The original sequence used for the wild-type row.
     """
     # Find row in the df where Aligned_Sequence is the same as Reference_Sequence and both does not containg '-' and copy it to make the first row of the alleles frequency table with the wild-type sequence. If there are more rows with the same Reference_Sequence and Aligned_Sequence, take the first one. If there is no such row, use the most frequent Reference_Sequence as the wild-type sequence.
     # Try to find the wild-type row based on the criteria, if not found, use the most frequent Reference_Sequence as the wild-type sequence and create the first row based on it.
@@ -522,11 +523,11 @@ def create_first_row_in_alleles_freq_table_with_wt_seq(df):
     wt_row['n_mutated'] = 0
     wt_row['#Reads'] = 0
     wt_row['%Reads'] = 0
+    original_seq = wt_row['Reference_Sequence']
     # Add the wt_row to the top of the df
     df = pd.concat([pd.DataFrame([wt_row]), df], ignore_index=True)
-    # print the df to check if the wt_row was added correctly
-    print(df.head())
-    return df
+    write_into_report(f'The sequence Aligned and Reference without mutation were selected: {wt_row["Aligned_Sequence"]} and {wt_row["Reference_Sequence"]}.', destination_folder=project_output_dir)
+    return df, original_seq
 
 
 def size_of_del_around_the_cut (gap_around_cut_starts, gap_around_cut_ends):
@@ -980,7 +981,7 @@ def blunt_cut_with_MH_possible(gap_min_max_range, Cut_position):
         return False
 
 # Add information about the sample, guide and its selected nucleoids into the table as new columns
-def process_table(table, gRNA_seq, sample, parameters_dic):
+def process_table(table, gRNA_seq, sample, parameters_dic, original_seq):
     """Adds to the given table many columns with stuff which are needed for CRISPRlysis.
     Can also process single .tsv file which is used to test the code with the randomly generated data. In that case, the gRNA_seq column is already present in the table."""
     df = pd.DataFrame(table)
@@ -996,7 +997,7 @@ def process_table(table, gRNA_seq, sample, parameters_dic):
     original_seq_dic = make_original_seq_dic(df['Reference_Sequence'], df['Unedited'], df['gRNA_seq'])
     print(original_seq_dic)
     # check if key is present in the dictionary, if no, use 'Reference_sequence' instead
-    df['Original_Sequence'] = df.apply(lambda row: original_seq_dic[gRNA_seq] if (gRNA_seq in original_seq_dic.keys()) else row['Reference_Sequence'], axis=1)
+    df['Original_Sequence'] = original_seq
     df['Original_Sequence_around_cut'] = df.apply(lambda row: make_seq_around_optimum_cut(row['Original_Sequence'], parameters_dic['cut_position'], 20), axis=1)
     df['Aligned_Sequence_around_cut'] = df.apply(lambda row: make_seq_around_optimum_cut(row['Aligned_Sequence'], parameters_dic['cut_position'], 20), axis=1)
     df['nt_around_cut'] = df.apply(lambda row: row['Original_Sequence'][parameters_dic['cut_position']-1:parameters_dic['cut_position']+1], axis=1)
@@ -1109,7 +1110,9 @@ def create_mastertable (project_dir, project_output_dir, parameters_dic):
     # if project_dir is tsv file, do   
     if project_dir.endswith('.tsv'):
         table = pd.read_csv(project_dir, sep='\t')
-        table = process_table(table, False, False, parameters_dic)
+        # Add first row to the table by create_first_row_in_alleles_freq_table_with_wt_seq 
+        table, original_seq = create_first_row_in_alleles_freq_table_with_wt_seq(table, project_output_dir)
+        table = process_table(table, False, False, parameters_dic, original_seq)
         mastertable_dir = Path(str(project_output_dir) + f'/00_mastertable_{date}.tsv')
         table.to_csv(mastertable_dir, sep='\t', mode='w', header=True, index=None)
         write_into_report(f'Mastertable was created from the unique .tsv file which already contained gRNA seq.', destination_folder=project_output_dir)
@@ -1130,8 +1133,8 @@ def create_mastertable (project_dir, project_output_dir, parameters_dic):
         # nuclease = filepath.split('/')[-2].split('_')[3]
         table = pd.read_csv(filepath, sep='\t')
         # Add first row to the table by create_first_row_in_alleles_freq_table_with_wt_seq 
-        table = create_first_row_in_alleles_freq_table_with_wt_seq(table)
-        table = process_table(table, filepath[-24:-4], sample_name, parameters_dic)
+        table, original_seq = create_first_row_in_alleles_freq_table_with_wt_seq(table, project_output_dir)
+        table = process_table(table, filepath[-24:-4], sample_name, parameters_dic, original_seq)
         # the name of the Allels_frequency_table_* must have sequence of the gRNA at the end of the name
         # it is there automatically if the name of the gRNA is not given into CRISPResso2 tool
         # example, where I added the sequence post analysis via search in totalcommander -> Alleles_frequency_table_around_gRNA10_GTAAAGTTTTCTGGTTAATT.txt

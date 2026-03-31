@@ -40,7 +40,7 @@
 {'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/animals/van_Overbeek_et_al_2016/03_for_Meta/to_analyse/HCT116_RNP_8hours/02_CRISPResso/',
    'project_output_dir':'../../CRISPRlysis_outputs/van_Overbeek_2016',
    'add_columns':{'organism':'Homo sapiens',
-      'hours_post_inoculation':8,
+      'hours_post_inoculation':'8',
       'deliver_of_nuclease':'RNP',
       'cell_line':'HCT116',
       'cell_cycle':'nondividing'      

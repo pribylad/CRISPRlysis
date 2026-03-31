@@ -41,7 +41,7 @@
    'project_output_dir':'../../CRISPRlysis_outputs/Bae_et_al_2014',
    'add_columns':{'organism':'Homo sapiens',
       'hours_post_inoculation':'72',
-      'deliver_of_nuclease':'xx',
+      'deliver_of_nuclease':'xxx',
       'cell_line':'Hela',
       'cell_cycle':'dividing'      
       },

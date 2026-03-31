@@ -40,9 +40,10 @@
 {'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/palnts/Hudzieczek_2021/02_outputs/CRISPRessoBatch_on_batch_220825/',
    'project_output_dir':'../../CRISPRlysis_outputs/Hudzieczek_2021',
    'add_columns':{'organism':'Silene latifolia',
-      'hours_post_inoculation':'xx',
+      'hours_post_inoculation':'xxx',
       'deliver_of_nuclease':'protoplasts transfection',
-      'cell_cycle':'nondividing'      
+      'cell_cycle':'nondividing',
+      'cell_line':'xxx'   
       },
    'data_source_original':'Hudzieczek unpublished, 2021',
    'cut_position':150,

@@ -40,9 +40,10 @@
 {'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/03_maybe_to use/Hoijer_et_al_2022/02_Metacentrum/CRISPResso_output_1399bp/5dpi',
    'project_output_dir':'../../CRISPRlysis_outputs/Hoijer_et_al_2022',
    'add_columns':{'organism':'Danio rerio',
-      'hours_post_inoculation':120,
+      'hours_post_inoculation':'120',
       'deliver_of_nuclease':'RNP',
-      'cell_cycle':'dividing'  
+      'cell_cycle':'dividing',
+      'cell_line':'xxx'
       },
    'data_source_original':'Hoijer et al., 2022',
    'cut_position':1399,

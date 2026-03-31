@@ -42,10 +42,10 @@
 {'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/palnts/Weiss_et_al_2022/03_for_Meta/to_analyse',
    'project_output_dir':'../../CRISPRlysis_outputs/Weiss_et_al_2022',
    'add_columns':{'organism':'Arabidopsis thaliana',
-      'hours_post_inoculation':'T1',
+      'hours_post_inoculation':'xxx',
       'deliver_of_nuclease':'Agrobacterium floral dip',
       'cell_cycle':'nondividing',
-      'cell_line':'embryo' 
+      'cell_line':'xxx' 
       },
    'data_source_original':'Weiss et al, 2022',
    'cut_position':20,

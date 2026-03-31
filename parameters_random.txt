@@ -40,8 +40,10 @@
 {'source_dir':'/home/lefnui/CRISPRlysis_outputs/random/random_sequences_CRISPResso2_like.tsv',
    'project_output_dir':'../../CRISPRlysis_outputs/random_2025',
    'add_columns':{'organism':'UniCorn',
-      'hours_post_inoculation':0,
-      'deliver_of_nuclease':'RNP'      
+      'hours_post_inoculation':'0',
+      'deliver_of_nuclease':'RNP',
+      'cell_cycle':'nondividing',
+      'cell_line':'xxx'    
       },
    'data_source_original':'Random 2025',
    'cut_position':50,

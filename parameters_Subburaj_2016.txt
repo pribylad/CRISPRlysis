@@ -42,7 +42,8 @@
    'add_columns':{'organism':'Petunia hybrida',
       'hours_post_inoculation':'24',
       'deliver_of_nuclease':'PEG leaves protoplasts',
-      'cell_cycle':'nondividing'       
+      'cell_cycle':'nondividing',
+      'cell_line':'xxx'      
       },
    'data_source_original':'Subburaj et al, 2016',
    'cut_position':60,

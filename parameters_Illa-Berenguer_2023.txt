@@ -40,9 +40,10 @@
 {'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/03_maybe_to use/Illa_Berenguer_et_al_2023/04_CRISPResso2_output/CRISPRessoBatch_on_batch_260203_filtered/',
    'project_output_dir':'../../CRISPRlysis_outputs/Illa_Berenguer_et_al_2023',
    'add_columns':{'organism':'Oryza sativa',
-      'hours_post_inoculation':840,
+      'hours_post_inoculation':'840',
       'deliver_of_nuclease':'biolistic',
-      'cell_cycle':'dividing'          
+      'cell_cycle':'dividing',
+      'cell_line':'xxx'          
       },
    'data_source_original':'Illa-Berenguer et al., 2023',
    'cut_position':90,
