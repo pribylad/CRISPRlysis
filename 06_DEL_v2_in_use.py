@@ -256,7 +256,7 @@ for run in range(no_of_runs):
     # remove index name
     df_pivot.columns.name = None
     # Save pivot table as tsv
-    df_pivot.to_csv(Path(str(table_output_dir) + '/' + '05' + '_DEL_orientation_NOTnormalised_pivot_' + filter_criterion + '_' + filter_value + '_' + date + '.tsv'), sep='\t')
+    df_pivot.to_csv(Path(str(table_output_dir) + '/' + '05' + '_DEL_orientation_NOTnormalised_pivot_' + date + '.tsv'), sep='\t')
     # Normalise rows to 100%
     df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
     df_pivot
@@ -274,7 +274,7 @@ for run in range(no_of_runs):
     # Met pivot table_avg reset index
     pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list, value_vars=list_of_events)
     # Save pivot table as tsv
-    pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + '05_pivot_DEL_orientation_normalised_avg' + filter_criterion + '_' + filter_value + '_' + date + '.tsv'), sep='\t')
+    pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + '05_pivot_DEL_orientation_normalised_avg_' + date + '.tsv'), sep='\t')
     # Make column combining organism and cell_line for better visualisation in the plot
     pivot_table_avg['organism_cell_line_hpi'] = pivot_table_avg['organism'] + ' - ' + pivot_table_avg['cell_line'] + ' - ' + pivot_table_avg['hours_post_inoculation']
     pivot_table_avg
