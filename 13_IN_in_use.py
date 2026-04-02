@@ -30,7 +30,7 @@ maximum_to_view = 2    # max lenght of insertion to be views as inependent subse
 # filter_criterion = 'efficacy'
 # filter_value = '95'
 # data_source = 'all_samples_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260330.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260402.tsv'
 # charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/01_all_samples')
 # table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/01_all_samples')
 
@@ -39,7 +39,7 @@ maximum_to_view = 2    # max lenght of insertion to be views as inependent subse
 # filter_criterion = 'efficacy_and_kingdom'
 # filter_value = '95_and_plant'
 # data_source = 'plants_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_plant_260331.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_plant_260402.tsv'
 # charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/02_plants')
 # table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/02_plants')
 
@@ -48,14 +48,15 @@ maximum_to_view = 2    # max lenght of insertion to be views as inependent subse
 # filter_criterion = 'efficacy_and_kingdom'
 # filter_value = '95_and_animal'
 # data_source = 'animals_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal_260331.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal_260402.tsv'
 # charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/02_animals')
 # table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/02_animals')
 
 
 # 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
 # Open list_of_datasets.txt and read it as list of datasets to be analysed individually
-list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples.txt'
+list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
+# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
 list_of_datasets = []
 with open(list_of_datasets_file, 'r') as f:
     for line in f:
@@ -70,10 +71,12 @@ for run in range(no_of_runs):
     if no_of_runs > 1:
         filter_criterion = 'efficacy_and_individual_dataset'
         filter_value = list_of_datasets[run]
-        data_source = f'{filter_value}'
         df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{filter_value}'
-        charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/{filter_value}')
-        table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/{filter_value}')
+        # Remove 04_split_index_ from data_source and also .tsv, replace " _ " with "_" and spaces with "_" in data_source
+        data_source = f'{filter_value}'
+        data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A')
+        charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/{data_source}')
+        table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/{data_source}')
     print(f"Run {run+1}/{no_of_runs} sample being analysed: {filter_value}")
     ##########################################################################################
     now = datetime.now()
@@ -377,3 +380,4 @@ for run in range(no_of_runs):
     # Save statistics
     stat_info = pivot_table_avg.groupby('4th_nt_inserted').describe().unstack()
     save_stat(stat_info, name_to_save, charts_output_dir)
+# %%

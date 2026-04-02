@@ -1,0 +1,27 @@
+04_split_index_A_thaliana - embryo - unknown_260402.tsv
+04_split_index_Arabidopsis thaliana - root culture - 504_260402.tsv
+04_split_index_Homo sapiens - HAP1 - 48to72_260402.tsv
+04_split_index_Homo sapiens - HCT116 - 16_260402.tsv
+04_split_index_Homo sapiens - HCT116 - 24_260402.tsv
+04_split_index_Homo sapiens - HCT116 - 4_260402.tsv
+04_split_index_Homo sapiens - HCT116 - 48_260402.tsv
+04_split_index_Homo sapiens - HCT116 - 8_260402.tsv
+04_split_index_Homo sapiens - HEK293 - 16_260402.tsv
+04_split_index_Homo sapiens - HEK293 - 24_260402.tsv
+04_split_index_Homo sapiens - HEK293 - 4_260402.tsv
+04_split_index_Homo sapiens - HEK293 - 48_260402.tsv
+04_split_index_Homo sapiens - HEK293 - 8_260402.tsv
+04_split_index_Homo sapiens - Hela - 72_260402.tsv
+04_split_index_Homo sapiens - Jurkat - 48to72_260402.tsv
+04_split_index_Homo sapiens - K562 - 16_260402.tsv
+04_split_index_Homo sapiens - K562 - 24_260402.tsv
+04_split_index_Homo sapiens - K562 - 4_260402.tsv
+04_split_index_Homo sapiens - K562 - 48_260402.tsv
+04_split_index_Homo sapiens - K562 - 8_260402.tsv
+04_split_index_Nicotiana benthamiana - xxx - 120_260402.tsv
+04_split_index_Petunia hybrida - xxx - 24_260402.tsv
+04_split_index_Pleurodeles waltl - xxx - xxx_260402.tsv
+04_split_index_Silene latifolia - xxx - xx_260402.tsv
+04_split_index_Solanum lycopersicum - M82 - 48_260402.tsv
+04_split_index_Solanum lycopersicum - xxx - 24_260402.tsv
+04_split_index_Xenopus tropicalis - xxx - xxx_260402.tsv
