@@ -14,28 +14,28 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import os
 ##########################################################################################
-# output_format = 'png'
-output_format = 'svg'
+output_format = 'png'
+# output_format = 'svg'
 show_plots = True
 
-# # 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs and generating 05_tables by 06_DEL.py script
-# filter_criterion = 'None'
-# filter_value = 'None'
-# data_source = 'all_samples_no_filters'
-# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_pivot_DEL_orientation_normalised_avgNone_None_260305.tsv'
-# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_pivot_DEL_orientation_normalised_avgNone_None_260310.tsv'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_pivot_DEL_orientation_normalised_avgNone_None_260320.tsv'
-# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260305.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples')
+# 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs and generating 05_tables by 06_DEL.py script
+filter_criterion = 'None'
+filter_value = 'None'
+data_source = 'all_samples_no_filters'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_pivot_DEL_orientation_normalised_avgNone_None_260305.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_pivot_DEL_orientation_normalised_avgNone_None_260310.tsv'
+df_dir = '/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/01_no_filter_all_samples/05_pivot_DEL_orientation_normalised_avg_260407.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260305.tsv'
+charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/01_no_filter_all_samples')
+table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/01_no_filter_all_samples')
 
-# 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
-filter_criterion = 'efficacy'
-filter_value = '95'
-data_source = 'all_samples_filtered_95'
-df_dir = '/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/01_all_samples/05_pivot_DEL_orientation_normalised_avgefficacy_95_260331.tsv'
-charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
-table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+# # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
+# filter_criterion = 'efficacy'
+# filter_value = '95'
+# data_source = 'all_samples_filtered_95'
+# df_dir = '/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/01_all_samples/05_pivot_DEL_orientation_normalised_avgefficacy_95_260402.tsv'
+# charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+# table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
 
 # # 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
 # filter_criterion = 'efficacy_1ntIN'

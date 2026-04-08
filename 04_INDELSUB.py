@@ -26,7 +26,7 @@ output_format = 'png'
 show_plots = True
 
 
-#####
+# ####
 # # 1 Analysis for data without filtering for 5% efficacy
 # filter_criterion = 'All'
 # filter_value = 'All'
@@ -36,7 +36,7 @@ show_plots = True
 # data_source = 'all_samples'
 # project_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/01_no_filter_all_samples/01_all_samples')
 
-# # #####
+# #####
 # # 2 Analysis for data with filtering for 5% efficacy
 # filter_criterion = 'Efficacy'
 # filter_value = '95'
@@ -64,8 +64,8 @@ show_plots = True
 
 # 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
 # Open list_of_datasets.txt and read it as list of datasets to be analysed individually
-# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
-list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
+list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
+# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
 list_of_datasets = []
 with open(list_of_datasets_file, 'r') as f:
     for line in f:
@@ -83,7 +83,8 @@ for run in range(no_of_runs):
         df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{filter_value}'
         # Remove 04_split_index_ from data_source and also .tsv, replace " _ " with "_" and spaces with "_" in data_source
         data_source = f'{filter_value}'
-        data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A')
+        data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A').replace('.,','_').replace(',', '').replace('__', '_')
+        print(f"Data source: {data_source}")
         project_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/{data_source}')
     print(f"Run {run+1}/{no_of_runs} sample being analysed: {filter_value}")
     ##########################################################################################

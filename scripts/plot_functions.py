@@ -650,7 +650,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         at.patch.set_boxstyle('round,pad=0.,rounding_size=0.2')
         ax.add_artist(at)
 
-    plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.' + output_format), dpi=dpi, bbox_inches='tight')
+    plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '.' + output_format), dpi=dpi, bbox_inches='tight')
     write_into_report(f'Violin plot {name_to_save} was created.', destination_folder=project_output_dir)
     if show_plots is True:
         return plt.show()

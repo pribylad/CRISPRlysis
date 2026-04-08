@@ -36,9 +36,9 @@ use_3_5_possible = False
 # no_of_runs = 1
 # # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260227.tsv'
 # # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260305.tsv'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260320.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples')
+# df_dir = '/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260402.tsv'
+# charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/01_no_filter_all_samples')
+# table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/01_no_filter_all_samples')
 
 # # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
 # filter_criterion = 'efficacy'
@@ -60,72 +60,15 @@ use_3_5_possible = False
 # charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/02_plants')
 # table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/02_plants')
 
-# 4 with data filtered for overall efficacy >=5% and kingdom = animal, input table is result from 02_filter_low_efficacy.py script
-filter_criterion = 'efficacy_and_kingdom'
-filter_value = '95_and_animal'
-individual_dataset = True
-no_of_runs = 1
-data_source = 'animals_filtered_95'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal_260402.tsv'
-charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/02_animals')
-table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/02_animals')
-
-# # TODO individual_dataset must be False
-# # 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
-# filter_criterion = 'efficacy_1ntIN'
-# filter_value = '95_80'
-# individual_dataset = False
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_filtered_efficacy_95_samples_260227.tsv'
-# data_source = 'all_' + filter_criterion + '_' + filter_value + '%'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/03_filtered_{filter_criterion}_{filter_value}')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/03_filtered_{filter_criterion}_{filter_value}')
-
-# # TODO individual_dataset must be True
-# # 4 with data from 02_mastertable outputs from CRISPRlysis.py
-# # filter_criterion = 'HEK293'
-# filter_criterion = 'K562'
-# filter_value = '4'
-# # filter_value = '8'
-# # filter_value = '16'
-# # filter_value = '48'
-# individual_dataset = True 
-# # df_dir = f'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/02_mastertable_{filter_criterion}_RNP_{filter_value}_260305.tsv'
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/van_Overbeek_2016/02_mastertable_{filter_criterion}_RNP_{filter_value}_260225.tsv'
-# data_source = 'Filter ' + filter_criterion + '_' + filter_value
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}')
-
-# filter_criterion = 'Xenopus-tropicalis'
-# filter_value = 'xxx'
+# # 4 with data filtered for overall efficacy >=5% and kingdom = animal, input table is result from 02_filter_low_efficacy.py script
+# filter_criterion = 'efficacy_and_kingdom'
+# filter_value = '95_and_animal'
 # individual_dataset = True
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/Iida_et_al_2020/02_mastertable_WT_260320.tsv'
-# data_source = 'Filter ' + filter_criterion + '_' + filter_value
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Iida')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Iida')
-
-# filter_criterion = 'N-benthamiana'
-# filter_value = '120'
-# individual_dataset = True
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/Pribylova_et_al_2022/02_mastertable_P35S_WT_260206.tsv'
-# data_source = 'Filter ' + filter_criterion + '_' + filter_value
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Pribylova')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Pribylova')
-
-# filter_criterion = 'A-thaliana'
-# filter_value = '504'
-# individual_dataset = True
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/Kamoen_et_al_2024/02_mastertable_WT_260305_Kamoen.tsv'
-# data_source = 'Filter ' + filter_criterion + '_' + filter_value
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Kamoen')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Kamoen')
-
-# filter_criterion = 'A-thaliana'
-# filter_value = 'T1'
-# individual_dataset = True
-# df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_Weiss_0874_260305.tsv'
-# data_source = 'Filter ' + filter_criterion + '_' + filter_value
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_filtered_{filter_criterion}_{filter_value}_Weiss')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_filtered_{filter_criterion}_{filter_value}_Weiss')
+# no_of_runs = 1
+# data_source = 'animals_filtered_95'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal_260402.tsv'
+# charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/02_animals')
+# table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/02_animals')
 
 # filter_criterion = 'Random_dataset'
 # use_3_5_possible = True
@@ -142,19 +85,19 @@ table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_{filter_criterion}_{filter_value}_random_noPAM')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_{filter_criterion}_{filter_value}_random_noPAM')
 
-# # 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
-# # Open list_of_datasets.txt and read it as list of datasets to be analysed individually
-# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
-# # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
-# list_of_datasets = []
-# with open(list_of_datasets_file, 'r') as f:
-#     for line in f:
-#         dataset = line.strip()
-#         if dataset:  # Check if the line is not empty
-#             list_of_datasets.append(dataset)
-# print(list_of_datasets)
-# no_of_runs = len(list_of_datasets)
-# print(f"No of individual datasets to be analysed: {no_of_runs}")
+# 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
+# Open list_of_datasets.txt and read it as list of datasets to be analysed individually
+list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
+# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
+list_of_datasets = []
+with open(list_of_datasets_file, 'r') as f:
+    for line in f:
+        dataset = line.strip()
+        if dataset:  # Check if the line is not empty
+            list_of_datasets.append(dataset)
+print(list_of_datasets)
+no_of_runs = len(list_of_datasets)
+print(f"No of individual datasets to be analysed: {no_of_runs}")
 
 for run in range(no_of_runs):
     if no_of_runs > 1:
@@ -164,7 +107,7 @@ for run in range(no_of_runs):
         df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{filter_value}'
         # Remove 04_split_index_ from data_source and also .tsv, replace " _ " with "_" and spaces with "_" in data_source
         data_source = f'{filter_value}'
-        data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A')
+        data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A').replace('.,','_').replace(',', '').replace('__', '_')
         charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/{data_source}')
         table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/{data_source}')
     print(f"Run {run+1}/{no_of_runs} sample being analysed: {filter_value}")
@@ -777,3 +720,4 @@ for run in range(no_of_runs):
         , data_source=data_source, output_format='svg'\
         , dpi=200, y_min=0, y_max=119, show_plots=show_plots)
 print('Tadaaaa, all finished :o)')
+# %%

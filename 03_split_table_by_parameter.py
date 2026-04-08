@@ -15,52 +15,9 @@ output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtere
 df = pd.read_csv(input_file, sep='\t')
 df['hours_post_inoculation'] = df['hours_post_inoculation'].astype(str)
 df['hours_post_inoculation'].unique()
-
-##########################################################################################
-##########################################################################################
-# FILTER BY LIST
-##########################################################################################
-##########################################################################################
 # %%
-# Lists are based on PCA analysis
-# list_dict = {'Cluster_1': ['Homo sapiens - Hela - 72'
-#                         ,'Homo sapiens - HCT116 - 48'
-#                         ,'Homo sapiens - HEK293 - 48'
-#                         ,'Homo sapiens - K562 - 48'
-#                         ,'Homo sapiens - HAP1 - 48to72'
-#                         ,'Homo sapiens - HCT116 - 24'
-#                         ,'Homo sapiens - HEK293 - 24'
-#                         ,'Homo sapiens - K562 - 24' ],
-#                 'Cluster_2':['Arabidopsis thaliana - xxx - 504'
-#                         ,'Homo sapiens - HCT116 - 8'
-#                         ,'Homo sapiens - HEK293 - 8'
-#                         ,'Homo sapiens - K562 - 8'],
-#                 'Cluster_3': ['Arabidopsis thaliana - xxx - unknown'
-#                         ,'Nicotiana benthamiana - xxx - 120'
-#                         ,'Petunia hybrida - xxx - 24'
-#                         ,'Silene latifoliaa - xxx - xx'
-#                         ,'Solanum lycopersicum - xxx - 24']}
-# df['organism_cell_line_hpi'] = df['organism'] + ' - ' + df['cell_line'] + ' - ' + df['hours_post_inoculation']
-
-# # Check if all organism_cell_line_hpi values are in list_dic in one of the clusters
-# all_organism_cell_line_hpi = df['organism_cell_line_hpi'].unique()
-# missing_values = []
-# for cluster, organism_list in list_dict.items():
-#     for organism in organism_list:
-#         if organism not in all_organism_cell_line_hpi:
-#             missing_values.append(organism)
-# if missing_values:
-#     raise ValueError(f"The following organism_cell_line_hpi values are missing from the list_dict: {missing_values}")
-
-# # Make csv tables for Cluster_1, Cluster_2 and Cluster_3 and save them to output directory
-# for cluster, organism_list in list_dict.items():
-#     cluster_df = df[df['organism_cell_line_hpi'].isin(organism_list)]
-#     output_file = os.path.join(output_directory, f'07_split_{cluster}_{datetime.now().strftime("%y%m%d")}.tsv')
-#     cluster_df.to_csv(output_file, sep='\t', index=False)
-#     print(f"Saved {output_file} with shape {cluster_df.shape}")
-#     print(f"Sources in this split: {cluster_df['source'].unique().tolist()}")
-#     print("--------------------------------------------------")
-
+df.columns
+df['source'].unique()
 # %%
 ##########################################################################################
 ##########################################################################################
@@ -72,8 +29,9 @@ df['hours_post_inoculation'].unique()
 # split_parameter_dic = {'kingdom': ['plant', 'animal']}
 ##########################################################################################
 
-df['index'] = df['organism'] + ' - ' + df['cell_line'] + ' - ' + df['hours_post_inoculation']
+df['index'] = df['source'] + ' - ' + df['organism'] + ' - ' + df['cell_line'] + ' - ' + df['hours_post_inoculation']
 df['index'].unique()
+# %%
 filter_criterion = 'index'
 # Make dictionary where key is 'index' and value is list of unique valuses o index
 split_parameter_dic = {'index': df['index'].unique().tolist()}

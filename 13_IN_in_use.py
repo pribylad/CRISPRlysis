@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from scripts.plot_functions import plot_sns_violin_and_print, save_stat
 ##########################################################################################
 output_format = 'png'
-show_plots = False
+show_plots = True
 maximum_to_view = 2    # max lenght of insertion to be views as inependent subset, all insertions longer than this will be grouped as >{maximum_to_view}
 
 # # 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs
@@ -21,7 +21,7 @@ maximum_to_view = 2    # max lenght of insertion to be views as inependent subse
 # filter_criterion = 'None'
 # filter_value = 'None'
 # data_source = 'all_samples_no_filters'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260320.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260402.tsv'
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples')
 
@@ -52,7 +52,6 @@ maximum_to_view = 2    # max lenght of insertion to be views as inependent subse
 # charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/02_animals')
 # table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/02_animals')
 
-
 # 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
 # Open list_of_datasets.txt and read it as list of datasets to be analysed individually
 list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
@@ -74,7 +73,7 @@ for run in range(no_of_runs):
         df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{filter_value}'
         # Remove 04_split_index_ from data_source and also .tsv, replace " _ " with "_" and spaces with "_" in data_source
         data_source = f'{filter_value}'
-        data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A')
+        data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A').replace('.,','_').replace(',', '').replace('__', '_')
         charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/{data_source}')
         table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/{data_source}')
     print(f"Run {run+1}/{no_of_runs} sample being analysed: {filter_value}")
