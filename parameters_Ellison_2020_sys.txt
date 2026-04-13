@@ -40,7 +40,7 @@
 {'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/palnts/Ellison_et_al_2020/03_for_Meta/to_analyse/PDS/sys',
    'project_output_dir':'../../CRISPRlysis_outputs/Ellison_et_al_2020/sys',
    'add_columns':{'organism':'Nicotiana benthamiana',
-      'hours_post_inoculation':'120',
+      'hours_post_inoculation':'1008',
       'deliver_of_nuclease':'Agrobacterium leaves infiltration',
       'plant_part':'systemic',
       'cell_cycle':'nondividing',

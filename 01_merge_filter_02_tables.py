@@ -6,21 +6,12 @@ import glob
 import pandas as pd
 from datetime import datetime
 ##########################################################################################
-source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260330/'
-output_file_name = '01_merged_02tables_NoFilter_All_' + datetime.now().strftime('%y%m%d') + '.tsv'
-
-# source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260305'
+# source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260330/'
 # output_file_name = '01_merged_02tables_NoFilter_All_' + datetime.now().strftime('%y%m%d') + '.tsv'
-# source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/part_A/Animals'
-# output_file_name = '01_merged_02tables_NoFilter_Animals_' + datetime.now().strftime('%y%m%d') + '.tsv'
-# source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/part_A/Plants'
-# output_file_name = '01_merged_02tables_NoFilter_Plants_' + datetime.now().strftime('%y%m%d') + '.tsv'
 
-# source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/Kamoen_2024/WT'
-# output_file_name = '01_merged_02tables_NoFilter_Kamoen_WT_' + datetime.now().strftime('%y%m%d') + '.tsv'
+source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/mutants/'
+output_file_name = '01_merged_02tables_NoFilter_mutants_' + datetime.now().strftime('%y%m%d') + '.tsv'
 
-# source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/Weiss_0_8_7_4'
-# output_file_name = '01_merged_02tables_NoFilter_Weiss_0874_' + datetime.now().strftime('%y%m%d') + '.tsv'
 ##########################################################################################
 
 output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/'
@@ -95,3 +86,4 @@ print(merged_df['kingdom'].unique())
 print(f"Merged dataframe organisms: {merged_df['organism'].unique()}")
 # %%
 print(merged_df.columns)
+# %%

@@ -26,46 +26,46 @@ output_format = 'png'
 show_plots = True
 
 
-# ####
+####
 # # 1 Analysis for data without filtering for 5% efficacy
 # filter_criterion = 'All'
 # filter_value = 'All'
 # no_of_runs = 1
-# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260330.tsv'
-# df_dir = '/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260402.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260409.tsv'
 # data_source = 'all_samples'
-# project_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/01_no_filter_all_samples/01_all_samples')
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples/01_all_samples')
 
 # #####
 # # 2 Analysis for data with filtering for 5% efficacy
 # filter_criterion = 'Efficacy'
 # filter_value = '95'
 # no_of_runs = 1
-# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260330.tsv'
-# df_dir = '/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260402.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All.tsv'
 # data_source = 'all_samples_filtered_95'
-# project_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/01_all_samples')
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/01_all_samples')
 
 # # 3 with data filtered for overall efficacy >=5% and kingdom = plant, input table is result from 02_filter_low_efficacy.py script
 # filter_criterion = 'efficacy_and_kingdom'
 # filter_value = '95_and_plant'
 # no_of_runs = 1
 # data_source = 'plants_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_plant_260402.tsv'
-# project_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/02_plants')
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_plant.tsv'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_plants')
 
 # # 4 with data filtered for overall efficacy >=5% and kingdom = animal, input table is result from 02_filter_low_efficacy.py script
 # filter_criterion = 'efficacy_and_kingdom'
 # filter_value = '95_and_animal'
 # no_of_runs = 1
 # data_source = 'animals_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal_260402.tsv'
-# project_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/02_animals')
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal.tsv'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_animals')
 
 # 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
 # Open list_of_datasets.txt and read it as list of datasets to be analysed individually
-list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
+mutants = True
+# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
 # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
+list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_3_mutants.txt'
 list_of_datasets = []
 with open(list_of_datasets_file, 'r') as f:
     for line in f:
@@ -76,16 +76,27 @@ print(list_of_datasets)
 no_of_runs = len(list_of_datasets)
 print(f"No of individual datasets to be analysed: {no_of_runs}")
 
+
 for run in range(no_of_runs):
     if no_of_runs > 1:
-        filter_criterion = 'efficacy_and_individual_dataset'
-        filter_value = list_of_datasets[run]
-        df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{filter_value}'
-        # Remove 04_split_index_ from data_source and also .tsv, replace " _ " with "_" and spaces with "_" in data_source
-        data_source = f'{filter_value}'
-        data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A').replace('.,','_').replace(',', '').replace('__', '_')
-        print(f"Data source: {data_source}")
-        project_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/{data_source}')
+        if mutants is False:
+            filter_criterion = 'efficacy_and_individual_dataset'
+            filter_value = list_of_datasets[run]
+            df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{filter_value}'
+            # Remove 04_split_index_ from data_source and also .tsv, replace " _ " with "_" and spaces with "_" in data_source
+            data_source = f'{filter_value}'
+            data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A').replace('.,','_').replace(',', '').replace('__', '_')
+            print(f"Data source: {data_source}")
+            project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/{data_source}')
+        else:
+            filter_criterion = 'mutant'
+            filter_value = list_of_datasets[run]
+            df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/mutants/{filter_value}'
+            # Remove 04_split_index_ from data_source and also .tsv, replace " _ " with "_" and spaces with "_" in data_source
+            data_source = f'{filter_value}'
+            data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A').replace('.,','_').replace(',', '').replace('__', '_')
+            print(f"Data source: {data_source}")
+            project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/03_mutants/{data_source}')
     print(f"Run {run+1}/{no_of_runs} sample being analysed: {filter_value}")
     ##########################################################################################
     now = datetime.now()
@@ -121,7 +132,10 @@ for run in range(no_of_runs):
     #            I   N    N   DDDD    EEEEEE  LLLLLL  SSSS     UUU    BBBB
     ##########################################################################################
     # Define lists
-    default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'TergetNum', 'replicate']
+    if mutants is False:
+        default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'TergetNum', 'replicate']
+    else:
+        default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'replicate']
     # Check if all all events from default_list are present as columns in the df, check if those columns contain values on individual rows and if not, fill them with 0
     for event in default_list:
         df[event] = df[event].fillna(0)
@@ -130,7 +144,8 @@ for run in range(no_of_runs):
 
     default_list_NOreplicate = default_list.copy()
     default_list_NOreplicate.remove('replicate')
-    default_list_NOreplicate.remove('TergetNum')
+    if mutants is False:
+        default_list_NOreplicate.remove('TergetNum')
     default_list_NOreplicate.append('Event_around_cut')
 
     # Get data

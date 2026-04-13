@@ -19,10 +19,10 @@ output_directory = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filter
 # input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260225.tsv'
 # input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260227.tsv'
 # input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260320.tsv'
-input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260402.tsv'
-output_nofilter_tsv = f'02_pivot_table_no_filter_All_{datetime.now().strftime("%y%m%d")}.tsv'
-output_tsv = f'03_filtered_efficacy_samples_limit{100-x}efficacy_All_{datetime.now().strftime("%y%m%d")}.tsv'
-output_low_efficacy_txt = f'03_low_efficacy_samples_limit{100-x}efficacy_All_{datetime.now().strftime("%y%m%d")}.txt'
+input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260409.tsv'
+output_nofilter_tsv = f'02_pivot_table_no_filter_All.tsv'
+output_tsv = f'03_filtered_efficacy_samples_limit{100-x}efficacy_All.tsv'
+output_low_efficacy_txt = f'03_low_efficacy_samples_limit{100-x}efficacy_All.txt'
 
 ##########################################################################################
 # If output_directory does not exists, create on
@@ -51,7 +51,7 @@ plt.xlabel('%Reads of No Mutation')
 plt.ylabel('Frequency')
 plt.grid(axis='y', alpha=0.75)
 # Save the histogram as a PNG file
-histogram_file = os.path.join(output_directory, f'no_mutation_histogram_{datetime.now().strftime("%y%m%d")}.png')
+histogram_file = os.path.join(output_directory, f'no_mutation_histogram.png')
 plt.savefig(histogram_file) 
 plt.show()
 # Make list of samples where sum of %Reads for no_mutation is greater than x
@@ -77,7 +77,7 @@ filtered_df.to_csv(output_file, sep='\t', index=False)
 pivot_table = pd.pivot_table(filtered_df, index=['sample', 'gRNA_seq', 'replicate'], columns=['Event'], values=['%Reads'], aggfunc='sum', fill_value=0)
 plt.hist(pivot_table[('%Reads', 'no_mutation')], bins=50, color='blue', alpha=0.7)
 # Save the histogram as a PNG file
-histogram_file = os.path.join(output_directory, f'no_mutation_histogram_filtered_{datetime.now().strftime("%y%m%d")}.png')
+histogram_file = os.path.join(output_directory, f'no_mutation_histogram_filtered.png')
 plt.savefig(histogram_file) 
 plt.show()
 

@@ -320,6 +320,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'Arabidopsis thaliana - xxx - unknown': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '*'}
             ,'A. thaliana - embryo - unknown': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '*'}
             ,'Nicotiana benthamiana - xxx - 120': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 'v'}
+            ,'Nicotiana benthamiana - xxx - 336': {'color': "#11775c", 'edge_color':'gray', 'hatch':'', 'marker': 'v'}
             ,'Petunia hybrida - xxx - 24': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '>'}
             ,'Silene latifolia - xxx - xx': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '<'}
             ,'Solanum lycopersicum - xxx - 24': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 's'}

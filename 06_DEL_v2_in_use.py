@@ -34,11 +34,9 @@ use_3_5_possible = False
 # data_source = 'all_samples_no_filters'
 # individual_dataset = False
 # no_of_runs = 1
-# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260227.tsv'
-# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260305.tsv'
-# df_dir = '/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260402.tsv'
-# charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/01_no_filter_all_samples')
-# table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/01_no_filter_all_samples')
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260409.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples/01_all_samples')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_all_samples')
 
 # # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
 # filter_criterion = 'efficacy'
@@ -46,9 +44,9 @@ use_3_5_possible = False
 # individual_dataset = False
 # no_of_runs = 1
 # data_source = 'all_samples_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All_260402.tsv'
-# charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/01_all_samples')
-# table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/01_all_samples')
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/01_all_samples')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/01_all_samples')
 
 # # 3 with data filtered for overall efficacy >=5% and kingdom = plant, input table is result from 02_filter_low_efficacy.py script
 # filter_criterion = 'efficacy_and_kingdom'
@@ -56,9 +54,9 @@ use_3_5_possible = False
 # individual_dataset = True
 # no_of_runs = 1
 # data_source = 'plants_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_plant_260402.tsv'
-# charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/02_plants')
-# table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/02_plants')
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_plant.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_plants')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/02_plants')
 
 # # 4 with data filtered for overall efficacy >=5% and kingdom = animal, input table is result from 02_filter_low_efficacy.py script
 # filter_criterion = 'efficacy_and_kingdom'
@@ -66,9 +64,9 @@ use_3_5_possible = False
 # individual_dataset = True
 # no_of_runs = 1
 # data_source = 'animals_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal_260402.tsv'
-# charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/02_animals')
-# table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/02_animals')
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_animals')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/02_animals')
 
 # filter_criterion = 'Random_dataset'
 # use_3_5_possible = True
@@ -87,8 +85,11 @@ use_3_5_possible = False
 
 # 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
 # Open list_of_datasets.txt and read it as list of datasets to be analysed individually
-list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
+# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
 # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
+mutants = True
+list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_3_mutants.txt'
+
 list_of_datasets = []
 with open(list_of_datasets_file, 'r') as f:
     for line in f:
@@ -101,15 +102,26 @@ print(f"No of individual datasets to be analysed: {no_of_runs}")
 
 for run in range(no_of_runs):
     if no_of_runs > 1:
-        individual_dataset = True
-        filter_criterion = 'efficacy_and_individual_dataset'
-        filter_value = list_of_datasets[run]
-        df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{filter_value}'
-        # Remove 04_split_index_ from data_source and also .tsv, replace " _ " with "_" and spaces with "_" in data_source
-        data_source = f'{filter_value}'
-        data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A').replace('.,','_').replace(',', '').replace('__', '_')
-        charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_efficacy_95/{data_source}')
-        table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/{data_source}')
+        if mutants is False:
+            individual_dataset = True
+            filter_criterion = 'efficacy_and_individual_dataset'
+            filter_value = list_of_datasets[run]
+            df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{filter_value}'
+            # Remove 04_split_index_ from data_source and also .tsv, replace " _ " with "_" and spaces with "_" in data_source
+            data_source = f'{filter_value}'
+            data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A').replace('.,','_').replace(',', '').replace('__', '_')
+            charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/{data_source}')
+            table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{data_source}')
+        else:
+            filter_criterion = 'mutant'
+            filter_value = list_of_datasets[run]
+            df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/mutants/{filter_value}'
+            # Remove 04_split_index_ from data_source and also .tsv, replace " _ " with "_" and spaces with "_" in data_source
+            data_source = f'{filter_value}'
+            data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A').replace('.,','_').replace(',', '').replace('__', '_')
+            print(f"Data source: {data_source}")
+            charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/03_mutants/{data_source}')
+            table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/mutants/{data_source}')
     print(f"Run {run+1}/{no_of_runs} sample being analysed: {filter_value}")
     ##########################################################################################
     now = datetime.now()
@@ -199,7 +211,7 @@ for run in range(no_of_runs):
     # remove index name
     df_pivot.columns.name = None
     # Save pivot table as tsv
-    df_pivot.to_csv(Path(str(table_output_dir) + '/' + '05' + '_DEL_orientation_NOTnormalised_pivot_' + date + '.tsv'), sep='\t')
+    df_pivot.to_csv(Path(str(table_output_dir) + '/' + '05' + '_DEL_orientation_NOTnormalised_pivot_' + '.tsv'), sep='\t')
     # Normalise rows to 100%
     df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
     df_pivot
@@ -217,7 +229,7 @@ for run in range(no_of_runs):
     # Met pivot table_avg reset index
     pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list, value_vars=list_of_events)
     # Save pivot table as tsv
-    pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + '05_pivot_DEL_orientation_normalised_avg_' + date + '.tsv'), sep='\t')
+    pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + '05_pivot_DEL_orientation_normalised_avg_' + '.tsv'), sep='\t')
     # Make column combining organism and cell_line for better visualisation in the plot
     pivot_table_avg['organism_cell_line_hpi'] = pivot_table_avg['organism'] + ' - ' + pivot_table_avg['cell_line'] + ' - ' + pivot_table_avg['hours_post_inoculation']
     pivot_table_avg
@@ -240,6 +252,7 @@ for run in range(no_of_runs):
                 ,'A. thaliana - embryo - T1'
                 ,'Nicotiana benthamiana - xxx - 120'
                 ,'Nicotiana benthamiana - leaf - 120'
+                ,'Nicotiana benthamiana - xxx - 336'
                 ,'Petunia hybrida - xxx - 24'
                 ,'Silene latifolia - xxx - xx'
                 ,'Solanum lycopersicum - xxx - 24'
@@ -344,21 +357,26 @@ for run in range(no_of_runs):
     df_stats['ALR_upstream_ambiguous_vs_upstream_NO_ambi'] = np.log((df_stats["upstream_ambiguous"] + 1e-12) / (df_stats["upstream_NO_ambi"] + 1e-12))
 
   # Perform Wilcoxon signed-rank test on ALR values
-    statistic, p_value = stats.wilcoxon(df_stats['ALR_upstream_ambiguous_vs_upstream_NO_ambi'])
-    print(f'Wilcoxon signed-rank test statistic: {statistic}, p-value: {p_value}')
-    median_lf = np.median(df_stats['ALR_upstream_ambiguous_vs_upstream_NO_ambi'])
-    if median_lf > 0:
-        interpretation = "Upstream deletions with ambiguos nucleoties are significantly more frequent than upstream deletions without ambiguity."
-    elif median_lf < 0:
-        interpretation = "Upstream deletions without ambiguity are significantly more frequent than upstream deletions with ambiguity."
-    else:
-        interpretation = "No difference in frequency between upstream deletions with and without ambiguity."
-    print(f'Median is {median_lf}. Interpretation based on median log-fold change: {interpretation}')
-    # Save statistics
-    stat_info = pd.DataFrame({'statistic': [statistic], 'p_value': [p_value]})
-    save_stat(stat_info, f'003_5_DEL_end_summary_norm_violinplot_filtered_stats_{filter_criterion}_{filter_value}', charts_output_dir)
-    stat_info
-
+  #   Try if statistic rise ValueError, if yes skip
+    try:
+        statistic, p_value = stats.wilcoxon(df_stats['ALR_upstream_ambiguous_vs_upstream_NO_ambi'])
+        print(f'Wilcoxon signed-rank test statistic: {statistic}, p-value: {p_value}')
+        median_lf = np.median(df_stats['ALR_upstream_ambiguous_vs_upstream_NO_ambi'])
+        if median_lf > 0:
+            interpretation = "Upstream deletions with ambiguos nucleoties are significantly more frequent than upstream deletions without ambiguity."
+        elif median_lf < 0:
+            interpretation = "Upstream deletions without ambiguity are significantly more frequent than upstream deletions with ambiguity."
+        else:
+            interpretation = "No difference in frequency between upstream deletions with and without ambiguity."
+        print(f'Median is {median_lf}. Interpretation based on median log-fold change: {interpretation}')
+        # Save statistics
+        stat_info = pd.DataFrame({'statistic': [statistic], 'p_value': [p_value]})
+        save_stat(stat_info, f'003_5_DEL_end_summary_norm_violinplot_filtered_stats_{filter_criterion}_{filter_value}', charts_output_dir)
+    except ValueError as e:
+        print(f"Error occurred: {e}")
+        print("Skipping statistical test.")
+        statistic, p_value = None, None
+    
     plt.figure(figsize=(7, 4)) 
     plt.hist(df_stats['ALR_upstream_ambiguous_vs_upstream_NO_ambi'], bins=40, color="steelblue", edgecolor="black", alpha=0.7)
     plt.axvline(0, color="gray", linestyle="--", label="5’ = 3’")
@@ -379,74 +397,78 @@ for run in range(no_of_runs):
                     \nInterpretation based on median log-fold change:\n    {interpretation}\
                     \n    Wilcoxon signed-rank test statistic: {statistic}, p-value: {p_value}\
                     \nNo of samples: {no_of_samples}'
-    plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
-        , number_of_columns=len(pivot_table_avg['variable'].unique())/2\
-        , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
-        , show_hue_medians=False\
-        , hue=None, hue_only_for_data_points=False \
-        , hatches=False\
-        , clip_right=True\
-        , title=title, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
-        , order=order\
-        , plot_legend=False\
-        , integrated_properties_dic=False, color_dic=colour_dic\
-        , text_bellow_chart=text_bellow_chart\
-        , y_legend_coordinate=-0.4, yaxis_formater=100\
-        , x_max=None\
-        , change_edge_color=False\
-        # , add_stat=True, stat_pairs=[("upstream_ambiguous", "upstream_NO_ambi")], stat_test='Wilcoxon', stat_format='star', stat_correction='BH'\
-        , name_to_save=name_to_save\
-        , project_output_dir=charts_output_dir\
-        , data_source=data_source, output_format=output_format\
-        , dpi=200, y_min=0, y_max=115, show_plots=show_plots)
-
-    # Without legend etc as png
-    name_to_save = f'003_4_DEL_orientation_summary_violinplot_small'
-    plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
-        , number_of_columns=len(pivot_table_avg['variable'].unique())/2\
-        , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
-        , show_hue_medians=False\
-        , hue=None, hue_only_for_data_points=False \
-        , hatches=False\
-        , clip_right=True\
-        , title=None, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
-        , order=order\
-        , plot_legend=False\
-        , integrated_properties_dic=False, color_dic=colour_dic\
-        , text_bellow_chart=None\
-        , y_legend_coordinate=-0.4, yaxis_formater=100\
-        , x_max=None\
-        , change_edge_color=False\
-        , name_to_save=name_to_save\
-        , project_output_dir=charts_output_dir\
-        , data_source=data_source, output_format='png'\
-        , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
-
-    # Without legend etc as svg
-    name_to_save = f'003_4_DEL_orientation_summary_violinplot_small'
-    plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
-        , number_of_columns=len(pivot_table_avg['variable'].unique())/2\
-        , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
-        , show_hue_medians=False\
-        , hue=None, hue_only_for_data_points=False \
-        , hatches=False\
-        , clip_right=True\
-        , title=None, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
-        , order=order\
-        , plot_legend=False\
-        , integrated_properties_dic=False, color_dic=colour_dic\
-        , text_bellow_chart=None\
-        , y_legend_coordinate=-0.4, yaxis_formater=100\
-        , x_max=None\
-        , change_edge_color=False\
-        , name_to_save=name_to_save\
-        , project_output_dir=charts_output_dir\
-        , data_source=data_source, output_format='svg'\
-        , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
-
-    stat_info = pivot_table_avg.groupby('variable').value.describe()
-    save_stat(stat_info, name_to_save, charts_output_dir)
     
+    try:
+        plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+            , number_of_columns=len(pivot_table_avg['variable'].unique())/2\
+            , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
+            , show_hue_medians=False\
+            , hue=None, hue_only_for_data_points=False \
+            , hatches=False\
+            , clip_right=True\
+            , title=title, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
+            , order=order\
+            , plot_legend=False\
+            , integrated_properties_dic=False, color_dic=colour_dic\
+            , text_bellow_chart=text_bellow_chart\
+            , y_legend_coordinate=-0.4, yaxis_formater=100\
+            , x_max=None\
+            , change_edge_color=False\
+            # , add_stat=True, stat_pairs=[("upstream_ambiguous", "upstream_NO_ambi")], stat_test='Wilcoxon', stat_format='star', stat_correction='BH'\
+            , name_to_save=name_to_save\
+            , project_output_dir=charts_output_dir\
+            , data_source=data_source, output_format=output_format\
+            , dpi=200, y_min=0, y_max=115, show_plots=show_plots)
+
+        # Without legend etc as png
+        name_to_save = f'003_4_DEL_orientation_summary_violinplot_small'
+        plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+            , number_of_columns=len(pivot_table_avg['variable'].unique())/2\
+            , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
+            , show_hue_medians=False\
+            , hue=None, hue_only_for_data_points=False \
+            , hatches=False\
+            , clip_right=True\
+            , title=None, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
+            , order=order\
+            , plot_legend=False\
+            , integrated_properties_dic=False, color_dic=colour_dic\
+            , text_bellow_chart=None\
+            , y_legend_coordinate=-0.4, yaxis_formater=100\
+            , x_max=None\
+            , change_edge_color=False\
+            , name_to_save=name_to_save\
+            , project_output_dir=charts_output_dir\
+            , data_source=data_source, output_format='png'\
+            , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+
+        # Without legend etc as svg
+        name_to_save = f'003_4_DEL_orientation_summary_violinplot_small'
+        plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+            , number_of_columns=len(pivot_table_avg['variable'].unique())/2\
+            , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
+            , show_hue_medians=False\
+            , hue=None, hue_only_for_data_points=False \
+            , hatches=False\
+            , clip_right=True\
+            , title=None, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
+            , order=order\
+            , plot_legend=False\
+            , integrated_properties_dic=False, color_dic=colour_dic\
+            , text_bellow_chart=None\
+            , y_legend_coordinate=-0.4, yaxis_formater=100\
+            , x_max=None\
+            , change_edge_color=False\
+            , name_to_save=name_to_save\
+            , project_output_dir=charts_output_dir\
+            , data_source=data_source, output_format='svg'\
+            , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+
+        stat_info = pivot_table_avg.groupby('variable').value.describe()
+        save_stat(stat_info, name_to_save, charts_output_dir)
+    except ValueError as e:
+        print(f"Error occurred while plotting: {e}")
+        print("Skipping plot.")
 
     ##########################################################################################
     #               DDDD    EEEEEE  L           PPPPP     A    RRRRR   TTTTTTT
@@ -530,70 +552,74 @@ for run in range(no_of_runs):
     else:
         order = ['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']
 
-    # Full plot as png
-    name_to_save = f'003_4_DEL_end_summary_norm_violinplot'
-    plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
-        , number_of_columns=3\
-        , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
-        , show_hue_medians=False\
-        , hue=None, hue_only_for_data_points=False \
-        , hatches=False\
-        , clip_right=True\
-        , title=title, xtickt_rotation=-55, ylabel=ylabel\
-        , order=order\
-        , plot_legend=False\
-        , integrated_properties_dic=False, color_dic=color_dic\
-        , text_bellow_chart=text_bellow_chart\
-        , y_legend_coordinate=-0.45, yaxis_formater=100\
-        , x_max=None\
-        , change_edge_color=False\
-        , name_to_save=name_to_save\
-        , project_output_dir=charts_output_dir\
-        , data_source=data_source, output_format=output_format\
-        , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+    try:
+        # Full plot as png
+        name_to_save = f'003_4_DEL_end_summary_norm_violinplot'
+        plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+            , number_of_columns=3\
+            , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
+            , show_hue_medians=False\
+            , hue=None, hue_only_for_data_points=False \
+            , hatches=False\
+            , clip_right=True\
+            , title=title, xtickt_rotation=-55, ylabel=ylabel\
+            , order=order\
+            , plot_legend=False\
+            , integrated_properties_dic=False, color_dic=color_dic\
+            , text_bellow_chart=text_bellow_chart\
+            , y_legend_coordinate=-0.45, yaxis_formater=100\
+            , x_max=None\
+            , change_edge_color=False\
+            , name_to_save=name_to_save\
+            , project_output_dir=charts_output_dir\
+            , data_source=data_source, output_format=output_format\
+            , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 
-    # Without legend etc as png
-    name_to_save = f'003_4_DEL_end_summary_norm_violinplot_small'
-    plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
-        , number_of_columns=3\
-        , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
-        , show_hue_medians=False\
-        , hue=None, hue_only_for_data_points=False \
-        , hatches=False\
-        , clip_right=True\
-        , title=None, xtickt_rotation=-55, ylabel=ylabel\
-        , order=order\
-        , plot_legend=False\
-        , integrated_properties_dic=False, color_dic=color_dic\
-        , text_bellow_chart=None\
-        , y_legend_coordinate=-0.45, yaxis_formater=100\
-        , x_max=None\
-        , change_edge_color=False\
-        , name_to_save=name_to_save\
-        , project_output_dir=charts_output_dir\
-        , data_source=data_source, output_format='png'\
-        , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+        # Without legend etc as png
+        name_to_save = f'003_4_DEL_end_summary_norm_violinplot_small'
+        plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+            , number_of_columns=3\
+            , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
+            , show_hue_medians=False\
+            , hue=None, hue_only_for_data_points=False \
+            , hatches=False\
+            , clip_right=True\
+            , title=None, xtickt_rotation=-55, ylabel=ylabel\
+            , order=order\
+            , plot_legend=False\
+            , integrated_properties_dic=False, color_dic=color_dic\
+            , text_bellow_chart=None\
+            , y_legend_coordinate=-0.45, yaxis_formater=100\
+            , x_max=None\
+            , change_edge_color=False\
+            , name_to_save=name_to_save\
+            , project_output_dir=charts_output_dir\
+            , data_source=data_source, output_format='png'\
+            , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 
-    # Without legend etc as svg
-    plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
-        , number_of_columns=3\
-        , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
-        , show_hue_medians=False\
-        , hue=None, hue_only_for_data_points=False \
-        , hatches=False\
-        , clip_right=True\
-        , title=None, xtickt_rotation=-55, ylabel=ylabel\
-        , order=order\
-        , plot_legend=False\
-        , integrated_properties_dic=False, color_dic=color_dic\
-        , text_bellow_chart=None\
-        , y_legend_coordinate=-0.45, yaxis_formater=100\
-        , x_max=None\
-        , change_edge_color=False\
-        , name_to_save=name_to_save\
-        , project_output_dir=charts_output_dir\
-        , data_source=data_source, output_format='svg'\
-        , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+        # Without legend etc as svg
+        plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
+            , number_of_columns=3\
+            , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
+            , show_hue_medians=False\
+            , hue=None, hue_only_for_data_points=False \
+            , hatches=False\
+            , clip_right=True\
+            , title=None, xtickt_rotation=-55, ylabel=ylabel\
+            , order=order\
+            , plot_legend=False\
+            , integrated_properties_dic=False, color_dic=color_dic\
+            , text_bellow_chart=None\
+            , y_legend_coordinate=-0.45, yaxis_formater=100\
+            , x_max=None\
+            , change_edge_color=False\
+            , name_to_save=name_to_save\
+            , project_output_dir=charts_output_dir\
+            , data_source=data_source, output_format='svg'\
+            , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+    except ValueError as e:
+        print(f"Error occurred: {e}")
+        print("Skipping plot.")
     # Save pivot table as tsv
     pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
     # Save statistics
@@ -616,22 +642,24 @@ for run in range(no_of_runs):
 
 
     # Perform Wilcoxon signed-rank test on ALR values
-    statistic, p_value = stats.wilcoxon(df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'])
-    print(f'Wilcoxon signed-rank test statistic: {statistic}, p-value: {p_value}')
-    median_lf = np.median(df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'])
-    if median_lf > 0:
-        interpretation = "5’ microhomology staggered cut is significantly more frequent than 3’ microhomology staggered cut."
-    elif median_lf < 0:
-        interpretation = "3’ microhomology staggered cut is significantly more frequent than 5’ microhomology staggered cut."
-    else:
-        interpretation = "No difference in frequency between 5’ microhomology staggered cut and 3’ microhomology staggered cut."
-    print(f'Median is {median_lf}. Interpretation based on median log-fold change: {interpretation}')
-    # Save statistics
-    stat_info = pd.DataFrame({'statistic': [statistic], 'p_value': [p_value]})
-    save_stat(stat_info, f'003_5_DEL_end_summary_norm_violinplot_filtered_stats_{filter_criterion}_{filter_value}', charts_output_dir)
-    stat_info
-    
-
+    try:
+        statistic, p_value = stats.wilcoxon(df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'])
+        print(f'Wilcoxon signed-rank test statistic: {statistic}, p-value: {p_value}')
+        median_lf = np.median(df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'])
+        if median_lf > 0:
+            interpretation = "5’ microhomology staggered cut is significantly more frequent than 3’ microhomology staggered cut."
+        elif median_lf < 0:
+            interpretation = "3’ microhomology staggered cut is significantly more frequent than 5’ microhomology staggered cut."
+        else:
+            interpretation = "No difference in frequency between 5’ microhomology staggered cut and 3’ microhomology staggered cut."
+        print(f'Median is {median_lf}. Interpretation based on median log-fold change: {interpretation}')
+        # Save statistics
+        stat_info = pd.DataFrame({'statistic': [statistic], 'p_value': [p_value]})
+        save_stat(stat_info, f'003_5_DEL_end_summary_norm_violinplot_filtered_stats_{filter_criterion}_{filter_value}', charts_output_dir)
+        stat_info
+    except ValueError as e:
+        print(f"Error occurred: {e}")
+        statistic, p_value = None, None
 
     plt.figure(figsize=(7, 4)) 
     plt.hist(df_stats['ALR_5_NOTblunt_vs_3_NOTblunt'], bins=40, color="steelblue", edgecolor="black", alpha=0.7)
@@ -654,70 +682,78 @@ for run in range(no_of_runs):
                         \nNo of samples: {no_of_samples}'
     # Full plot as png
     name_to_save = f'003_7_DEL_end_summary_norm_violinplot_filtered'
-    plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'].isin(["5' NOT blunt", "3' NOT blunt"])], x='variable', y='value'\
-        , number_of_columns=2\
-        , show_datapoints=True, jitter=0.05, stripplot_offset=10, dodge=False\
-        , show_hue_medians=False\
-        , hue=None, hue_only_for_data_points=False \
-        , hatches=False\
-        , clip_right=True\
-        , title=title, xtickt_rotation=-55, ylabel=ylabel\
-        , order=['5\' NOT blunt', '3\' NOT blunt']\
-        , plot_legend=False\
-        , integrated_properties_dic=False, color_dic=color_dic\
-        , text_bellow_chart=text_bellow_chart\
-        , y_legend_coordinate=-0.25, yaxis_formater=100\
-        , x_max=None\
-        , change_edge_color=False\
-        # , add_stat=True, stat_pairs=[("5' NOT blunt", "3' NOT blunt")], stat_test='t-test_ind', stat_format='full', stat_correction=None\
-        , name_to_save=name_to_save\
-        , project_output_dir=charts_output_dir\
-        , data_source=data_source, output_format=output_format\
-        , dpi=200, y_min=0, y_max=119, show_plots=show_plots)
-    
+    try:
+        plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'].isin(["5' NOT blunt", "3' NOT blunt"])], x='variable', y='value'\
+            , number_of_columns=2\
+            , show_datapoints=True, jitter=0.05, stripplot_offset=10, dodge=False\
+            , show_hue_medians=False\
+            , hue=None, hue_only_for_data_points=False \
+            , hatches=False\
+            , clip_right=True\
+            , title=title, xtickt_rotation=-55, ylabel=ylabel\
+            , order=['5\' NOT blunt', '3\' NOT blunt']\
+            , plot_legend=False\
+            , integrated_properties_dic=False, color_dic=color_dic\
+            , text_bellow_chart=text_bellow_chart\
+            , y_legend_coordinate=-0.25, yaxis_formater=100\
+            , x_max=None\
+            , change_edge_color=False\
+            # , add_stat=True, stat_pairs=[("5' NOT blunt", "3' NOT blunt")], stat_test='t-test_ind', stat_format='full', stat_correction=None\
+            , name_to_save=name_to_save\
+            , project_output_dir=charts_output_dir\
+            , data_source=data_source, output_format=output_format\
+            , dpi=200, y_min=0, y_max=119, show_plots=show_plots)
+    except ValueError as e:
+        print(f"Error occurred: {e}")
     # Without legend etc as png
     name_to_save = f'003_7_DEL_end_summary_norm_violinplot_filtered_small'
-    plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'].isin(["5' NOT blunt", "3' NOT blunt"])], x='variable', y='value'\
-        , number_of_columns=2\
-        , show_datapoints=True, jitter=0.05, stripplot_offset=10, dodge=False\
-        , show_hue_medians=False\
-        , hue=None, hue_only_for_data_points=False \
-        , hatches=False\
-        , clip_right=True\
-        , title=None, xtickt_rotation=-55, ylabel=ylabel\
-        , order=['5\' NOT blunt', '3\' NOT blunt']\
-        , plot_legend=False\
-        , integrated_properties_dic=False, color_dic=color_dic\
-        , text_bellow_chart=None\
-        , y_legend_coordinate=-0.25, yaxis_formater=100\
-        , x_max=None\
-        , change_edge_color=False\
-        , add_stat=True, stat_pairs=[("5' NOT blunt", "3' NOT blunt")], stat_test='Wilcoxon', stat_format='star', stat_correction='BH'\
-        , name_to_save=name_to_save\
-        , project_output_dir=charts_output_dir\
-        , data_source=data_source, output_format='png'\
-        , dpi=200, y_min=0, y_max=119, show_plots=show_plots)
-    
+    try:
+        plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'].isin(["5' NOT blunt", "3' NOT blunt"])], x='variable', y='value'\
+            , number_of_columns=2\
+            , show_datapoints=True, jitter=0.05, stripplot_offset=10, dodge=False\
+            , show_hue_medians=False\
+            , hue=None, hue_only_for_data_points=False \
+            , hatches=False\
+            , clip_right=True\
+            , title=None, xtickt_rotation=-55, ylabel=ylabel\
+            , order=['5\' NOT blunt', '3\' NOT blunt']\
+            , plot_legend=False\
+            , integrated_properties_dic=False, color_dic=color_dic\
+            , text_bellow_chart=None\
+            , y_legend_coordinate=-0.25, yaxis_formater=100\
+            , x_max=None\
+            , change_edge_color=False\
+            , add_stat=True, stat_pairs=[("5' NOT blunt", "3' NOT blunt")], stat_test='Wilcoxon', stat_format='star', stat_correction='BH'\
+            , name_to_save=name_to_save\
+            , project_output_dir=charts_output_dir\
+            , data_source=data_source, output_format='png'\
+            , dpi=200, y_min=0, y_max=119, show_plots=show_plots)
+    except ValueError as e:
+        print(f"Error occurred: {e}")
     # Without legend etc as svg
-    plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'].isin(["5' NOT blunt", "3' NOT blunt"])], x='variable', y='value'\
-        , number_of_columns=2\
-        , show_datapoints=True, jitter=0.05, stripplot_offset=10, dodge=False\
-        , show_hue_medians=False\
-        , hue=None, hue_only_for_data_points=False \
-        , hatches=False\
-        , clip_right=True\
-        , title=None, xtickt_rotation=-55, ylabel=ylabel\
-        , order=['5\' NOT blunt', '3\' NOT blunt']\
-        , plot_legend=False\
-        , integrated_properties_dic=False, color_dic=color_dic\
-        , text_bellow_chart=None\
-        , y_legend_coordinate=-0.25, yaxis_formater=100\
-        , x_max=None\
-        , change_edge_color=False\
-        , add_stat=True, stat_pairs=[("5' NOT blunt", "3' NOT blunt")], stat_test='Wilcoxon', stat_format='star', stat_correction='BH'\
-        , name_to_save=name_to_save\
-        , project_output_dir=charts_output_dir\
-        , data_source=data_source, output_format='svg'\
-        , dpi=200, y_min=0, y_max=119, show_plots=show_plots)
+    try:
+        plot = plot_sns_violin_and_print(data=pivot_table_avg[pivot_table_avg['variable'].isin(["5' NOT blunt", "3' NOT blunt"])], x='variable', y='value'\
+            , number_of_columns=2\
+            , show_datapoints=True, jitter=0.05, stripplot_offset=10, dodge=False\
+            , show_hue_medians=False\
+            , hue=None, hue_only_for_data_points=False \
+            , hatches=False\
+            , clip_right=True\
+            , title=None, xtickt_rotation=-55, ylabel=ylabel\
+            , order=['5\' NOT blunt', '3\' NOT blunt']\
+            , plot_legend=False\
+            , integrated_properties_dic=False, color_dic=color_dic\
+            , text_bellow_chart=None\
+            , y_legend_coordinate=-0.25, yaxis_formater=100\
+            , x_max=None\
+            , change_edge_color=False\
+            , add_stat=True, stat_pairs=[("5' NOT blunt", "3' NOT blunt")], stat_test='Wilcoxon', stat_format='star', stat_correction='BH'\
+            , name_to_save=name_to_save\
+            , project_output_dir=charts_output_dir\
+            , data_source=data_source, output_format='svg'\
+            , dpi=200, y_min=0, y_max=119, show_plots=show_plots)
+    except ValueError as e:
+        print(f"Error occurred: {e}")
+
 print('Tadaaaa, all finished :o)')
 # %%

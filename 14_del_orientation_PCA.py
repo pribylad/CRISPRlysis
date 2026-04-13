@@ -18,24 +18,21 @@ output_format = 'png'
 # output_format = 'svg'
 show_plots = True
 
-# 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs and generating 05_tables by 06_DEL.py script
-filter_criterion = 'None'
-filter_value = 'None'
-data_source = 'all_samples_no_filters'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_pivot_DEL_orientation_normalised_avgNone_None_260305.tsv'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_pivot_DEL_orientation_normalised_avgNone_None_260310.tsv'
-df_dir = '/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/01_no_filter_all_samples/05_pivot_DEL_orientation_normalised_avg_260407.tsv'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260305.tsv'
-charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/01_no_filter_all_samples')
-table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/01_no_filter_all_samples')
+# # 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs and generating 05_tables by 06_DEL.py script
+# filter_criterion = 'None'
+# filter_value = 'None'
+# data_source = 'all_samples_no_filters'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples/01_all_samples')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_all_samples')
 
-# # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
-# filter_criterion = 'efficacy'
-# filter_value = '95'
-# data_source = 'all_samples_filtered_95'
-# df_dir = '/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_efficacy_95/01_all_samples/05_pivot_DEL_orientation_normalised_avgefficacy_95_260402.tsv'
-# charts_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/04_charts/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
-# table_output_dir = Path(f'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/Obsidian_1bp_CMEJ_vault/01_data/00_final_analysis/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+# 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
+filter_criterion = 'efficacy'
+filter_value = '95'
+data_source = 'all_samples_filtered_95'
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
 
 # # 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
 # filter_criterion = 'efficacy_1ntIN'
@@ -99,6 +96,7 @@ properties_dict = {
     'Arabidopsis thaliana - xxx - unknown': {'color': '#009d73', 'marker': '*'},
     'A. thaliana - embryo - unknown': {'color': '#009d73', 'marker': '*'},
     'Nicotiana benthamiana - xxx - 120': {'color': '#009d73', 'marker': 'v'},
+    'Nicotiana benthamiana - xxx - 336': {'color': '#11775c', 'marker': 'v'},
     'Petunia hybrida - xxx - 24': {'color': '#009d73', 'marker': '>'},
     'Silene latifolia - xxx - xx': {'color': '#009d73', 'marker': '<'},
     'Solanum lycopersicum - xxx - 24': {'color': '#009d73', 'marker': 's'},
@@ -153,7 +151,7 @@ plt.ylabel('PC2')
 plt.title('PCA with K-means Clusters')
 plt.legend(*plt.gca().get_legend_handles_labels(), title='Clusters')
 # Save PCA plot with clusters
-output_file = os.path.join(charts_output_dir, f'004_1_PCA_DEL_orientation_normalised_avg_with_clusters_{date}.png')
+output_file = os.path.join(charts_output_dir, f'004_1_PCA_DEL_orientation_normalised_avg_with_clusters.png')
 plt.savefig(output_file, bbox_inches='tight', dpi=300)
 plt.show()
 
@@ -193,7 +191,7 @@ plt.legend(handles=legend_elements, bbox_to_anchor=(1.05, 1), loc='upper left')
 # plot grid in the background
 plt.grid(axis='both', alpha=0.5)
 # Save PCA plot
-output_file = os.path.join(charts_output_dir, f'004_2_PCA_DEL_orientation_normalised_avg_{date}.{output_format}')
+output_file = os.path.join(charts_output_dir, f'004_2_PCA_DEL_orientation_normalised_avg.{output_format}')
 plt.savefig(output_file, bbox_inches='tight', dpi=300)
 # Save PCA results to TSV
 output_file = os.path.join(table_output_dir, f'06_PCA_DEL_orientation_normalised_avg_{date}.tsv')
