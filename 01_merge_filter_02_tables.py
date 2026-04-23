@@ -9,9 +9,14 @@ from datetime import datetime
 # source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260330/'
 # output_file_name = '01_merged_02tables_NoFilter_All_' + datetime.now().strftime('%y%m%d') + '.tsv'
 
-source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/mutants/'
-output_file_name = '01_merged_02tables_NoFilter_mutants_' + datetime.now().strftime('%y%m%d') + '.tsv'
+source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260423/'
+output_file_name = '01_merged_02tables_NoFilter_All_' + datetime.now().strftime('%y%m%d') + '.tsv'
 
+# source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/mutants/'
+# output_file_name = '01_merged_02tables_NoFilter_mutants_' + datetime.now().strftime('%y%m%d') + '.tsv'
+
+# source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/Ponce/'
+# output_file_name = '01_merged_02tables_NoFilter_Ponce_' + datetime.now().strftime('%y%m%d') + '.tsv'
 ##########################################################################################
 
 output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/'
@@ -34,7 +39,8 @@ organism_dict = {
     'Homo sapiens': 'animal',
     'Xenopus tropicalis': 'animal',
     'Solanum lycopersicum': 'plant',
-    'Pleurodeles waltl': 'animal'
+    'Pleurodeles waltl': 'animal',
+    'Chlamydomonas reinhardtii': 'plant'
 }
 ##########################################################################################
 def load_tsv_files_from_directory(directory_path):

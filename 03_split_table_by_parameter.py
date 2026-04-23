@@ -11,9 +11,11 @@ from datetime import datetime
 # input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All.tsv'
 # output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/'
 
+input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/03_filtered_efficacy_samples_limit5efficacy_All.tsv'
+output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/'
 
-input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_mutants_260413.tsv'
-output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/mutants/'
+# input_file = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_mutants_260413.tsv'
+# output_directory = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/mutants/'
 
 # If output directory does not exist, create it
 if not os.path.exists(output_directory):
@@ -33,8 +35,8 @@ df['mutant'].unique()
 ##########################################################################################
 ##########################################################################################
 
-# filter_criterion = 'kingdom'  # parameter to split the table by
-# split_parameter_dic = {'kingdom': ['plant', 'animal']}
+filter_criterion = 'kingdom'  # parameter to split the table by
+split_parameter_dic = {'kingdom': ['plant', 'animal']}
 ##########################################################################################
 
 # df['index'] = df['organism'] + ' - ' + df['cell_line'] + ' - ' + df['hours_post_inoculation']
@@ -51,9 +53,9 @@ df['mutant'].unique()
 # # Remove rows where 'ProExoInt' is not in split_parameter_dic
 # df = df[df['ProExoInt'].isin(split_parameter_dic['ProExoInt'])]
 
-# For mutants
-filter_criterion = 'mutant'
-split_parameter_dic = {'mutant': ['WT', 'ku70', 'ku70teb5', 'teb5']}
+# # For mutants
+# filter_criterion = 'mutant'
+# split_parameter_dic = {'mutant': ['WT', 'ku70', 'ku70teb5', 'teb5']}
 
 if filter_criterion not in split_parameter_dic:
     raise ValueError(f"Filter criterion {filter_criterion} not recognized")

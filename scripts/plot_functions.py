@@ -237,11 +237,11 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'////', 'marker':'o'}
             ,'blunt':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\', 'marker':'o'}
-            ,'cannot_be_determined':{'color':'white','edge_color':'gray', 'hatch':'', 'marker':'o'}
-            ,'can_not_be_determined':{'color':'white','edge_color':'gray', 'hatch':'', 'marker':'o'}
-            ,'can not be determined':{'color':'white','edge_color':'gray', 'hatch':'', 'marker':'o'}
-            ,'cannot_be_determined_ambiguous':{'color':'white','edge_color':'gray', 'hatch':'//', 'marker':'o'}
-            ,'cannot_be_determined_NO_ambi':{'color':'white','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'cannot_be_determined':{'color':'gray','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'can_not_be_determined':{'color':'gray','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'can not be determined':{'color':'gray','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'cannot_be_determined_ambiguous':{'color':'gray','edge_color':'gray', 'hatch':'//', 'marker':'o'}
+            ,'cannot_be_determined_NO_ambi':{'color':'gray','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'distal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'\\\\', 'marker':'o'}
             ,'distal_stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'distal_stagg1nt_likely':{'color':'#ffaaaa','edge_color':'gray', 'hatch':'\\\\', 'marker':'o'}
@@ -325,8 +325,10 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'Silene latifolia - xxx - xx': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '<'}
             ,'Solanum lycopersicum - xxx - 24': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
             ,'Solanum lycopersicum - M82 - 48': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '^'}
+            ,'Chlamydomonas reinhardtii - xxx - 48': {'color': "#8BDFE6", 'edge_color':'gray', 'hatch':'', 'marker': 'x'}
             ,'plant': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
             ,'animal': {'color': '#cc79a6', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
+            ,'alga': {'color': "#8BDFE6", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
             ,'UniCorn - random_dataset - 0;': {'color': '#FFD700', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
             ,'Xenopus tropicalis - xxx - xxx': {'color': "#181766", 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
             ,'Pleurodeles waltl - xxx - xxx': {'color': "#272592", 'edge_color':'gray', 'hatch':'', 'marker': 's'}
@@ -840,7 +842,7 @@ def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_di
         at.patch.set_boxstyle('round,pad=0.,rounding_size=0.2')
         ax.add_artist(at)
 
-    plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.' + output_format), dpi=dpi, bbox_inches='tight')
+    plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '.' + output_format), dpi=dpi, bbox_inches='tight')
     write_into_report(f'Stacked horizontal barchart {name_to_save} was created.', destination_folder=project_output_dir)
     if show_plots is True:
         return plt.show()
@@ -911,7 +913,7 @@ def plot_barplot(data, x, y, project_output_dir, name_to_save, data_source, hue=
     if xtickt_rotation != 0:
         plt.xticks(rotation=xtickt_rotation, ha='left', rotation_mode='anchor')
     plt.text(0, -0.02, text_bellow_chart, fontsize=14, transform=plt.gcf().transFigure)
-    plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.' + output_format), dpi=dpi, bbox_inches='tight')
+    plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '.' + output_format), dpi=dpi, bbox_inches='tight')
     write_into_report('Barplot {0} was created.'.format(name_to_save))
     if show_plots is True:
         return plt.show()
@@ -1125,7 +1127,7 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
         at.patch.set_boxstyle('round,pad=0.,rounding_size=0.2')
         ax.add_artist(at)
             # plt.text(0, -0.35, text_bellow_chart, fontsize=14, transform=plt.gcf().transFigure)
-    plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.' + output_format), dpi=dpi, bbox_inches='tight')
+    plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '.' + output_format), dpi=dpi, bbox_inches='tight')
     write_into_report(f'Stacked vertical barchart {name_to_save} was created.')
     if show_plots == True:
         return plt.show()
@@ -1291,7 +1293,7 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
 #         at.patch.set_boxstyle('round,pad=0.,rounding_size=0.2')
 #         ax.add_artist(at)
 
-#     plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '_' + date + '.' + output_format), dpi=dpi, bbox_inches='tight')
+#     plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '.' + output_format), dpi=dpi, bbox_inches='tight')
 #     write_into_report(f'Boxplot plot {name_to_save} was created.', destination_folder=project_output_dir)
 #     if show_plots == True:
 #         return plt.show()

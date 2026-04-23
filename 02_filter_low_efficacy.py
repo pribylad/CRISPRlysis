@@ -14,12 +14,14 @@ import matplotlib.pyplot as plt
 x=95  # efficacy threshold percentage
 filter_criterion = 'efficacy'
 filter_value = str(x)
-output_directory = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}'
+# output_directory = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}'
 
 # input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260225.tsv'
 # input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260227.tsv'
 # input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_merged_02tables_NoFilter_All_260320.tsv'
-input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260409.tsv'
+input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260423.tsv'
+output_directory = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples'
+# input_file = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260409.tsv'
 output_nofilter_tsv = f'02_pivot_table_no_filter_All.tsv'
 output_tsv = f'03_filtered_efficacy_samples_limit{100-x}efficacy_All.tsv'
 output_low_efficacy_txt = f'03_low_efficacy_samples_limit{100-x}efficacy_All.txt'

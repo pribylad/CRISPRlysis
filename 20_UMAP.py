@@ -21,18 +21,28 @@ show_plots = True
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_all_samples')
 
 # %%
-filter_criterion = 'efficacy'
-filter_value = '95'
-data_source = 'all_samples_filtered_95'
-# read the DEL_orientation data where the biological replicates are already averaged and the data is filtered for efficacy > 95%
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+# filter_criterion = 'efficacy'
+# filter_value = '95'
+# data_source = 'all_samples_filtered_95'
+# # read the DEL_orientation data where the biological replicates are already averaged and the data is filtered for efficacy > 95%
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+
+
+# 4 with data from Crisitna Ponce Lilly
+filter_criterion = 'efficacy_and_author'
+filter_value = '100_and_Ponce'
+data_source = 'Ponce_unfiltered'
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_Ponce/05_pivot_DEL_orientation_normalised_avg.tsv'
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples/05_Ponce')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_Ponce')
 # %%
 df = pd.read_csv(df_dir, sep='\t', index_col=0)
 df.head()
 df['variable'].unique()
-
+df.columns
+# %%
 metadata_cols = [
     "kingdom", "source", "organism", "cell_line", "mutant",
     "gene", "gRNA_seq", "hours_post_inoculation", "Org_line_hpi"
@@ -238,7 +248,8 @@ plot_umap(out, "Org_line_hpi", properties_dic, show_plots=show_plots)
 # %%
 # Identify clusters in the UMAP embedding using HDBSCAN
 import hdbscan
-clusterer = hdbscan.HDBSCAN(min_cluster_size=20)
+cluster_size = 25
+clusterer = hdbscan.HDBSCAN(min_cluster_size=cluster_size)
 out['cluster'] = clusterer.fit_predict(embedding)
 # Plot UMAP colored by cluster
 plt.figure(figsize=(8, 8))
@@ -258,7 +269,9 @@ plt.ylim(2,16)
 plt.title("UMAP of deletion profiles colored by HDBSCAN clusters")
 plt.legend(title="Cluster", bbox_to_anchor=(1.05, 1), loc='upper left')
 # Save the plot
-plt.savefig(charts_output_dir / f'005_umap_clusters_{data_source}.{output_format}', dpi=300, bbox_inches='tight')
+plt.savefig(charts_output_dir / f'005_umap_clusters_{data_source}_{cluster_size}.{output_format}', dpi=300, bbox_inches='tight')
+# Save the out dataframe with UMAP coordinates and cluster labels
+out.to_csv(table_output_dir / f'07_umap_coordinates_clusters_{data_source}_{cluster_size}.tsv', sep='\t', index=True)
 if show_plots:
     plt.show()
 # %%
@@ -296,5 +309,54 @@ for org_line_hpi, group in out.groupby("Org_line_hpi"):
         plt.show()
 
 # %%
-# Save the out dataframe with UMAP coordinates and cluster labels
-out.to_csv(table_output_dir / f'005_umap_coordinates_clusters_{data_source}.tsv', sep='\t', index=True)
+# split dataframe out into separate dataframes for each cluster
+clusters = out['cluster'].unique()
+cluster_dfs = {cluster: out[out['cluster'] == cluster] for cluster in clusters}
+# Get the samples from the wide dataframe that belong to each cluster
+cluster_samples = {cluster: cluster_df.index.tolist() for cluster, cluster_df in cluster_dfs.items()}
+# Save the sample IDs for each cluster to separate files
+for cluster, samples in cluster_samples.items():
+    with open(table_output_dir / f'08_cluster_{cluster}_samples_{data_source}.txt', 'w') as f:
+        for sample in samples:
+            f.write(f"{sample}\n")
+
+# %%
+from scripts.plot_functions import plot_sns_violin_and_print, save_stat
+from scripts.dict_functions import get_color_dic_35_violin
+
+# filter the 'wide' dataframe to keep only the samples that belong to individual clusters and make individual plots for each cluster
+for cluster in clusters:
+    print(f"Processing cluster {cluster}...")
+    cluster_samples = cluster_dfs[cluster].index.tolist()
+    cluster_wide = wide.loc[cluster_samples]
+    # chnge cluster_wide to long format for seaborn
+    cluster_wide = cluster_wide.reset_index().melt(id_vars='sample_id', var_name='variable', value_name='value')
+    # plot violinplots for cluster_wide
+
+    # plot violinplots for cluster_0_wide
+    colour_dic = {'upstream_ambiguous':'#f0d271', 'upstream_NO_ambi':'#f0d271', 'both_ambiguous':'#808080', 'both_NO_ambi':'#808080', 'downstream_ambiguous':'#cccccc', 'downstream_NO_ambi':'#cccccc', 'cannot_be_determined_ambiguous':'#ffffff', 'cannot_be_determined_NO_ambi':'#ffffff', 'X_gap_out_of_cut':'#000000', 'plant':'#009d73', 'animal':'#cc79a6'}
+    list_of_events = ['upstream_ambiguous', 'both_ambiguous', 'downstream_ambiguous', 'upstream_NO_ambi', 'both_NO_ambi', 'downstream_NO_ambi', 'cannot_be_determined_ambiguous', 'cannot_be_determined_NO_ambi', 'X_gap_out_of_cut']
+    ylabel = 'Normalised percentage \nof DEL around the cut'
+    title = 'Normalised incidence of DEL according to the orientation,\n mean of replicates'
+    name_to_save = f'006_1_DEL_orientation_cluster_{cluster}_violinplot_small'
+    data_source = f'Cluster_{cluster}'
+    plot = plot_sns_violin_and_print(data=cluster_wide, x='variable', y='value'\
+        , number_of_columns=len(cluster_wide['variable'].unique())/2\
+        , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
+        , show_hue_medians=False\
+        , hue=None, hue_only_for_data_points=False \
+        , hatches=False\
+        , clip_right=True\
+        , title=title, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
+        , order=list_of_events\
+        , plot_legend=False\
+        , integrated_properties_dic=False, color_dic=colour_dic\
+        , text_bellow_chart=None\
+        , y_legend_coordinate=-0.4, yaxis_formater=100\
+        , x_max=None\
+        , change_edge_color=False\
+        , name_to_save=name_to_save\
+        , project_output_dir=charts_output_dir\
+        , data_source=data_source, output_format='png'\
+        , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+# %%

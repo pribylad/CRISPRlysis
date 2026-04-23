@@ -30,9 +30,13 @@ show_plots = True
 filter_criterion = 'efficacy'
 filter_value = '95'
 data_source = 'all_samples_filtered_95'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}/with_Ponce_samples/01_all_samples')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/with_Ponce_samples/01_all_samples')
+
 
 # # 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
 # filter_criterion = 'efficacy_1ntIN'
@@ -103,6 +107,7 @@ properties_dict = {
     'Solanum lycopersicum - M82 - 48': {'color': '#009d73', 'marker': '^'},
     'Xenopus tropicalis - xxx - xxx': {'color': "#181766", 'marker': 'o'},
     'Pleurodeles waltl - xxx - xxx': {'color': "#272592", 'marker': 's'},
+    'Chlamydomonas reinhardtii - xxx - 48': {'color': "#8BDFE6", 'marker': 'x'}
 
 }
 

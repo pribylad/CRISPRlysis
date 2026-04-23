@@ -38,15 +38,19 @@ use_3_5_possible = False
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples/01_all_samples')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_all_samples')
 
-# # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
-# filter_criterion = 'efficacy'
-# filter_value = '95'
-# individual_dataset = False
-# no_of_runs = 1
-# data_source = 'all_samples_filtered_95'
+# 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
+filter_criterion = 'efficacy'
+filter_value = '95'
+individual_dataset = False
+no_of_runs = 1
+data_source = 'all_samples_filtered_95'
 # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All.tsv'
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/01_all_samples')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/01_all_samples')
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/03_filtered_efficacy_samples_limit5efficacy_All.tsv'
+data_source = 'all_samples_filtered_95'
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/01_all_samples')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/01_all_samples')
 
 # # 3 with data filtered for overall efficacy >=5% and kingdom = plant, input table is result from 02_filter_low_efficacy.py script
 # filter_criterion = 'efficacy_and_kingdom'
@@ -54,9 +58,12 @@ use_3_5_possible = False
 # individual_dataset = True
 # no_of_runs = 1
 # data_source = 'plants_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_plant.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_plants')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/02_plants')
+# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_plant.tsv'
+# # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_plants')
+# # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/02_plants')
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/04_split_kingdom_plant.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_plants')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/02_plants')
 
 # # 4 with data filtered for overall efficacy >=5% and kingdom = animal, input table is result from 02_filter_low_efficacy.py script
 # filter_criterion = 'efficacy_and_kingdom'
@@ -64,9 +71,13 @@ use_3_5_possible = False
 # individual_dataset = True
 # no_of_runs = 1
 # data_source = 'animals_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_animals')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/02_animals')
+# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal.tsv'
+# # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_animals')
+# # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/02_animals')
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/04_split_kingdom_animal.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_animals')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/02_animals')
+
 
 # filter_criterion = 'Random_dataset'
 # use_3_5_possible = True
@@ -87,18 +98,27 @@ use_3_5_possible = False
 # Open list_of_datasets.txt and read it as list of datasets to be analysed individually
 # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
 # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
-mutants = True
-list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_3_mutants.txt'
+# mutants = True
+# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_3_mutants.txt'
 
-list_of_datasets = []
-with open(list_of_datasets_file, 'r') as f:
-    for line in f:
-        dataset = line.strip()
-        if dataset:  # Check if the line is not empty
-            list_of_datasets.append(dataset)
-print(list_of_datasets)
-no_of_runs = len(list_of_datasets)
-print(f"No of individual datasets to be analysed: {no_of_runs}")
+# list_of_datasets = []
+# with open(list_of_datasets_file, 'r') as f:
+#     for line in f:
+#         dataset = line.strip()
+#         if dataset:  # Check if the line is not empty
+#             list_of_datasets.append(dataset)
+# print(list_of_datasets)
+# no_of_runs = len(list_of_datasets)
+# print(f"No of individual datasets to be analysed: {no_of_runs}")
+
+# # 6 with data from Cristina Ponce Lilli unpublished, withour filtering for efficacy, input table is result from 01_merge_filter_02_tables.py script
+# filter_criterion = 'efficacy_and_author'
+# filter_value = '100_and_Ponce'
+# no_of_runs = 1
+# data_source = 'Ponce_unfiltered'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_Ponce_260423.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples/05_Ponce')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_Ponce')
 
 for run in range(no_of_runs):
     if no_of_runs > 1:
@@ -211,7 +231,7 @@ for run in range(no_of_runs):
     # remove index name
     df_pivot.columns.name = None
     # Save pivot table as tsv
-    df_pivot.to_csv(Path(str(table_output_dir) + '/' + '05' + '_DEL_orientation_NOTnormalised_pivot_' + '.tsv'), sep='\t')
+    df_pivot.to_csv(Path(str(table_output_dir) + '/' + '05' + '_DEL_orientation_NOTnormalised_pivot' + '.tsv'), sep='\t')
     # Normalise rows to 100%
     df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
     df_pivot
@@ -229,7 +249,7 @@ for run in range(no_of_runs):
     # Met pivot table_avg reset index
     pivot_table_avg = pd.melt(pivot_table_avg.reset_index(), id_vars=default_list, value_vars=list_of_events)
     # Save pivot table as tsv
-    pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + '05_pivot_DEL_orientation_normalised_avg_' + '.tsv'), sep='\t')
+    pivot_table_avg.to_csv(Path(str(table_output_dir) + '/' + '05_pivot_DEL_orientation_normalised_avg' + '.tsv'), sep='\t')
     # Make column combining organism and cell_line for better visualisation in the plot
     pivot_table_avg['organism_cell_line_hpi'] = pivot_table_avg['organism'] + ' - ' + pivot_table_avg['cell_line'] + ' - ' + pivot_table_avg['hours_post_inoculation']
     pivot_table_avg
@@ -278,6 +298,7 @@ for run in range(no_of_runs):
                 ,'UniCorn - random_dataset - 0'
                 ,'Xenopus tropicalis - xxx - xxx'
                 ,'Pleurodeles waltl - xxx - xxx'
+                ,'Chlamydomonas reinhardtii - xxx - 48'
     ]
     # Test if all organism_cell_line_hpi.unique() are present in the hue order
     unique_hue_values = pivot_table_avg['organism_cell_line_hpi'].unique()
