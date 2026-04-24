@@ -38,19 +38,19 @@ use_3_5_possible = False
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples/01_all_samples')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_all_samples')
 
-# 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
-filter_criterion = 'efficacy'
-filter_value = '95'
-individual_dataset = False
-no_of_runs = 1
-data_source = 'all_samples_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/01_all_samples')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/01_all_samples')
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/03_filtered_efficacy_samples_limit5efficacy_All.tsv'
-data_source = 'all_samples_filtered_95'
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/01_all_samples')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/01_all_samples')
+# # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
+# filter_criterion = 'efficacy'
+# filter_value = '95'
+# individual_dataset = False
+# no_of_runs = 1
+# data_source = 'all_samples_filtered_95'
+# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/03_filtered_efficacy_samples_limit5efficacy_All.tsv'
+# # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/01_all_samples')
+# # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/01_all_samples')
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/03_filtered_efficacy_samples_limit5efficacy_All.tsv'
+# data_source = 'all_samples_filtered_95'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/01_all_samples')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/01_all_samples')
 
 # # 3 with data filtered for overall efficacy >=5% and kingdom = plant, input table is result from 02_filter_low_efficacy.py script
 # filter_criterion = 'efficacy_and_kingdom'
@@ -100,16 +100,16 @@ table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_f
 # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
 # mutants = True
 # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_3_mutants.txt'
-
-# list_of_datasets = []
-# with open(list_of_datasets_file, 'r') as f:
-#     for line in f:
-#         dataset = line.strip()
-#         if dataset:  # Check if the line is not empty
-#             list_of_datasets.append(dataset)
-# print(list_of_datasets)
-# no_of_runs = len(list_of_datasets)
-# print(f"No of individual datasets to be analysed: {no_of_runs}")
+list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_4_with_Ponce.txt'
+list_of_datasets = []
+with open(list_of_datasets_file, 'r') as f:
+    for line in f:
+        dataset = line.strip()
+        if dataset:  # Check if the line is not empty
+            list_of_datasets.append(dataset)
+print(list_of_datasets)
+no_of_runs = len(list_of_datasets)
+print(f"No of individual datasets to be analysed: {no_of_runs}")
 
 # # 6 with data from Cristina Ponce Lilli unpublished, withour filtering for efficacy, input table is result from 01_merge_filter_02_tables.py script
 # filter_criterion = 'efficacy_and_author'
@@ -126,12 +126,15 @@ for run in range(no_of_runs):
             individual_dataset = True
             filter_criterion = 'efficacy_and_individual_dataset'
             filter_value = list_of_datasets[run]
-            df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{filter_value}'
+            # df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{filter_value}'
+            df_dir = f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/{filter_value}'
             # Remove 04_split_index_ from data_source and also .tsv, replace " _ " with "_" and spaces with "_" in data_source
             data_source = f'{filter_value}'
             data_source = data_source.replace('split_', '').replace('index_', '').replace('.tsv', '').replace(' - ', '_').replace(' ', '_').replace('A.', 'A').replace('.,','_').replace(',', '').replace('__', '_')
-            charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/{data_source}')
-            table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{data_source}')
+            # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/{data_source}')
+            # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/{data_source}')
+            charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/{data_source}')
+            table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/{data_source}')
         else:
             filter_criterion = 'mutant'
             filter_value = list_of_datasets[run]
@@ -190,7 +193,7 @@ for run in range(no_of_runs):
     # Define list of indexes for pivot table
     # default_list = ['source', 'gene', 'gRNA_seq', 'mutant', 'organism', 'replicate']
     if individual_dataset == False:
-        default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep','replicate']
+        default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'gRNA_num', 'replicate']
     else:
         default_list = ['source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation','replicate']
     # list_of_events = ['upstream', 'both', 'downstream', 'cannot_be_determined', 'X']

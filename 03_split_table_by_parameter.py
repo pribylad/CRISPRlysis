@@ -35,15 +35,15 @@ df['mutant'].unique()
 ##########################################################################################
 ##########################################################################################
 
-filter_criterion = 'kingdom'  # parameter to split the table by
-split_parameter_dic = {'kingdom': ['plant', 'animal']}
+# filter_criterion = 'kingdom'  # parameter to split the table by
+# split_parameter_dic = {'kingdom': ['plant', 'animal']}
 ##########################################################################################
 
-# df['index'] = df['organism'] + ' - ' + df['cell_line'] + ' - ' + df['hours_post_inoculation']
-# df['index'].unique()
-# filter_criterion = 'index'
-# # Make dictionary where key is 'index' and value is list of unique valuses o index
-# split_parameter_dic = {'index': df['index'].unique().tolist()}
+df['index'] = df['organism'] + ' - ' + df['cell_line'] + ' - ' + df['hours_post_inoculation']
+df['index'].unique()
+filter_criterion = 'index'
+# Make dictionary where key is 'index' and value is list of unique valuses o index
+split_parameter_dic = {'index': df['index'].unique().tolist()}
 
 # # For Cucuy et al., 2026
 # filter_criterion = 'ProExoInt'

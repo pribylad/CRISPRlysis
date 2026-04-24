@@ -31,21 +31,25 @@ show_plots = True
 
 
 # 4 with data from Crisitna Ponce Lilly
-filter_criterion = 'efficacy_and_author'
-filter_value = '100_and_Ponce'
-data_source = 'Ponce_unfiltered'
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_Ponce/05_pivot_DEL_orientation_normalised_avg.tsv'
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples/05_Ponce')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/05_Ponce')
+filter_criterion = 'efficacy'
+filter_value = '95'
+data_source = 'all_samples_filtered_95_with_Ponce'
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}/with_Ponce_samples/01_all_samples')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/with_Ponce_samples/01_all_samples')
 # %%
 df = pd.read_csv(df_dir, sep='\t', index_col=0)
 df.head()
 df['variable'].unique()
 df.columns
 # %%
+# Make column '4th_nt' from the 'gRNA_seq' column by taking the 4th character from the right end of the gRNA sequence (which is the 17th character from the left)
+df['4th_nt'] = df['gRNA_seq'].str[17] 
+df['4th_3rd_nt'] = df['gRNA_seq'].str[17:19]
+# %%
 metadata_cols = [
     "kingdom", "source", "organism", "cell_line", "mutant",
-    "gene", "gRNA_seq", "hours_post_inoculation", "Org_line_hpi"
+    "gene", "gRNA_seq", "4th_nt", "4th_3rd_nt", "hours_post_inoculation", "Org_line_hpi"
 ]
 
 feature_col = "variable"
@@ -59,6 +63,9 @@ df['hours_post_inoculation'] = df['hours_post_inoculation'].astype(str).str.repl
 print(df['hours_post_inoculation'].unique())
 df['Org_line_hpi'] = df['organism'] + '_' + df['cell_line'] + '_' + df['hours_post_inoculation']
 print(df['Org_line_hpi'].unique())
+# %%
+df['4th_nt'].unique()
+df['4th_3rd_nt'].unique()
 
 # %%
 # 1) Create a sample ID from metadata columns
@@ -89,6 +96,8 @@ wide
 # %%
 # 5) Fill missing values if needed
 wide = wide.fillna(0)
+# Save the wide matrix and metadata for future use
+wide.to_csv(table_output_dir / f'07_UMAP_wide_matrix_{data_source}.tsv', sep='\t')
 # %%
 # 6) Run UMAP
 reducer = umap.UMAP(
@@ -210,6 +219,7 @@ properties_dic = {'stagg2nt':{'color':'#E890B8','edge_color':'gray', 'hatch':'',
 
 def plot_umap(out, groupby, color_map, show_plots=False):
     plt.figure(figsize=(8, 8))
+    sns.set_style("whitegrid")
     for group, g in out.reset_index().groupby(groupby):
         try:
             plt.scatter(
@@ -233,8 +243,8 @@ def plot_umap(out, groupby, color_map, show_plots=False):
 
     plt.xlabel("UMAP1")
     plt.ylabel("UMAP2")
-    plt.xlim(-3,18)
-    plt.ylim(2,16)
+    plt.xlim(-4,15)
+    plt.ylim(1,15)
     plt.title("UMAP of deletion profiles")
     plt.legend(title=groupby, bbox_to_anchor=(1.05, 1), loc='upper left')
     # Save the plot
@@ -244,15 +254,19 @@ def plot_umap(out, groupby, color_map, show_plots=False):
 
 plot_umap(out, "kingdom", properties_dic, show_plots=show_plots)
 # %%
+plot_umap(out, "4th_nt", properties_dic, show_plots=show_plots)
+# %%
+plot_umap(out, "3rd_4th_nt", properties_dic, show_plots=show_plots)
+# %%
 plot_umap(out, "Org_line_hpi", properties_dic, show_plots=show_plots)
 # %%
 # Identify clusters in the UMAP embedding using HDBSCAN
 import hdbscan
-cluster_size = 25
+cluster_size = 12
 clusterer = hdbscan.HDBSCAN(min_cluster_size=cluster_size)
 out['cluster'] = clusterer.fit_predict(embedding)
 # Plot UMAP colored by cluster
-plt.figure(figsize=(8, 8))
+plt.figure(figsize=(8, 7))
 sns.scatterplot(
     x="UMAP1",
     y="UMAP2",
@@ -264,8 +278,8 @@ sns.scatterplot(
 )
 plt.xlabel("UMAP1")
 plt.ylabel("UMAP2")
-plt.xlim(-3,18)
-plt.ylim(2,16)
+plt.xlim(-4,15)
+plt.ylim(1,15)
 plt.title("UMAP of deletion profiles colored by HDBSCAN clusters")
 plt.legend(title="Cluster", bbox_to_anchor=(1.05, 1), loc='upper left')
 # Save the plot
@@ -299,12 +313,45 @@ for org_line_hpi, group in out.groupby("Org_line_hpi"):
     )
     plt.xlabel("UMAP1")
     plt.ylabel("UMAP2")
-    plt.xlim(-3,18)
-    plt.ylim(2,16)
+    plt.xlim(-4,15)
+    plt.ylim(1,15)
     plt.title(f"UMAP of deletion profiles highlighting {org_line_hpi}")
     plt.legend(title="Org_line_hpi", bbox_to_anchor=(1.05, 1), loc='upper left')
     # Save the plot
     plt.savefig(charts_output_dir / f'005_umap_highlight_Org_line_hpi_{org_line_hpi}_{data_source}.{output_format}', dpi=300, bbox_inches='tight')
+    if show_plots:
+        plt.show()
+# %%
+# Make UMAP plot highlighting the samples base on 4th_3rd_nt, rest samples in gray
+for nt, group in out.groupby("4th_3rd_nt"):
+    plt.figure(figsize=(8, 6))
+    # Plot all samples in gray
+    plt.scatter(
+        out["UMAP1"],
+        out["UMAP2"],
+        s=35,
+        alpha=0.3,
+        color='lightgray',
+        label='Other samples'
+    )
+    # Highlight the current group
+    plt.scatter(
+        group["UMAP1"],
+        group["UMAP2"],
+        s=35,
+        alpha=0.5,
+        color=properties_dic.get(nt, {'color': 'red'})['color'],
+        marker=properties_dic.get(nt, {'marker': 'o'})['marker'],
+        label=nt
+    )
+    plt.xlabel("UMAP1")
+    plt.ylabel("UMAP2")
+    plt.xlim(-4,15)
+    plt.ylim(1,15)
+    plt.title(f"UMAP of deletion profiles highlighting 4th_3rd_nt={nt}")
+    plt.legend(title="4th_3rd_nt", bbox_to_anchor=(1.05, 1), loc='upper left')
+    # Save the plot
+    plt.savefig(charts_output_dir / f'005_umap_highlight_4th_3rd_nt_{nt}_{data_source}.{output_format}', dpi=300, bbox_inches='tight')
     if show_plots:
         plt.show()
 
