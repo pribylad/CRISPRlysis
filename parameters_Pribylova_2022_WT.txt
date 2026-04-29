@@ -38,11 +38,11 @@
 #                 DICTIONARY                #
 #############################################
 {'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/palnts/Pribylova_et_al_2022/03_for_Meta/to_analyse/WT/',
-   'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022',
+   'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022/260429',
    'add_columns':{'organism':'Nicotiana benthamiana',
       'hours_post_inoculation':'120',
       'deliver_of_nuclease':'Agroinfiltration',
-      'cell_cycle':'nondividing'
+      'cell_cycle':'nondividing',
       'cell_line':'xxx'      
       },
    'data_source_original':'Pribylova et al., 2022',
@@ -64,7 +64,7 @@
    'plot_INs':True,
    'plot_DELs':True,
    'plot_DEL_individual_gRNAs':True,
-   'plot_DEL_dinochart':False,
+   'plot_DEL_dinochart':True,
    'plot_participating_end':True,
    'plot_participating_end_dinochart':True,
    'plot_MH':True,

@@ -529,7 +529,6 @@ def create_first_row_in_alleles_freq_table_with_wt_seq(df, project_output_dir):
     write_into_report(f'The sequence Aligned and Reference without mutation were selected: {wt_row["Aligned_Sequence"]} and {wt_row["Reference_Sequence"]}.', destination_folder=project_output_dir)
     return df, original_seq
 
-
 def size_of_del_around_the_cut (gap_around_cut_starts, gap_around_cut_ends):
     """
     Calculate the size of a deletion around the cut.
@@ -588,7 +587,6 @@ def return_shifted_DEL_range(cut_position, DEL_range):
     else:
         y_new = y - cut_position - 1
 
-    # print(f'New DEL_range is ({x_new},{y_new}).')
     return x_new, y_new
 
 def return_category_of_DEL(cut_position, cut_maximum, cut_minimum, DEL_range):
@@ -954,7 +952,6 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
         dict_NoMH={12:list_20}
     else:
         return 'X', 'X', 'X', 0, 0
-        # raise ValueError(f'Category_1 from return_category_of_DEL is not in function return_cut_type_based_on_cut_categories. Value of category_1 is {category_1}')
 
     cut_type = dict_NoMH[category_2][0]
     end_participating = dict_NoMH[category_2][1]
@@ -972,7 +969,7 @@ def blunt_cut_with_MH_possible(gap_min_max_range, Cut_position):
     # Check if the gap_min_max_range is a string like 'no_gap' or 'gap_span....'
     if 'gap' in str(gap_min_max_range):
         return 'unknown'
-    
+
     (x1, y1), (x2, y2) = gap_min_max_range
 
     if Cut_position in range(x1, x2) or Cut_position in range(y1, y2):
@@ -995,7 +992,6 @@ def process_table(table, gRNA_seq, sample, parameters_dic, original_seq):
     df['Nuclease'] = parameters_dic['nuclease']
     # make dictionary with original sequences according to the gRNA_seq
     original_seq_dic = make_original_seq_dic(df['Reference_Sequence'], df['Unedited'], df['gRNA_seq'])
-    print(original_seq_dic)
     # check if key is present in the dictionary, if no, use 'Reference_sequence' instead
     df['Original_Sequence'] = original_seq
     df['Original_Sequence_around_cut'] = df.apply(lambda row: make_seq_around_optimum_cut(row['Original_Sequence'], parameters_dic['cut_position'], 20), axis=1)
@@ -1064,10 +1060,6 @@ def process_table(table, gRNA_seq, sample, parameters_dic, original_seq):
     # Call the above function to add columns based on the function find_microhomology
     apply_return_cut_type_based_on_cut_categories(df, return_cut_type_based_on_cut_categories, ['Cut_type', 'End_participating_on_MH', 'DEL_orientation', 'End_3_5', 'Likely_cut_type'])
 
-    # TODO once the code is working, make the function for the following lines
-    # df['MH_around_cut'] = df.apply(lambda row: MH_around_cut(row['DEL_orientation_min_max_range'], row['Maximal_MH'], row['Aligned_Sequence'], row['End_participating_on_MH'], parameters_dic['cut_position']), axis=1)
-    # df['MH_around_cut_len'] = df.apply(lambda row: len(row['MH_around_cut']), axis=1)
-
     df['Ref_seq_has_PAM_proximal_gap_next_to_cut_site'] = df.apply(lambda row: row['Reference_Sequence'][parameters_dic['cut_position']] == '-', axis=1)
     df['Insertion_event'] = df.apply(lambda row:  get_insertion_event(row, parameters_dic['cut_position']), axis=1)
     df['4th_nt_inserted'] = df.apply(lambda row: row['Insertion_event'] == row['4th_nt'], axis=1)
@@ -1078,15 +1070,6 @@ def process_table(table, gRNA_seq, sample, parameters_dic, original_seq):
     df['Aligned_2nt_mid'] = df.apply(lambda row:  row['Aligned_Sequence'][parameters_dic['cut_position']-1:parameters_dic['cut_position']+1], axis=1)
     df['Reference_2nt_mid'] = df.apply(lambda row:  row['Reference_Sequence'][parameters_dic['cut_position']-1:parameters_dic['cut_position']+1], axis=1)
     df['Same_2nt_mid'] = df.apply(lambda row:  row['Aligned_2nt_mid'] == row['Reference_2nt_mid'], axis=1)
-
-    # TODO Do I need the followitn four columns?
-    # # this works only if there is no '-' in Reference Sequence, thus no IN event around predicted cut, else 'cannot determine'
-    # df['Aligned_sequence_has_gap_next_to_blunt_cut_in_PAM_proximal'] = df.apply(lambda row:  gap_in_aligned_seq(row, parameters_dic['cut_position']), axis=1)
-    # df['Aligned_sequence_has_gap_next_to_blunt_cut_in_PAM_distal'] = df.apply(lambda row:  gap_in_aligned_seq(row, parameters_dic['cut_position']-1), axis=1)
-
-    # # This does not count with staggered end formation and microhomology, just DEL in first half or second half of Aligned sequence
-    # df['Aligned_sequence_contain_gap_distal_from_blunt_cut'] = df.apply(lambda row:  gap_in_range(row, 'Aligned_Sequence', 0, parameters_dic['cut_position']), axis=1)
-    # df['Aligned_sequence_contain_gap_proximal_from_blunt_cut'] = df.apply(lambda row:  gap_in_range(row, 'Aligned_Sequence', parameters_dic['cut_position'], (len(row['Aligned_Sequence'])+1)), axis=1)
 
     df['Referene_sequence_contain_gap'] = df.apply(lambda row: '-' in row['Reference_Sequence'], axis=1)
 
@@ -1194,10 +1177,10 @@ def add_columns_to_df(df, project_output_dir, parameters_dic, date, sort_alphabe
     for key in parameters_dic['add_columns']:
         df[key] = parameters_dic['add_columns'][key]
     df['name'] = df['sample'].astype(str) + '_' + df['gRNA_seq'].astype(str)
-    
+
     if sort_alphabetically is True:
         df.sort_values(by='name', inplace=True)
-    
+
     df.to_csv(Path(project_output_dir, '01_mastertable_' + date + '.tsv'), sep='\t', mode='w', header=True, index=None)
     write_into_report(f'01_mastertable_{date}.tsv with shape {df.shape} was created.\n', destination_folder=project_output_dir)
     return df

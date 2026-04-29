@@ -146,11 +146,9 @@ def adjust_box_widths(g, fac, no_of_columns):
                             l.set_xdata([xmin_new, xmax_new])
                     else:
                         if np.all(l.get_xdata() == [xmin, xmax]):
-                            l.set_xdata([xmin_new, xmax_new])
-                
+                            l.set_xdata([xmin_new, xmax_new])         
     return
 
-# TODO offset of datapoints does not work
 def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         , hue=None, hue_order=None, hue_only_for_data_points=True\
         , boxplot_distances_with=[0.15, 0.9]\
@@ -385,14 +383,6 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
 
     # Set withts for plotted boxplots
     width_list = boxplot_distances_with
-    # TODO solve in the main CRISPRlysis.py code and set up the new parameter boxplot_distances_with likely as [0.8, 0.3]
-    # if hue_only_for_data_points is False:
-    #     if hue is not None:
-    #         if len(data[hue].unique()) == 4:
-    #             width_list = [0.8, 0.3]
-    #         else:
-    #             width_list = [0.8, 0.4]
-    #             print('Problem with boxplot wisht could be in settings width_list. Change values in the with_list = [0.8, 0.4]')
 
     # Plot Violinplot in order (True/False) with stripplot (True/False)
     if order is None:
@@ -456,24 +446,6 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                     showbox=True, # must be True for Change color of meanprops later
                     showcaps=False,
                     ax=stripplot)
-                # Change color of the mean according to the used palette in color_dic
-                
-                # box_patches = [patch for patch in ax.patches if type(patch) == matplotlib.patches.PathPatch]
-                # if len(box_patches) == 0:  # in matplotlib older than 3.5, the boxes are stored in ax.artists
-                #     box_patches = ax.artists
-                # num_patches = len(box_patches)
-                # lines_per_boxplot = len(ax.lines) // num_patches
-                # for i, patch in enumerate(box_patches):
-                #     # Set the linecolor on the patch to the facecolor, and set the facecolor to None
-                #     col = patch.get_facecolor()
-                #     patch.set_edgecolor(col)
-                #     patch.set_facecolor('None')
-                #     # Each box has asociated Line2D objects (to make the whiskers, fliers, etc.)
-                #     # Loop over them here, and use the same color as above
-                #     for line in ax.lines[i * lines_per_boxplot: (i + 1) * lines_per_boxplot]:
-                #         line.set_color(col)
-                #         line.set_mfc(col)  # facecolor of fliers
-                #         line.set_mec(col)  # edgecolor of fliers
         # Make inner boxplot with mean as 'x'
         sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, width=width_list[0], showfliers=False, showmeans=True, meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black', markersize=5, linewidth=1.0, zorder=14), boxprops=dict(facecolor='gray', edgecolor='black', linewidth=1.5, alpha=1, zorder=10), whiskerprops=dict(color='black', linewidth=1.5, zorder=11), capprops=dict(color='black', linewidth=1.5, zorder=12), medianprops=dict(color='black', linewidth=1.5, zorder=13))
     else:
@@ -575,9 +547,6 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
 
     # Statistic
     if add_stat is True:
-        # add_stat_annotation(ax, data=data, x=x, y=y\
-        #     , box_pairs=stat_pairs,\
-        #     test=stat_test, text_format='star', loc='outside', verbose=1, fontsize='large')
         annot = Annotator(ax, pairs=stat_pairs, data=data, x=x, y=y)
         if stat_correction in [None, "none", "no_correction"]:
             annot.configure(
@@ -681,14 +650,8 @@ def check_if_all_events_are_present_after_pivot_reset_index(df, list_of_events, 
             list_of_events.append(f'{i}_0')
             list_of_events.append(f'{i}_1')
         list_of_events.extend(default_events)
-        # concert int() to str()
-        # for i in range(len(list_of_events)):
-        #     list_of_events[i]=str(list_of_events[i])
-        # TODO delete onec it works
-        # list_of_events = ['stagg2nt', 'stagg2nt_likely', 'stagg1nt', 'stagg1nt_likely', 'blunt_likely', 'blunt', 'cannot_be_determined']
     if list_of_events == 'INDELSUBOTHERS':
         list_of_events = ['IN', 'DEL', 'SUB', 'OTHERS']
-    # TODO solve list of events for prosimal distal
     if list_of_events == 'ProximalDistalBars':
         list_of_events = ['distal_blunt', 'distal_blunt_likely', 'distal_stagg1nt', 'distal_stagg1nt_likely', 'distal_stagg2nt_likely', 'proximal_blunt', 'proximal_blunt_likely', 'proximal_stagg1nt', 'proximal_stagg2nt']
     if return_only_predef_list is True:
@@ -737,24 +700,19 @@ def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_di
     bars_order: paste list of bars with desired order, default None
     show_plots: True/False, default False"""
 
-    # Define the custom exception class within the function
-    # class PlotGeneralStackedHorizonError(Exception):
-    #     """Rise a function specific error."""
     # Check if there are data in the data[x], if not skip making the plot.
     if df[x].notnull().any() is False:
         write_into_report(f'df["x"] are empty, plotting of the plot {name_to_save} was terminated.', destination_folder=project_output_dir)
         return
-        # raise PlotGeneralStackedHorizonError(f'df["x"] are empty, plotting of the plot {name_to_save} was terminated.')
 
     now = datetime.now()
     date = now.strftime('%y%m%d')
 
     y_len = len(df[y].unique())
-    # skip the plot if there are more than 20 unique ys
+    # skip the plot if there are more than 40 unique ys
     if y_len > 40:
         write_into_report(f'There are more than 40 unique values in df["{y}"], plotting of the plot {name_to_save} was terminated.', destination_folder=project_output_dir)
         return
-        # raise PlotGeneralStackedHorizonError(f'There are more than 20 unique values in df["{y}"], plotting of the plot {name_to_save} was terminated.')
 
     # Try to make the pivot table, if not possible, skip the plot
     try:
@@ -763,7 +721,6 @@ def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_di
         write_into_report(f'Pivot table could not be created for {name_to_save} plot. Error: {e}', destination_folder=project_output_dir)
         return
     # make dic with updated values -> value + sum from previous values nd from it df again
-    # pivot = pd.pivot_table(df, index=y, columns=x, values=values)
     if bars_order != 0:
         pivot = pivot.reindex(bars_order, axis=1)
     bars = pivot.columns.tolist()
@@ -793,8 +750,8 @@ def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_di
         df = df.set_index('y')
 
     # plot
-    sns.set_theme(style='whitegrid')                      # makes gid behind the plot
-    f, ax = plt.subplots(figsize=(9,y_len/4))       # set the figure size
+    sns.set_theme(style='whitegrid')
+    f, ax = plt.subplots(figsize=(9,y_len/4))
 
     # make color palette from sns.color_palette or own dictionary
     if sns_palette is True:
@@ -818,8 +775,6 @@ def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_di
         for column in range(no_of_bars,0,-1):              # plot in reverse
             sns.barplot(x=df.iloc[:,column-1], y=df.index, color=pal[column-1], edgecolor='#000000', \
                     alpha=1, errorbar=None, linewidth=0.2)        
-    # get the current ticks and use it to set the new ticks by sampling every other tick
-    # ax.set_xticks(ax.get_xticks()[::2])
 
     plt.title(f'{title} ({date}) \n {data_source}')
     plt.xlabel(xlabel, size=15)
@@ -881,7 +836,6 @@ def plot_barplot(data, x, y, project_output_dir, name_to_save, data_source, hue=
     if data[x].notnull().any() == False:
         write_into_report(f'data["x"] are empty, plotting of the plot {name_to_save} was terminated.', destination_folder=project_output_dir)
         return
-        # raise PlotBarplotError(f'data["x"] are empty, plotting of the plot {name_to_save} was terminated.')
     
     now = datetime.now()
     date = now.strftime('%y%m%d')
@@ -907,8 +861,6 @@ def plot_barplot(data, x, y, project_output_dir, name_to_save, data_source, hue=
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.xlim(x_lim)
     plt.ylim(y_lim)
-    # for container in ax.containers:
-    #     ax.bar_label(container)
     ax.yaxis.set_major_formatter(mtick.PercentFormatter(yaxis_formater, decimals=decimals))
     if xtickt_rotation != 0:
         plt.xticks(rotation=xtickt_rotation, ha='left', rotation_mode='anchor')
@@ -919,7 +871,6 @@ def plot_barplot(data, x, y, project_output_dir, name_to_save, data_source, hue=
         return plt.show()
     return plt.close()
 
-# TODO shift the chart when no positive values are present
 def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir, order_y=None\
     , data_source=None, title=None, name_to_save='stacked_vertical_barchart'\
     , output_format='png', dpi=200, xlabel=None, ylabel=None, sns_palette=True\
@@ -1012,35 +963,6 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
                 df_pivot.loc[len(df_pivot)] = empty_row
 
         df_pivot.sort_values(x, inplace=True)
-
-    # if fill_empty_x == True:
-    #     # check if all columns exists, if not make an empty one
-    #     if min(df_pivot[x]) > 0:
-    #         list_of_x = list(range(max(df_pivot[x])+1))
-    #     else:
-    #         list_of_x = list(range(min(df_pivot[x]), max(df_pivot[x])+1))
-    #     if 0 in list_of_x:
-    #         list_of_x.remove(0)
-    #     no_of_columns = len(df_pivot.columns)
-
-    #     if 1 not in list_of_x:
-    #         empty_row = [1] + [0] * (no_of_columns - 1)
-    #         df_pivot.loc[len(df_pivot)] = empty_row
-    #         # append 1 to the list of x values
-
-    #     # try:
-    #     middle = list_of_x.index(1)
-    #     # except:
-    #     #     middle=0
-        
-    #     for lx in list_of_x:
-    #         if lx not in list(df_pivot[x]):
-    #             empty_row = [lx]
-    #             for i in range(no_of_columns-1):
-    #                 empty_row.append(0)
-    #             df_pivot.loc[len(df_pivot)] = empty_row
-    #     df_pivot.sort_values(x, inplace=True)
-
     i = 0
     to_plot_dic = {}
     for row in df_pivot[x]:
@@ -1052,7 +974,7 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
             list_of_row_values.append(value)
         to_plot_dic[row] = list_of_row_values
         i+=1
-    
+
     # Sort the bars
     if order_y == None:
         bars = sorted(df_pivot.columns[1:])
@@ -1096,7 +1018,7 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
     plt.xlabel(xlabel, size=10)
     plt.ylabel(ylabel, size=15)
     bars = np.flip(bars)                            # change the bars order as they were plotted 
-    plt.legend(labels=bars, loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.legend(labels=bars, loc='lower left', bbox_to_anchor=(1.1, 0))
     if xlim != None:
         if maximum <= 0:
             maximum = 1
@@ -1117,10 +1039,6 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
         ax.yaxis.set_major_formatter(mtick.PercentFormatter(yaxis_formater, decimals=decimals_value))
         # Add text below chart
     if text_bellow_chart != None:
-        # at = AnchoredText(text_bellow_chart, prop=dict(size=12), frameon=True, loc='upper left'\
-        #     , bbox_to_anchor=(0, y_legend_coordinate), bbox_transform=f.transFigure, borderpad=0.)
-        # at.patch.set_boxstyle('round,pad=0.,rounding_size=0.2')
-        # ax.add_artist(at)
         props = {'backgroundcolor':'lightgray', 'size':12}  # bbox features
         at = AnchoredText(text_bellow_chart, frameon=True, loc='upper left'\
             , bbox_to_anchor=(0, y_legend_coordinate), bbox_transform=f.transFigure, borderpad=0., prop=props)
@@ -1132,169 +1050,3 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
     if show_plots == True:
         return plt.show()
     return plt.close()
-
-# def plot_sns_boxplot_and_print(data, x, y, number_of_columns, project_output_dir\
-#                                , hue=None, title=None, xtickt_rotation=0\
-#                                , ylabel=None, order=None, integrated_palette=False\
-#                                , transparency = 0.8 \
-#                                , hatches=False, hatches_dic=None, hatches_color_dic=None\
-#                                , yaxis_formater=1, name_to_save='Boxplot', data_source = None\
-#                                , y_min=None, y_max=None, y_legend_coordinate=0, plot_legend=False\
-#                                , add_stat=False, stat_pairs=None, stat_test='t-test_ind'\
-#                                , text_bellow_chart=None, output_format='png', dpi=200, show_plots=False):
-#     """Plots boxplot and saves it.
-#     data: DataFrame
-#     x: x to plot
-#     y: y to plot
-#     number_of_columns: int() to calculate the chart width
-#     hue: hue or None
-#     title: title, default None
-#     xtickt_rotation: int(), default 0
-#     ylabel: ylabel, default None
-#     order: order of x, default None
-#     integrated_palette:True use integrated dictionary; False -> makes default colors; enter own palette dic plain for color or nasted {'key':{'color':'gray', 'hatch_color':'', 'hatch':'////'}}
-#     transparency = int() 0-1, default 0.8
-#     hatches: True/False, if you want to make hatches, default False
-#     hatches_dic: use when not nasted dic as integrated_palette is used
-#                 for example {'key':'gray'}, deault None
-#     hatches_color_dic: fuse when not nasted dic as integrated_palette is used
-#                     for example {'key':'gray'}, deault None
-#     yaxis_formater: usually 1 of 100, to make yaxis in %, default 1
-#     project_output_dir: dir for output
-#     name_to_save: hae to contain full path with name of the boxplot (date and format is added automatialy)
-#     data_source: like 'Přibylová et al., (2021)'
-#     y_min: int(), default None
-#     y_max: int(), default None
-#     y_legend_coordinate: int() coordinates of figure are 0-1, default 0
-#     plot_legend: True/False, default False
-#     add_stat: add t-test_ind statistic annotation, default False
-#     stat_pairs: [(('pairs'), ('to compare')), (('pairs'), ('to compare')), ...]
-#     stat_test: t-test_ind, t-test_welch, t-test_paired, Mann-Whitney, Mann-Whitney-gt, Mann-Whitney-ls, Levene, Wilcoxon, Kruskal, default t-test_ind
-#     text_bellow_chart: str() to comment chart bellow, default None
-#     output_format: png, svg,..., default 'png'
-#     dpi: int(), default 200
-#     show_plots: True/False, default False"""
-    
-#     # TODO move the dict as a universal parameter for all charts
-#     color_dic = {'stagg2nt':{'color':'#E890B8','hatch_color':'gray', 'hatch':''}\
-#             ,'stagg2nt_likely':{'color':'#E890B8','hatch_color':'gray', 'hatch':'//'}\
-#             ,'stagg1nt':{'color':'#ffaaaa','hatch_color':'gray', 'hatch':''}\
-#             ,'stagg1nt_likely':{'color':'#ffaaaa','hatch_color':'gray', 'hatch':'////'}\
-#             ,'blunt':{'color':'#6ea7ff','hatch_color':'gray', 'hatch':''}\
-#             ,'blunt_likely':{'color':'#6ea7ff','hatch_color':'gray', 'hatch':'\\\\'}\
-#             ,'cannot_be_determined':{'color':'white','hatch_color':'gray', 'hatch':''}\
-#             ,'can_not_be_determined':{'color':'white','hatch_color':'gray', 'hatch':''}\
-#             ,'gap_out_of_cut':{'color':'gray','hatch_color':'', 'hatch':''}\
-#             ,'IN':{'color':'#091f92','hatch_color':'', 'hatch':''}\
-#             ,'INs':{'color':'#091f92','hatch_color':'', 'hatch':''}\
-#             ,'DEL':{'color':'#ba8759','hatch_color':'', 'hatch':''}\
-#             ,'DELs':{'color':'#ba8759','hatch_color':'', 'hatch':''}\
-#             ,'SUB':{'color':'#ffcc33','hatch_color':'', 'hatch':''}\
-#             ,'OTHERS':{'color':'#808080','hatch_color':'', 'hatch':''}\
-#             ,'no_mutation':{'color':'#111111','hatch_color':'', 'hatch':''}\
-#             ,'distal':{'color':'#f0d271','hatch_color':'', 'hatch':''}\
-#             ,'distal_both':{'color':'#C4C4C4','hatch_color':'', 'hatch':''}\
-#             ,'distal_both_proximal':{'color':'#979797','hatch_color':'', 'hatch':''}\
-#             ,'both':{'color':'#808080','hatch_color':'', 'hatch':''}\
-#             ,'both_proximal':{'color':'#C4C4C4','hatch_color':'', 'hatch':''}\
-#             ,'proximal':{'color':'#f5ad62','hatch_color':'', 'hatch':''}\
-#             ,'PAM_distal_nt_in_MH':{'color':'#52D8FF','hatch_color':'', 'hatch':''}\
-#             ,'PAM_proximal_nt_in_MH':{'color':'#FADA52','hatch_color':'', 'hatch':''}\
-#             ,'no_MH_likely':{'color':'#A9A9A9','hatch_color':'', 'hatch':''}\
-#             ,'no_MH':{'color':'#D3D3D3','hatch_color':'', 'hatch':''}\
-#             ,'A':{'color':'#70c936','hatch_color':'', 'hatch':''}\
-#             ,'C':{'color':'#ff0000','hatch_color':'', 'hatch':''}\
-#             ,'G':{'color':'#ffd42a','hatch_color':'', 'hatch':''}\
-#             ,'T':{'color':'#9955ff','hatch_color':'', 'hatch':''}}
-    
-#     # Check if there are data in the data[x], if not skip making the plot.
-#     if data[x].notnull().any() == False:
-#         print(f'data["x"] are empty, plotting of the plot {name_to_save} was terminated.')
-#         write_into_report(f'data["x"] are empty, plotting of the plot {name_to_save} was terminated.', destination_folder=project_output_dir)
-#         return
-    
-#     now = datetime.now()
-#     date = now.strftime('%y%m%d')
-#     # Change matplotlib style and define figure size
-#     sns.set(style='whitegrid')
-#     f, ax = plt.subplots(figsize=(number_of_columns, 4))
-#     # Define which palette will be used
-#     if integrated_palette == True:
-#         color_dic = color_dic
-#     else:
-#         color_dic = integrated_palette
-#     # Make color list from dictionary
-#     color_list=[]
-#     hatches_list=[]
-#     edge_color_list=[]
-#     if order==None:
-#         order = list(data[x].unique())    
-#     for order_key in order:
-#         if ((any(isinstance(i, dict) for i in color_dic.values()))) == True:
-#             color_list.append(color_dic[order_key]['color'])
-#             hatches_list.append(color_dic[order_key]['hatch'])
-#             edge_color_list.append(color_dic[order_key]['hatch_color'])
-#         else:
-#             color_list = color_dic
-#             hatches_list = hatches_dic
-#             edge_color_list = hatches_color_dic
-
-#     #  Plot Boxplot in order (True/False)
-#     if order == None:
-#         boxplot = sns.boxplot(x=x, y=y, hue=hue, data=data, palette=color_list, \
-#                 showmeans=True, meanprops={'marker':'x'
-#                                         ,'markerfacecolor':'black'
-#                                         , 'markeredgecolor':'black'
-#                                         , 'markersize':'8'})
-
-#     else:
-#         boxplot = sns.boxplot(x=x, y=y, hue=hue, data=data, palette=color_list, \
-#             showmeans=True, meanprops={'marker':'x'
-#                                     ,'markerfacecolor':'black'
-#                                     , 'markeredgecolor':'black'
-#                                     , 'markersize':'8'}
-#                                     , order=order)
-#     # Statistic
-#     if add_stat == True:
-#         add_stat_annotation(ax, data=data, x=x, y=y\
-#             , box_pairs=stat_pairs,\
-#             test=stat_test, text_format='star', loc='outside', verbose=1, fontsize='large')
-#     # Legend
-#     if plot_legend == True:
-#         plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-#     plt.title(title + '\n(' + date + ')\n' + data_source)
-#     plt.ylabel(ylabel)
-#     plt.ylim(y_min, y_max)
-#     plt.xticks(rotation=xtickt_rotation, ha='left', rotation_mode='anchor')
-#     # Add transparency to colors 
-#     for patch in boxplot.artists:
-#         r, g, b, a = patch.get_facecolor()
-#         patch.set_facecolor((r, g, b, transparency))
-#     # set hatches if wanted
-#     if hatches == True:
-#         # Loop over the bars
-#         for i,thisbar in enumerate(boxplot.artists):
-#             # Set a different hatch for each column
-#             thisbar.set_hatch(hatches_list[i])
-#             thisbar.set_edgecolor(edge_color_list[i])
-    
-#     ax.yaxis.set_major_formatter(mtick.PercentFormatter(yaxis_formater, decimals=0))
-#     # makes gaps between boxes when hue is used
-#     adjust_box_widths(f, 0.9, len(order)) 
-#     # Add text below chart
-#     if text_bellow_chart != None:
-#         # at = AnchoredText(text_bellow_chart, prop=dict(size=12), frameon=True, loc='upper left'\
-#         #     , bbox_to_anchor=(0, y_legend_coordinate), bbox_transform=f.transFigure, borderpad=0.)
-#         # at.patch.set_boxstyle('round,pad=0.,rounding_size=0.2')
-#         # ax.add_artist(at)
-#         props = {'backgroundcolor':'lightgray', 'size':12}  # bbox features
-#         at = AnchoredText(text_bellow_chart, frameon=True, loc='upper left'\
-#             , bbox_to_anchor=(0, y_legend_coordinate), bbox_transform=f.transFigure, borderpad=0., prop=props)
-#         at.patch.set_boxstyle('round,pad=0.,rounding_size=0.2')
-#         ax.add_artist(at)
-
-#     plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '.' + output_format), dpi=dpi, bbox_inches='tight')
-#     write_into_report(f'Boxplot plot {name_to_save} was created.', destination_folder=project_output_dir)
-#     if show_plots == True:
-#         return plt.show()
-#     return plt.close()

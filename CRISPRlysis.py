@@ -44,6 +44,11 @@ from scripts.plot_functions import save_stat, make_Ubuntu_mnt_path, make_reverse
 
 from scripts.dict_functions import make_color_dic_CutType, make_hatches_dic_CutType, make_color_dic_blunt_stagg_orientation, make_color_dic_Dino, make_hatches_dic_Dino, make_color_dic_Dino_end, get_color_dic_35_violin
 
+# Do not show future warnings in the output
+if not sys.warnoptions:
+    import warnings
+    warnings.simplefilter("ignore", FutureWarning)
+
 # Get start time
 start_time = time.time()
 # Get current date and time
@@ -112,9 +117,6 @@ else:
         write_into_report(f'Report from {data_source_original} from date {date}.', destination_folder=project_output_dir)
         write_into_report(f'Project output dir already exists and is {os.path.abspath(project_output_dir)}.', destination_folder=project_output_dir)
 
-# TODO delete in the final version of the code
-write_into_report(f'Cut position is set to location: {cut_position}', destination_folder=project_output_dir)
-
 # Check if project output dir exists, create it if not
 check_if_path_exist_create_if_not(project_output_dir)
 
@@ -152,13 +154,6 @@ for key, value in tables_dic.items():
     df = pd.read_csv(key, sep='\t', index_col=None)
     write_into_report('###########################\n# Analysing next subtable #\n###########################', destination_folder=project_output_dir)
     write_into_report(f'Processing {key}', destination_folder=project_output_dir)
-    # write_into_report(f'{df["gRNA_seq"].unique()} are unique gRNAs in file.', destination_folder=project_output_dir)
-
-    # TODO the part bellow might be deleted as the filtering should be done between mastertable 00 and 01 by 'filter_out_values':{} from the parameters.txt file
-    # # filter out some gRNA
-    # if filter_out_some_gRNA == True:
-    #     df = filter_gRNA(df, list_of_gRNA_seq_to_filter)
-    # write_into_report(f'After filtering {df["gRNA_seq"].unique()} are unique gRNAs in file.', destination_folder=project_output_dir)
 
     # Define new data_dource for individual key
     i=0
@@ -182,10 +177,6 @@ for key, value in tables_dic.items():
     # Sort Alphabetically
     if sort_alphabetically is True:
         order_list = sorted(df['gRNA_seq'].unique().tolist())
-        # TODO delete if the above row is sorting properly
-        # a = df['gRNA_seq'].unique()
-        # order_list = a.tolist()
-        # order_list.sort()
         write_into_report(f'df was sorted alphabetically. The order is: {order_list}', destination_folder=project_output_dir)
     else:
         order_list = df['gRNA_seq'].unique()
@@ -459,12 +450,6 @@ for key, value in tables_dic.items():
         # plot VIOLINPLOT 1
         ##########################################################################################
         # Set charts properties
-        # palette_dic=  {True:'#D3D3D3'
-        #             , False:'#B8BEDB'
-        #             , 'A':'#70c936'
-        #             , 'C':'#ff0000'
-        #             , 'G':'#ffd42a'
-        #             , 'T':'#9955ff'}
         title='Is the 4th nucleotide the inserted nucleotide?'
         no_of_samples = len(df_pivot['sample'].unique())
         ylabel='Normalised percentage\n of inserted 4th nucleotides'
@@ -555,7 +540,6 @@ for key, value in tables_dic.items():
         # reset index and NaN values to 0
         df_pivot = pivot.fillna(0).reset_index()
         ##########################################################################################
-        # print('The pivot is', df_pivot)
         # If df_pivot is Empty skip the next plot
         if df_pivot.empty:
             write_into_report('There is no DEL around the cut, skipping Not-normalised and normalised incidence of DEL according to the orientation plotting.', destination_folder=project_output_dir)
@@ -692,7 +676,12 @@ for key, value in tables_dic.items():
                 name_to_save = f'{file_number}_{counter}_Stagg_blunt_ratio_all_samples'
                 text_bellow_chart = f'Only DELs around the cut are plotted.\
                                 \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
-                                \n{no_of_gRNA_samples}'
+                                \n{no_of_gRNA_samples}\
+                                \n CutType_AmbigousNtPresent:\
+                                \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut, C=type of cut cut cannot be determined\
+                                \n   CutType which should be 0 in this plot (if not, check main script) -> O=gap out of the cut, X=no DEL around the cut\
+                                \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
+                
                 # TODO solve bars_order, color_dic, hatches_dic
                 plot = plot_general_stacked_horizontal_barchart(df=df_Blunt_Stagg_samples_norm, x='variable'\
                 , y='name', values='value', project_output_dir=project_output_subdir\
@@ -712,7 +701,11 @@ for key, value in tables_dic.items():
             ylabel='Normalised percentage of DELs \naround cuts events'
             text_bellow_chart = f'Only DELs around the cut are plotted.\
                                 \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
-                                \n{no_of_gRNA_samples}'
+                                \n{no_of_gRNA_samples}\
+                                \nCutType_AmbigousNtPresent:\
+                                \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut, C=type of cut cut cannot be determined\
+                                \n   CutType which should be 0 in this plot (if not, check main script) -> O=gap out of the cut, X=no DEL around the cut\
+                                \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
             name_to_save = f'{file_number}_{counter}_DEL_Stagg_blunt_summary_violinplot'
             plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable', y='value'\
                 , number_of_columns=len(df_Blunt_Stagg_samples_norm['variable'].unique())/2\
@@ -744,7 +737,6 @@ for key, value in tables_dic.items():
         # TODO for columns add the orientation
         pivot = pd.pivot_table(df_CutType, index=['name', 'gRNA_seq'], columns=['DEL_orientation', 'Cut_type', 'Likely_cut_type'], values='%Reads', aggfunc='sum', fill_value=0)
         # make order for pivot table based on the upstream/downstream, cut maximum/minimum and likeliness of the cut
-        # print('The pivot for plot VIOLINPLOTs with PAM proximal/distal orientation is', pivot)
         # If pivot is Empty skip the next plot
         if pivot.empty:
             write_into_report('There is no DEL for PAM proximal/distal orientation, skipping plotting.', destination_folder=project_output_dir)
@@ -762,8 +754,6 @@ for key, value in tables_dic.items():
             # Flatten the index
             df_Blunt_Stagg_samples.columns = ['_'.join(map(str, col)).strip('_') for col in df_Blunt_Stagg_samples.columns]
 
-            # check if all events are present, if not, add missing column with 0
-            # df_Blunt_Stagg_samples = check_if_all_events_are_present_after_pivot_reset_index(df_Blunt_Stagg_samples, order, cut_maximum, cut_minimum)
             # # make single column table
             df_Blunt_Stagg_samples = pd.melt(df_Blunt_Stagg_samples, id_vars=['name', 'gRNA_seq'], value_vars=order)
             ###############################################################################
@@ -781,7 +771,11 @@ for key, value in tables_dic.items():
             ylabel='Percentage of DELs \naround cuts events'
             text_bellow_chart = f'Only DELs around the cut are plotted.\
                         \nNot-normalised.\
-                        \n{no_of_gRNA_samples}'
+                        \n{no_of_gRNA_samples}\
+                        \nOrientation_CutType_AmbigousNtPresent:\
+                        \n   Orientation -> U=upstream, D=downstream, B=both, C=cannot be determined\
+                        \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut, C=type of cut cut cannot be determined\
+                        \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
             name_to_save = f'{file_number}_{counter}_1_DEL_Stagg_blunt_oriented_summary_violinplot'
             color_dic = make_color_dic_blunt_stagg_orientation(order)
             plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples, x='variable', y='value'\
@@ -821,7 +815,12 @@ for key, value in tables_dic.items():
             ylabel='Normalised percentage of DELs \naround cuts events'
             text_bellow_chart = f'Only DELs around the cut are plotted.\
                                 \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
-                                \n{no_of_gRNA_samples}'
+                                \n{no_of_gRNA_samples}\
+                                \nOrientation_CutType_AmbigousNtPresent:\
+                                \n   Orientation -> U=upstream, D=downstream, B=both, C=cannot be determined\
+                                \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut, C=type of cut cut cannot be determined\
+                                \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
+            name_to_save = f'{file_number}_{counter}_1_DEL_Stagg_blunt_oriented_summary_violinplot'
             name_to_save = f'{file_number}_{counter}_2_DEL_Stagg_blunt_oriented_summary_violinplot_normalised'
             plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable'\
                 , y='value', number_of_columns=len(order)/2\
@@ -894,7 +893,11 @@ for key, value in tables_dic.items():
                 text_bellow_chart = 'Data from deletions around cut only.\n\
                 Without deletions with DEL_orientation = both \n\
                 cannot_be_determined was split between upstream and downstream - gray bars.\n\
-                Not normalised data.'
+                Not normalised data.\
+                \nOrientation_CutType_AmbigousNtPresent:\
+                \n   Orientation -> U=upstream, D=downstream, sU/D=splitted to U and D as it cannot be determined\
+                \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut,\
+                \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
                 # normalise individual samples -> sum of all DEL = 100%
                 pivot = pd.crosstab(index=[df_Cut_gRNA['DEL_orientation_cut_type']\
                                             , df_Cut_gRNA['n_deleted_around_cut']]\
@@ -956,7 +959,7 @@ for key, value in tables_dic.items():
             ##########################################################################################
             color_dic=make_color_dic_CutType(list_of_events)
             hatches_dic = make_hatches_dic_CutType(list_of_events)
-        
+
             title = 'Normalised Staggered/Blunt representation\
                     \nin samples divided by 4th nucleotide upstream from PAM'
             xlabel = '4th nucleotide upstream from PAM'
@@ -964,8 +967,11 @@ for key, value in tables_dic.items():
             text_bellow_chart = f'Only DELs around the cut are plotted.\
                                 \nNormalised to SUM of all DEL categories around the cut in individual sample = 100%,\
                                 \n       then samples divided in 4th nt groups and mean was calculated for each DEL categry and plotted.\
-                                \n= 100%.\
-                                \n{no_of_gRNA_samples}'
+                                \n{no_of_gRNA_samples}\
+                                \nCutType_AmbigousNtPresent:\
+                                \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut, C=type of cut cut cannot be determined\
+                                \n   CutType which should be 0 in this plot (if not, check main script) -> O=gap out of the cut, X=no DEL around the cut\
+                                \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
             name_to_save = f'{file_number}_{counter}_DEL_Stagg_blunt_summary_barchart_4th_nt'
             plot = plot_general_stacked_vertical_barchart(df=df_Blunt_Stagg_samples_norm, x='4th_nt'\
                 , y='variable', values='value', order_y=list_of_events\
@@ -983,11 +989,15 @@ for key, value in tables_dic.items():
             ##########################################################################################
             # plot VIOLINPLOT
             ##########################################################################################
-            title='Normalised Staggered/Blunt representation'
+            title='Normalised Staggered/Blunt representation based on 4th nucleotide upstream from PAM'
             ylabel='Normalised percentage of DELs \naround cuts events'
             text_bellow_chart = f'Only DELs around the cut are plotted.\
-                                \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
-                                \n{no_of_gRNA_samples}'
+                                \nNormalised to: SUM of all DEL categories around the cut in individual sample = 100%.\
+                                \n{no_of_gRNA_samples}\
+                                \nCutType_AmbigousNtPresent:\
+                                \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut, C=type of cut cut cannot be determined\
+                                \n   CutType which should be 0 in this plot (if not, check main script) -> O=gap out of the cut, X=no DEL around the cut\
+                                \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
             name_to_save = f'{file_number}_{counter}_DEL_Stagg_blunt_summary_violinplot_4th_nt'
             plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable', y='value'\
                     , number_of_columns=len(list_of_events)\
@@ -1244,8 +1254,6 @@ for key, value in tables_dic.items():
                         , fill_empty_x=True, order_y=order\
                         , y_legend_coordinate=-0.2, show_plots=show_plots)
                 subcounter+=1
-                # Delete the following line if you want to plot all samples
-                # break
 # Write into the report how long the script run took
 end_time = time.time()
 total_time = end_time - start_time
