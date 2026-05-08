@@ -3,7 +3,10 @@
 # pylint: disable=invalid-name
 
 """
-This code is for making dictionaries for plotting colour palettes and hatches"""
+This code is for making dictionaries for plotting colour palettes and hatches
+"""
+
+
 def make_color_dic_CutType(list_of_events):
     ''' Makes color dictionary for plotting cut types.
     Parameters:
@@ -12,22 +15,42 @@ def make_color_dic_CutType(list_of_events):
     Returns:
     color_dic
     '''
+    from random import randint
     # Initialize an empty dictionary to store the results
-    color_dic = {}
+    # color_dic = {}
     # Iterate over each event in the list
+    # for l in list_of_events:
+    #     if l.startswith('0'):
+    #         color_dic[l] = '#ffe46a'
+    #     elif l.startswith('-1'):
+    #         color_dic[l] = '#ff6a2a'
+    #     elif l.startswith('-'):
+    #         color_dic[l] = '#64b96a'
+    #     elif l[0].isdigit():
+    #         color_dic[l] = 'orange'
+    #     elif l.startswith(('C', 'O', 'X')):
+    #         color_dic[l] = '#CCCCCC'
+    #     else:
+    #         color_dic[l] = 'red'  # Default case if it doesn't match any criteria
+    color_dic = {'-2nt upstream staggered cut':'#64b96a',
+                '-2nt upstream staggered cut with complementarity':'#64b96a',
+                '-1nt upstream staggered cut':'#ff6a2a',
+                '-1nt upstream staggered cut with complementarity':'#ff6a2a',
+                'blunt cut':'#ffe46a',
+                'blunt cut with complementarity':'#ffe46a',
+                'type of cut cannot be determined':'#CCCCCC',
+                'type of cut cannot be determined with complementarity':'#CCCCCC',
+                'gap out of the cut':"#A8A8A8",
+                'gap out of the cut with complementarity':'#A8A8A8',
+                'no DEL around the cut':"#464646",
+                'no DEL around the cut with complementarity':'#464646'}
+    # If list_of_events not in color_dic, add it with random color
     for l in list_of_events:
-        if l.startswith('0'):
-            color_dic[l] = '#6ea7ff'
-        elif l.startswith('-1'):
-            color_dic[l] = '#ffaaaa'
-        elif l.startswith('-'):
-            color_dic[l] = '#E890B8'
-        elif l[0].isdigit():
-            color_dic[l] = 'yellow'
-        elif l.startswith(('C', 'O', 'X')):
-            color_dic[l] = 'gray'
-        else:
-            color_dic[l] = 'red'  # Default case if it doesn't match any criteria
+        if l not in color_dic:
+            # Generate random HEX color
+            color_dic[l] = f'#{randint(0, 0xFFFFFF):06x}'
+            print(f'Error in make_color_dic_CutType function. Parameter: {l} is not in the colour decision list.')
+
     return color_dic
 
 def make_hatches_dic_CutType(list_of_events):
@@ -40,26 +63,31 @@ def make_hatches_dic_CutType(list_of_events):
     hatches_dic
     """
     hatches_dic = {}
+    # for l in list_of_events:
+    #     if l.startswith('C'):
+    #         hatches_dic[l] = ''
+    #     elif l.startswith('O'):
+    #         hatches_dic[l] = 'oo'
+    #     elif l.startswith('X'):
+    #         hatches_dic[l] = 'xxx'
+    #     elif l.endswith('0'):
+    #         hatches_dic[l] = ''
+    #     elif l.endswith('1'):
+    #         if l.startswith('0'):
+    #             hatches_dic[l] = '//'
+    #         elif l.startswith('-1'):
+    #             hatches_dic[l] = '//'
+    #         elif l.startswith('-'):
+    #             hatches_dic[l] = '//'
+    #         else:
+    #             hatches_dic[l] = '\\'
+    #     else:
+    #         hatches_dic[l] = '*'
     for l in list_of_events:
-        if l.startswith('C'):
-            hatches_dic[l] = ''
-        elif l.startswith('O'):
-            hatches_dic[l] = 'oo'
-        elif l.startswith('X'):
-            hatches_dic[l] = 'xxx'
-        elif l.endswith('0'):
-            hatches_dic[l] = ''
-        elif l.endswith('1'):
-            if l.startswith('0'):
-                hatches_dic[l] = '//'
-            elif l.startswith('-1'):
-                hatches_dic[l] = '//'
-            elif l.startswith('-'):
-                hatches_dic[l] = '//'
-            else:
-                hatches_dic[l] = '\\'
+        if 'complementarity' in l:
+            hatches_dic[l] = '\\\\'
         else:
-            hatches_dic[l] = '*'
+            hatches_dic[l] = ''
     return hatches_dic
 
 def make_color_dic_blunt_stagg_orientation(order):
@@ -80,37 +108,37 @@ def make_color_dic_blunt_stagg_orientation(order):
         elif split[0].startswith('U'):
             if split[1] == str(0):
                 if split[2] == str(0):
-                    color_dic[l] = {'color':'#6ea7ff','edge_color':'gray', 'hatch':''}
+                    color_dic[l] = {'color':'#ffe46a','edge_color':'gray', 'hatch':''}
                 else:
-                    color_dic[l] = {'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\'}
+                    color_dic[l] = {'color':'#ffe46a','edge_color':'gray', 'hatch':'\\\\'}
             elif split[1] == str(-1):
                 if split[2] == str(0):
-                    color_dic[l] = {'color':'#ffaaaa','edge_color':'gray', 'hatch':''}
+                    color_dic[l] = {'color':'#ff6a2a','edge_color':'gray', 'hatch':''}
                 else:
-                    color_dic[l] = {'color':'#ffaaaa','edge_color':'gray', 'hatch':'\\\\'}
+                    color_dic[l] = {'color':'#ff6a2a','edge_color':'gray', 'hatch':'\\\\'}
             elif split[1].startswith('-'):
                 if split[2] == str(0):
-                    color_dic[l] = {'color':'#E890B8','edge_color':'gray', 'hatch':''}
+                    color_dic[l] = {'color':'#64b96a','edge_color':'gray', 'hatch':''}
                 else:
-                    color_dic[l] = {'color':'#E890B8','edge_color':'gray', 'hatch':'\\\\'}
+                    color_dic[l] = {'color':'#64b96a','edge_color':'gray', 'hatch':'\\\\'}
             else:
                 color_dic[l] = {'color':'red','edge_color':'gray', 'hatch':''}
         elif split[0].startswith('D'):
             if split[1] == str(0):
                 if split[2] == str(0):
-                    color_dic[l] = {'color':'#6ea7ff','edge_color':'gray', 'hatch':''}
+                    color_dic[l] = {'color':'#ffe46a','edge_color':'gray', 'hatch':''}
                 else:
-                    color_dic[l] = {'color':'#6ea7ff','edge_color':'gray', 'hatch':'//'}
+                    color_dic[l] = {'color':'#ffe46a','edge_color':'gray', 'hatch':'//'}
             elif split[1] == str(-1):
                 if split[2] == str(0):
-                    color_dic[l] = {'color':'#ffaaaa','edge_color':'gray', 'hatch':''}
+                    color_dic[l] = {'color':'#ff6a2a','edge_color':'gray', 'hatch':''}
                 else:
-                    color_dic[l] = {'color':'#ffaaaa','edge_color':'gray', 'hatch':'//'}
+                    color_dic[l] = {'color':'#ff6a2a','edge_color':'gray', 'hatch':'//'}
             elif split[1].startswith('-'):
                 if split[2] == str(0):
-                    color_dic[l] = {'color':'#E890B8','edge_color':'gray', 'hatch':''}
+                    color_dic[l] = {'color':'#64b96a','edge_color':'gray', 'hatch':''}
                 else:
-                    color_dic[l] = {'color':'#E890B8','edge_color':'gray', 'hatch':'//'}
+                    color_dic[l] = {'color':'#64b96a','edge_color':'gray', 'hatch':'//'}
             else:
                 color_dic[l] = {'color':'red','edge_color':'gray', 'hatch':''}
         else:
@@ -134,22 +162,22 @@ def make_color_dic_Dino(list_of_events):
         split = l.split('_')
         if len(split) == 2:
             if split[0] == str(0):
-                color_dic[l] = '#6ea7ff'
+                color_dic[l] = '#ffe46a'
             elif split[0] == str(-1):
-                color_dic[l] = '#ffaaaa'
+                color_dic[l] = '#ff6a2a'
             elif split[0].startswith('-'):
-                color_dic[l] = '#E890B8'
+                color_dic[l] = '#64b96a'
         elif len(split) == 3:
             if split[0].startswith('s'):
-                color_dic[l] = 'gray'
+                color_dic[l] = '#CCCCCC'
             elif split[1].startswith('X'):
-                color_dic[l] = 'gray'
+                color_dic[l] = '#CCCCCC'
             elif split[1] == str(0):
-                color_dic[l] = '#6ea7ff'
+                color_dic[l] = '#ffe46a'
             elif split[1] == str(-1):
-                color_dic[l] = '#ffaaaa'
+                color_dic[l] = '#ff6a2a'
             elif split[1].startswith('-'):
-                color_dic[l] = '#E890B8'
+                color_dic[l] = '#64b96a'
         else:
             color_dic[l] = 'red'  # Default case if it doesn't match any criteria
             print(f'Error in make_color_dic_Dnino function. Parameter: {l} is not in the colour decision list.')
@@ -211,7 +239,13 @@ def make_color_dic_Dino_end(list_of_events):
                 color_dic[l] = 'red'  # Default case if it doesn't match any criteria
                 print(f'Error in make_color_dic_Dnino_end function. Parameter: {l} is not in the colour decision list.')
         elif split[1] == str(0):
-            color_dic[l] = "#CCCCCC"
+            if split[2] == 'False':
+                color_dic[l] = "#ffe46a"
+            elif split[2] == 'True':
+                color_dic[l] = "#CCCCCC"
+            else:
+                color_dic[l] = 'red'  # Default case if it doesn't match any criteria
+                print(f'Error in make_color_dic_Dnino_end function. Parameter: {l} is not in the colour decision list.')
         else:
             color_dic[l] = 'red'  # Default case if it doesn't match any criteria
             print(f'Error in make_color_dic_Dnino function. Parameter: {l} is not in the colour decision list.')

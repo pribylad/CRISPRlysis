@@ -16,6 +16,7 @@ from glob import glob
 import os
 from os.path import dirname, split, basename
 from pathlib import Path
+from random import randint
 import shutil
 import time
 import sys
@@ -318,7 +319,7 @@ for key, value in tables_dic.items():
         title = 'No of inserted nucleotides'
 
         # Plot average percentage of insertion and drop all despite 0 insertions
-        plot = plot_barplot(data=df_pivot, x='n_inserted', y='%Reads', project_output_dir=project_output_subdir, name_to_save=name_to_save, data_source=data_source, hue=None, color='#091f92', title=title, x_lim=(-0.5,14.5), y_lim=(0,55), xlabel='No of nucleotides', yaxis_formater=100, decimals=1, errorbar='sd', fill_empty_x=True, output_format=output_format, dpi=100, show_plots=show_plots)
+        plot = plot_barplot(data=df_pivot, x='n_inserted', y='%Reads', project_output_dir=project_output_subdir, name_to_save=name_to_save, data_source=data_source, hue=None, color='#091f92', title=title, x_lim=(-0.5,14.5), y_lim=(0,55), xlabel='No of inserted nucleotides', yaxis_formater=100, decimals=1, errorbar='sd', fill_empty_x=True, output_format=output_format, dpi=100, show_plots=show_plots)
         stat_info = df_pivot.groupby('n_inserted').describe().unstack()
         save_stat(stat_info, name_to_save, project_output_subdir)
         counter+=1
@@ -363,7 +364,7 @@ for key, value in tables_dic.items():
                             \n{no_of_gRNA_samples}'
         name_to_save=f'{file_number}_{counter}_IN_no_of_IN_nucleotides_summary_violinplot'
 
-        plot = plot_sns_violin_and_print(data=df_pivot, x='n_inserted', y='value', number_of_columns=len(df_pivot['n_inserted'].unique()), show_datapoints=True, jitter=0.1, stripplot_offset=12, dodge=False, clip_right=True, order=None, project_output_dir=project_output_subdir, hue=None, integrated_properties_dic=False, color_dic=color_dic, show_hue_medians=False, title=title, xtickt_rotation=0, ylabel=ylabel, yaxis_formater=1, name_to_save=name_to_save, text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.05, data_source=data_source, y_min=0, y_max=1.02, output_format=output_format, show_plots=show_plots)
+        plot = plot_sns_violin_and_print(data=df_pivot, x='n_inserted', y='value', number_of_columns=len(df_pivot['n_inserted'].unique()), show_datapoints=True, jitter=0.1, stripplot_offset=12, dodge=False, clip_right=True, order=None, project_output_dir=project_output_subdir, hue=None, integrated_properties_dic=False, color_dic=color_dic, show_hue_medians=False, title=title, xtickt_rotation=0, ylabel=ylabel, yaxis_formater=1, xlabel="No of inserted nucleotides", name_to_save=name_to_save, text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.05, data_source=data_source, y_min=0, y_max=1.02, output_format=output_format, show_plots=show_plots)
         stat_info = df_pivot.groupby('n_inserted').value.describe().unstack()
         save_stat(stat_info, name_to_save, project_output_subdir)
         counter+=1
@@ -521,15 +522,15 @@ for key, value in tables_dic.items():
             df_orientation = df_orientation[~df_orientation['DEL_orientation'].str.contains('X')]
         # filter out deletions which are not around the cut
         df_orientation = df_orientation[df_orientation['Gap_around_cut']==True]
-        # Change ['U', 'B', 'D', 'C'] in DEL_orientation for ['upstream', 'both', 'downstream', 'cannot_be_determined']
+        # Change ['U', 'B', 'D', 'C'] in DEL_orientation for ['upstream', 'both', 'downstream', 'cannot be determined']
         # Replace values in the DEL_orientation column
         df_orientation['DEL_orientation'] = df_orientation['DEL_orientation'].replace({
             'U': 'upstream',
-            'B': 'both',
+            'B': 'bidirectional',
             'D': 'downstream',
-            'C': 'cannot_be_determined'
+            'C': 'cannot be determined'
         })
-        order = ['upstream', 'both', 'downstream', 'cannot_be_determined']
+        order = ['upstream', 'bidirectional', 'downstream', 'cannot be determined']
         ##########################################################################################
         # plot VIOLINPLOT
         ##########################################################################################
@@ -596,7 +597,7 @@ for key, value in tables_dic.items():
             df_pivot = pivot.reset_index()
 
             # check if all columns exists, if not make an empty one
-            order = ['upstream', 'both', 'downstream', 'cannot_be_determined']
+            order = ['upstream', 'bidirectional', 'downstream', 'cannot be determined']
             for orientation in order:
                 if orientation not in df_pivot.columns.tolist():
                     df_pivot[orientation] = int()
@@ -607,7 +608,7 @@ for key, value in tables_dic.items():
 
             # Set charts properties
             title = 'Normalised incidence of DEL according to the orientation'
-            ylabel = 'Normalised percentage of DEL around the cut'
+            ylabel = 'Normalised percentage of DEL\naround the cut'
             no_of_samples = df_pivot.groupby('DEL_orientation').value.count().unique()
             text_bellow_chart = f'Only DELs around the cut are plotted.\
                                 \nNormalised to: SUM of all DEL orientation in individual sample = 100%\
@@ -663,6 +664,24 @@ for key, value in tables_dic.items():
             pivot = pd.crosstab(index=[df_Blunt_Stagg_samples['name'],df_Blunt_Stagg_samples['gRNA_seq']], columns=df_Blunt_Stagg_samples['variable'], values=df_Blunt_Stagg_samples['value'], aggfunc='sum', normalize='index')
             df_Blunt_Stagg_samples_norm = pivot.reset_index()
             df_Blunt_Stagg_samples_norm = pd.melt(df_Blunt_Stagg_samples_norm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
+            # In column variable change '-2' to 2nt upstream staggered cut, '-1' to 1nt upstream staggered cut, '0' to blunt cut, 'C' to type of cut cut cannot be determined, 'O' to gap out of the cut, 'X' to no DEL around the cut
+            df_Blunt_Stagg_samples_norm['variable'] = df_Blunt_Stagg_samples_norm['variable'].replace({
+                '-2_0': '-2nt upstream staggered cut',
+                '-2_1': '-2nt upstream staggered cut with complementarity',
+                '-1_0': '-1nt upstream staggered cut',
+                '-1_1': '-1nt upstream staggered cut with complementarity',
+                '0_0': 'blunt cut',
+                '0_1': 'blunt cut with complementarity',
+                'C_0': 'type of cut cannot be determined',
+                'C_1': 'type of cut cannot be determined with complementarity',
+                'O_0': 'gap out of the cut',
+                'O_1': 'gap out of the cut with complementarity',
+                'X_0': 'no DEL around the cut',
+                'X_1': 'no DEL around the cut with complementarity'
+            })
+            # Change list_of_events accordingly
+            list_of_events = ['-2nt upstream staggered cut', '-2nt upstream staggered cut with complementarity', '-1nt upstream staggered cut', '-1nt upstream staggered cut with complementarity', 'blunt cut', 'blunt cut with complementarity', 'type of cut cannot be determined', 'type of cut cannot be determined with complementarity', 'gap out of the cut', 'gap out of the cut with complementarity', 'no DEL around the cut', 'no DEL around the cut with complementarity']
+
             # Set charts properties
             ##########################################################################################
             # Horizontal bar charts for Blunt/Staggered cuts
@@ -676,11 +695,7 @@ for key, value in tables_dic.items():
                 name_to_save = f'{file_number}_{counter}_Stagg_blunt_ratio_all_samples'
                 text_bellow_chart = f'Only DELs around the cut are plotted.\
                                 \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
-                                \n{no_of_gRNA_samples}\
-                                \n CutType_AmbigousNtPresent:\
-                                \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut, C=type of cut cut cannot be determined\
-                                \n   CutType which should be 0 in this plot (if not, check main script) -> O=gap out of the cut, X=no DEL around the cut\
-                                \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
+                                \n{no_of_gRNA_samples}'
                 
                 # TODO solve bars_order, color_dic, hatches_dic
                 plot = plot_general_stacked_horizontal_barchart(df=df_Blunt_Stagg_samples_norm, x='variable'\
@@ -701,11 +716,7 @@ for key, value in tables_dic.items():
             ylabel='Normalised percentage of DELs \naround cuts events'
             text_bellow_chart = f'Only DELs around the cut are plotted.\
                                 \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
-                                \n{no_of_gRNA_samples}\
-                                \nCutType_AmbigousNtPresent:\
-                                \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut, C=type of cut cut cannot be determined\
-                                \n   CutType which should be 0 in this plot (if not, check main script) -> O=gap out of the cut, X=no DEL around the cut\
-                                \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
+                                \n{no_of_gRNA_samples}'
             name_to_save = f'{file_number}_{counter}_DEL_Stagg_blunt_summary_violinplot'
             plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable', y='value'\
                 , number_of_columns=len(df_Blunt_Stagg_samples_norm['variable'].unique())/2\
@@ -719,7 +730,7 @@ for key, value in tables_dic.items():
                 , integrated_properties_dic=False, color_dic=color_dic\
                 , hatches=True, hatches_list=hatches_dic\
                 , text_bellow_chart=text_bellow_chart\
-                , y_legend_coordinate=-0.15, yaxis_formater=1\
+                , y_legend_coordinate=-0.85, yaxis_formater=1\
                 , x_max=None\
                 , change_edge_color=False\
                 , name_to_save=name_to_save\
@@ -773,7 +784,7 @@ for key, value in tables_dic.items():
                         \nNot-normalised.\
                         \n{no_of_gRNA_samples}\
                         \nOrientation_CutType_AmbigousNtPresent:\
-                        \n   Orientation -> U=upstream, D=downstream, B=both, C=cannot be determined\
+                        \n   Orientation -> U=upstream, D=downstream, B=bidirectional, C=cannot be determined\
                         \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut, C=type of cut cut cannot be determined\
                         \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
             name_to_save = f'{file_number}_{counter}_1_DEL_Stagg_blunt_oriented_summary_violinplot'
@@ -817,7 +828,7 @@ for key, value in tables_dic.items():
                                 \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
                                 \n{no_of_gRNA_samples}\
                                 \nOrientation_CutType_AmbigousNtPresent:\
-                                \n   Orientation -> U=upstream, D=downstream, B=both, C=cannot be determined\
+                                \n   Orientation -> U=upstream, D=downstream, B=bidirectional, C=cannot be determined\
                                 \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut, C=type of cut cut cannot be determined\
                                 \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
             name_to_save = f'{file_number}_{counter}_1_DEL_Stagg_blunt_oriented_summary_violinplot'
@@ -891,8 +902,8 @@ for key, value in tables_dic.items():
                 xlabel='Number of deleted nucleotides (minus = upstream from the probable cut, plus = downstream from the probable cut)'
                 ylabel='Sum of %Reads \n of Staggered/Blunt cut'
                 text_bellow_chart = 'Data from deletions around cut only.\n\
-                Without deletions with DEL_orientation = both \n\
-                cannot_be_determined was split between upstream and downstream - gray bars.\n\
+                Without deletions with DEL_orientation = bidirectional \n\
+                cannot be determined was split between upstream and downstream - gray bars.\n\
                 Not normalised data.\
                 \nOrientation_CutType_AmbigousNtPresent:\
                 \n   Orientation -> U=upstream, D=downstream, sU/D=splitted to U and D as it cannot be determined\
@@ -1229,8 +1240,8 @@ for key, value in tables_dic.items():
                 xlabel='Number of deleted nucleotides (minus = upstream from the probable cut, plus = downstream from the probable cut)'
                 ylabel='Sum of %Reads \n of ends participating in the repair'
                 text_bellow_chart = 'Data from deletions around cut only.\n\
-                    Without deletions with DEL_orientation = both \n\
-                    cannot_be_determined was split between upstream and downstream - gray bars.\n\
+                    Without deletions with DEL_orientation = bidirectional \n\
+                    cannot be determined was split between upstream and downstream - gray bars.\n\
                     Not normalised data.'
                 # TODO normalise individual samples -> sum of all U/D DEL around the cut would be = 100%
                 pivot = pd.crosstab(index=[df_end_gRNA['DEL_orientation_participating_end']\

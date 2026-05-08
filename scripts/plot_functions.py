@@ -237,7 +237,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'blunt_likely':{'color':'#6ea7ff','edge_color':'gray', 'hatch':'\\\\', 'marker':'o'}
             ,'cannot_be_determined':{'color':'gray','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'can_not_be_determined':{'color':'gray','edge_color':'gray', 'hatch':'', 'marker':'o'}
-            ,'can not be determined':{'color':'gray','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'cannot be determined':{'color':'gray','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'cannot_be_determined_ambiguous':{'color':'gray','edge_color':'gray', 'hatch':'//', 'marker':'o'}
             ,'cannot_be_determined_NO_ambi':{'color':'gray','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'distal_stagg2nt_likely':{'color':'#E890B8','edge_color':'gray', 'hatch':'\\\\', 'marker':'o'}
@@ -269,11 +269,17 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'upstream_ambiguous':{'color':'#f0d271','edge_color':'gray', 'hatch':'//', 'marker':'o'}
             ,'upstream_NO_ambi':{'color':'#f0d271','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'upstream_both':{'color':'#C4C4C4','edge_color':'#f0d271', 'hatch':'\\\\\\', 'marker':'o'}
+            ,'upstream_bidirectional':{'color':'#C4C4C4','edge_color':'#f0d271', 'hatch':'\\\\\\', 'marker':'o'}
             ,'upstream_both_downstream':{'color':'#979797','edge_color':'black', 'hatch':'xx', 'marker':'o'}
+            ,'upstream_bidirectional_downstream':{'color':'#979797','edge_color':'black', 'hatch':'xx', 'marker':'o'}
             ,'both':{'color':'#808080','edge_color':'black', 'hatch':'', 'marker':'o'}
+            ,'bidirectional':{'color':'#808080','edge_color':'black', 'hatch':'', 'marker':'o'}
             ,'both_ambiguous':{'color':'#808080','edge_color':'gray', 'hatch':'//', 'marker':'o'}
+            ,'bidirectional_ambiguous':{'color':'#808080','edge_color':'gray', 'hatch':'//', 'marker':'o'}
             ,'both_NO_ambi':{'color':'#808080','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'bidirectional_NO_ambi':{'color':'#808080','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'both_downstream':{'color':'#C4C4C4','edge_color':'#f5ad62', 'hatch':'////', 'marker':'o'}
+            ,'bidirectional_downstream':{'color':'#C4C4C4','edge_color':'#f5ad62', 'hatch':'////', 'marker':'o'}
             ,'downstream':{'color':'#f5ad62','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'downstream_ambiguous':{'color':'#f5ad62','edge_color':'gray', 'hatch':'//', 'marker':'o'}
             ,'downstream_NO_ambi':{'color':'#f5ad62','edge_color':'gray', 'hatch':'', 'marker':'o'}
@@ -596,7 +602,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                     loc='center left', bbox_to_anchor=(1, 0.5))    
     # Plot labels, set lims, etc.
     if title is not None:
-        plt.title(title + '\n(' + date + ')\n' + data_source)
+        plt.title(title + '\n(plotted ' + date + ')\ndata source: ' + data_source)
 
     plt.ylabel(ylabel)
     plt.xlabel(xlabel)
@@ -776,7 +782,7 @@ def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_di
             sns.barplot(x=df.iloc[:,column-1], y=df.index, color=pal[column-1], edgecolor='#000000', \
                     alpha=1, errorbar=None, linewidth=0.2)        
 
-    plt.title(f'{title} ({date}) \n {data_source}')
+    plt.title(title + '\n(plotted ' + date + ')\ndata source: ' + data_source)
     plt.xlabel(xlabel, size=15)
     plt.ylabel('')
     plt.yticks(fontname='monospace')
@@ -855,7 +861,7 @@ def plot_barplot(data, x, y, project_output_dir, name_to_save, data_source, hue=
 
     f,ax = plt.subplots()
     sns.barplot(x=x, y=y, data=data_filled, hue=hue, capsize=0.2, errorbar='sd', alpha=0.8, color=color)
-    plt.title(title + ' (' + date + ') \n' + data_source)
+    plt.title(title + '\n(plotted ' + date + ')\ndata source: ' + data_source)
     plt.xlabel(xlabel)
     plt.ylabel('Average of %Reads')
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
@@ -1014,7 +1020,7 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
             sns.barplot(x=df.index, y=df.iloc[:,column-1], color=pal[column-1], edgecolor='#000000', \
                 alpha=1, errorbar=None, linewidth=0.2)        
 
-    plt.title(f'{title} \n ({date}) \n {data_source}')
+    plt.title(title + '\n(plotted ' + date + ')\ndata source: ' + data_source)
     plt.xlabel(xlabel, size=10)
     plt.ylabel(ylabel, size=15)
     bars = np.flip(bars)                            # change the bars order as they were plotted 

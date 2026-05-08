@@ -38,7 +38,7 @@
 #                 DICTIONARY                #
 #############################################
 {'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/palnts/Pribylova_et_al_2022/03_for_Meta/to_analyse/WT/',
-   'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022/260429',
+   'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022/260508',
    'add_columns':{'organism':'Nicotiana benthamiana',
       'hours_post_inoculation':'120',
       'deliver_of_nuclease':'Agroinfiltration',
@@ -60,15 +60,15 @@
    'make_subtables':True,
    'subtables_param':['gene', 'mutant'],
    'show_plots':False,
-   'plot_INDELs':True,
-   'plot_INs':True,
+   'plot_INDELs':False,
+   'plot_INs':False,
    'plot_DELs':True,
    'plot_DEL_individual_gRNAs':True,
-   'plot_DEL_dinochart':True,
-   'plot_participating_end':True,
-   'plot_participating_end_dinochart':True,
-   'plot_MH':True,
-   'plot_MH_dinochart':True,
+   'plot_DEL_dinochart':False,
+   'plot_participating_end':False,
+   'plot_participating_end_dinochart':False,
+   'plot_MH':False,
+   'plot_MH_dinochart':False,
    'IN_greater_than':6,
    'sort_alphabetically':True
    }
