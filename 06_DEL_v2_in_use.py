@@ -208,7 +208,7 @@ for run in range(no_of_runs):
         'D': 'downstream',
         'C': 'cannot_be_determined'
     })
-    order = ['upstream_ambiguous', 'both_ambiguous', 'downstream_ambiguous', 'upstream_NO_ambi', 'both_NO_ambi', 'downstream_NO_ambi', 'cannot_be_determined_ambiguous', 'cannot_be_determined_NO_ambi', 'X_gap_out_of_cut']
+    order = ['upstream_NO_ambi','upstream_ambiguous', 'both_NO_ambi','both_ambiguous', 'downstream_NO_ambi''downstream_ambiguous', 'cannot_be_determined_ambiguous', 'cannot_be_determined_NO_ambi', 'X_gap_out_of_cut']
     print(df_DEL_orientation['Maximal_MH_len'].unique())
     # Replace in Maximal_MH_len '0' for 'NO_ambi', 'gap_out_of_cut' keep and anything else as 'ambiguous'
     df_DEL_orientation['Maximal_MH_len'] = df_DEL_orientation['Maximal_MH_len'].replace({'0': 'NO_ambi', 'gap_out_of_cut': 'gap_out_of_cut'})

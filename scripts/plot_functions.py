@@ -436,9 +436,9 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                 , palette=color_dic\
                 , size=3, linewidth=0.5\
                 , transform=trans+offset(stripplot_offset)\
-                , zorder=20)
-            # Add median for stripplot
-            if show_hue_medians is True:
+                , zorder=20, ax=ax)
+            # Add median for stripplot and move it to the middle of the datapoints with the same offset as the stripplot to make sure the median is in the middle of the datapoints
+            if show_hue_medians:
                 sns.boxplot(showmeans=False,
                     meanline=False,
                     meanprops={'marker':'x'},
@@ -496,9 +496,10 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                 , palette=color_dic\
                 , size=3, linewidth=0.5\
                 , transform=trans+offset(stripplot_offset)\
-                , zorder=20)
+                , zorder=20, ax=ax)
             # Add mean for stripplot
             if show_hue_medians is True:
+                # plot median for stripplot with the offset which was used for stripplot to make sure the median is in the middle of the datapoints
                 sns.boxplot(showmeans=False,
                     meanline=False,
                     # meanprops={'marker':'x'},
@@ -580,26 +581,18 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         if show_datapoints is True:
             if show_hue_medians is True:
                 # Plot legend only from the stripplot and not boxplot (they are identical)
-                handles, labels = ax.get_legend_handles_labels()
-                plt.legend(handles[int(len(handles)/2):int(len(handles))],\
-                    labels[int(len(labels)/2):int(len(labels))],\
-                    loc='center left', bbox_to_anchor=(1, 0.5))    
+                handles, labels = stripplot.get_legend_handles_labels()
+                plt.legend(handles[0:len(data[hue].unique())], labels[0:len(data[hue].unique())], loc='center left', bbox_to_anchor=(1, 0.5))
             else:
                 plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         else:
             if show_hue_medians is True:
-                # Plot legend only from the stripplot and not boxplot (they are identical)
+                # Plot legend only from the boxplot and not stripplot (they are identical)
                 handles, labels = ax.get_legend_handles_labels()
-                plt.legend(handles[0:int(len(handles)/2)],\
-                    labels[int(len(labels)/2):int(len(labels))],\
-                    loc='center left', bbox_to_anchor=(1, 0.5))    
+                plt.legend(handles[0:len(data[hue].unique())], labels[0:len(data[hue].unique())], loc='center left', bbox_to_anchor=(1, 0.5))
             else:
-                # plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-                # Plot legend only from the stripplot and not boxplot (they are identical)
-                handles, labels = ax.get_legend_handles_labels()
-                plt.legend(handles[0:int(len(handles)/2)],\
-                    labels[int(len(labels)/2):int(len(labels))],\
-                    loc='center left', bbox_to_anchor=(1, 0.5))    
+                plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+                 
     # Plot labels, set lims, etc.
     if title is not None:
         plt.title(title + '\n(plotted ' + date + ')\ndata source: ' + data_source)
@@ -649,12 +642,12 @@ def check_if_all_events_are_present_after_pivot_reset_index(df, list_of_events, 
     """
     # TODO solve list of events fo bluntstag
     # Make list based on the cut_maximum and cut_optimum
-    default_events = ['C_0', 'C_1', 'O_0', 'O_1', 'X_0', 'X_1']
+    default_events = ['C_False', 'C_True', 'X_gap_spans_analysed_window']
     if list_of_events == 'BluntStag':
         list_of_events = []
         for i in range(cut_maximum, cut_minimum+1):
-            list_of_events.append(f'{i}_0')
-            list_of_events.append(f'{i}_1')
+            list_of_events.append(f'{i}_False')
+            list_of_events.append(f'{i}_True')
         list_of_events.extend(default_events)
     if list_of_events == 'INDELSUBOTHERS':
         list_of_events = ['IN', 'DEL', 'SUB', 'OTHERS']

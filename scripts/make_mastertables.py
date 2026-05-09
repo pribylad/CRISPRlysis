@@ -621,7 +621,7 @@ def return_category_of_DEL(cut_position, cut_maximum, cut_minimum, DEL_range):
 
     # Set category based on the logic decision.
     if x>y:
-        comment = 'x<y which should not exists.'
+        comment = 'x<y which should not exist.'
         category = 99
         return category, comment
 
@@ -662,7 +662,7 @@ def return_category_of_DEL(cut_position, cut_maximum, cut_minimum, DEL_range):
         return category, comment
 
     if cut_maximum<=x<cut_optimum and cut_optimum<y:
-        comment = 'DEL starts betweem cut_maximum and cut_optimum and ends after cut_optimum.'
+        comment = 'DEL starts between cut_maximum and cut_optimum and ends after cut_optimum.'
         category = 7
         return category, comment
 
@@ -677,7 +677,7 @@ def return_category_of_DEL(cut_position, cut_maximum, cut_minimum, DEL_range):
         return category, comment
 
     if x==cut_minimum:
-        comment = 'DEL strats downstream adjacent to the cut_minimum.'
+        comment = 'DEL starts downstream adjacent to the cut_minimum.'
         category = 10
         return category, comment
 
@@ -705,9 +705,9 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     cut_minimum (int): is the most 3' postition where the Cas can cut
 
     Returns:
-    str: Cut type category
-    str: End participating on the microhomology orientoriented according to the cleavage site
-    str: Orientation of the DELetion according to the cleavage site
+    str: Cut type category -> -int cut upstream, +int cut downstream, 0 blunt cut, C cut cannotbe determined, O deletion outside the prediceted cut, X ranges are string, likel no DELetion
+    str: End participating on the microhomology orientoriented according to the cleavage site -> X no ambigous nucleotide around the DEL, C cannot be determined, U upstream end, D downstream end
+    str: Orientation of the DELetion according to the cleavage site -> C cannot be determined, B bidirectional, U upstream, D downstream, X ranges are string, likel no DELetion 
     int: DNA end participating in repair (likely) - 3', 5', 0
     bool: If the Cut type categori is almost sure (0) or likely to be based on the homology lenght (1)
     """
@@ -830,19 +830,25 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
         list_i = list_24
         list_p = list_32
     
-    # Solve isses when cut_maximum == cut_optimum
+    # Solve issues when cut_maximum == cut_optimum
     list_n = list_10
     if abs(cut_optimum)==abs(cut_maximum):
         list_n = list_30
         list_o = list_31
 
-    # Solve issue for category 7
-    if abs(range_1[0])-cut_optimum<abs(range_1[1])-cut_optimum:
+    # Solve issue for category 7 when there is no MH
+    if abs(cut_optimum)==abs(cut_minimum):
         list_j = list_5
-    elif abs(range_1[0])-cut_optimum==abs(range_1[1])-cut_optimum:
-        list_j = list_25
     else:
-        list_j = list_3
+        if abs(range_1[0])-cut_optimum<abs(range_1[1])-cut_optimum:
+            list_j = list_5
+        elif abs(range_1[0])-cut_optimum==abs(range_1[1])-cut_optimum:
+            if abs(cut_maximum)>abs(cut_minimum):
+                list_j = list_5
+            else:
+                list_j = list_25
+        else:
+            list_j = list_3
     ########################################################################################
 
     # Determine for DELetions without shiftable nucleotides - no homology around the cut site
