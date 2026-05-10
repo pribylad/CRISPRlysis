@@ -43,7 +43,7 @@ from scripts.make_mastertables import filter_out_values_from_df, clasify_INDELSU
 
 from scripts.plot_functions import save_stat, make_Ubuntu_mnt_path, make_reverse_complement, find_element_in_list, adjust_box_widths, plot_sns_violin_and_print, plot_general_stacked_horizontal_barchart, plot_barplot, check_if_all_events_are_present_after_pivot_reset_index, plot_general_stacked_vertical_barchart
 
-from scripts.dict_functions import make_color_dic_CutType, make_hatches_dic_CutType, make_color_dic_blunt_stagg_orientation, make_color_dic_Dino, make_hatches_dic_Dino, make_color_dic_Dino_end, get_color_dic_35_violin
+from scripts.dict_functions import make_color_dic_CutType, make_hatches_dic_CutType, make_color_dic_blunt_stagg_orientation, make_color_dic_Dino, make_hatches_dic_Dino, make_color_dic_Dino_end, make_hatches_dic_Dino_end, get_color_dic_35_violin
 
 # Do not show future warnings in the output
 if not sys.warnoptions:
@@ -192,316 +192,319 @@ for key, value in tables_dic.items():
         write_into_report(f'There is no mutation in {key}, moved to the next subtable.', destination_folder=project_output_dir)
         continue
 
-    # ##########################################################################################
-    # #            I   N    N   DDDD    EEEEEE  L        SSSS   U   U   BBBB
-    # #            I   N N  N   D   D   E       L       S       U   U   B   B
-    # #            I   N  N N   D   D   EEEE    L        SSS    U   U   BBBB
-    # #            I   N   NN   D   D   E       L           S   U   U   B   B
-    # #            I   N    N   DDDD    EEEEEE  LLLLLL  SSSS     UUU    BBBB
-    # ##########################################################################################
-    # if plot_INDELs is True:
-    #     # Get data
-    #     df_INDELSUB = df[['order', 'sample', 'gRNA_seq', 'Event_around_cut', '%Reads', 'name']]
-    #     list_of_others = ['INDEL', 'INSUB', 'INDELSUB', 'DELSUB']
+    ##########################################################################################
+    #            I   N    N   DDDD    EEEEEE  L        SSSS   U   U   BBBB
+    #            I   N N  N   D   D   E       L       S       U   U   B   B
+    #            I   N  N N   D   D   EEEE    L        SSS    U   U   BBBB
+    #            I   N   NN   D   D   E       L           S   U   U   B   B
+    #            I   N    N   DDDD    EEEEEE  LLLLLL  SSSS     UUU    BBBB
+    ##########################################################################################
+    if plot_INDELs is True:
+        # Get data
+        df_INDELSUB = df[['order', 'sample', 'gRNA_seq', 'Event_around_cut', '%Reads', 'name']]
+        list_of_others = ['INDEL', 'INSUB', 'INDELSUB', 'DELSUB']
 
-    #     pivot = pd.pivot_table(df_INDELSUB, index=['sample'], columns='Event_around_cut', values='%Reads', aggfunc='sum', fill_value=0)
-    #     df_INDELSUB_summ = pivot.reset_index()
+        pivot = pd.pivot_table(df_INDELSUB, index=['sample'], columns='Event_around_cut', values='%Reads', aggfunc='sum', fill_value=0)
+        df_INDELSUB_summ = pivot.reset_index()
 
-    #     # check if all columns exists, if not make an empty one
-    #     events_list = ['IN', 'DEL', 'SUB']
-    #     for item in events_list:
-    #         if item not in df_INDELSUB_summ.columns.tolist():
-    #             df_INDELSUB_summ[item] = int()   
+        # check if all columns exists, if not make an empty one
+        events_list = ['IN', 'DEL', 'SUB']
+        for item in events_list:
+            if item not in df_INDELSUB_summ.columns.tolist():
+                df_INDELSUB_summ[item] = int()   
 
-    #     ## make column 'OTHERS' depending if the individual event is present or not
-    #     df_INDELSUB_summ['OTHERS'] = int()
-    #     for event in list_of_others:
-    #         if event in df_INDELSUB_summ.columns.tolist():
-    #             df_INDELSUB_summ['OTHERS'] = df_INDELSUB_summ['OTHERS'] + df_INDELSUB_summ[event]
+        ## make column 'OTHERS' depending if the individual event is present or not
+        df_INDELSUB_summ['OTHERS'] = int()
+        for event in list_of_others:
+            if event in df_INDELSUB_summ.columns.tolist():
+                df_INDELSUB_summ['OTHERS'] = df_INDELSUB_summ['OTHERS'] + df_INDELSUB_summ[event]
 
-    #     df_INDELSUB_summ = df_INDELSUB_summ[['sample', 'IN', 'DEL', 'SUB', 'OTHERS']]
-    #     df_INDELSUB_summ = pd.melt(df_INDELSUB_summ, id_vars=['sample']\
-    #                             , value_vars=['IN', 'DEL', 'SUB', 'OTHERS'])
-    #     ##########################################################################################
-    #     # plot VIOLINPLOT
-    #     ##########################################################################################
-    #     # Set charts properties
-    #     title = 'INDELSUB representation in all samples'
-    #     ylabel = 'Percentage of reads'
-    #     no_of_samples = len(df_INDELSUB_summ['sample'].unique())
-    #     text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around the cut.\
-    #                         \nOTHERS are combinations of INs, DELs and SUBs (INDELs etc.).\
-    #                         \nIN+DEL+SUB+OTHERS+no_mutation = 100%.\
-    #                         \n{no_of_gRNA_samples}'
-    #     name_to_save = f'01_1_INDELSUB_summary_violinplot'
-    #     plot = plot_sns_violin_and_print(data=df_INDELSUB_summ, x='Event_around_cut', y='value'\
-    #             , number_of_columns=3\
-    #             , project_output_dir=project_output_subdir\
-    #             , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False, show_hue_medians=False\
-    #             , hue='Event_around_cut', hue_only_for_data_points=True, transparency=0.7 \
-    #             , clip_right=True, change_edge_color=False\
-    #             , title=title, xtickt_rotation=0, ylabel=ylabel\
-    #             , order=['IN', 'DEL', 'SUB', 'OTHERS'] \
-    #             , integrated_properties_dic=True\
-    #             , text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.05\
-    #             , yaxis_formater=100, name_to_save=name_to_save\
-    #             , data_source=data_source, output_format=output_format\
-    #             , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
-    #     df_INDELSUB_summ.to_csv(Path(str(project_output_subdir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
-    #     stat_info = df_INDELSUB_summ.groupby('Event_around_cut').value.describe().unstack()
-    #     save_stat(stat_info, name_to_save, project_output_subdir)
+        df_INDELSUB_summ = df_INDELSUB_summ[['sample', 'IN', 'DEL', 'SUB', 'OTHERS']]
+        df_INDELSUB_summ = pd.melt(df_INDELSUB_summ, id_vars=['sample']\
+                                , value_vars=['IN', 'DEL', 'SUB', 'OTHERS'])
+        ##########################################################################################
+        # plot VIOLINPLOT
+        ##########################################################################################
+        # Set charts properties
+        title = 'INDELSUB representation in all samples'
+        ylabel = 'Percentage of reads'
+        no_of_samples = len(df_INDELSUB_summ['sample'].unique())
+        text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around the cut.\
+                            \nOTHERS are combinations of INs, DELs and SUBs (INDELs etc.).\
+                            \nIN+DEL+SUB+OTHERS+no_mutation = 100%.\
+                            \n{no_of_gRNA_samples}'
+        name_to_save = f'01_01_INDELSUB_summary_violinplot'
+        plot = plot_sns_violin_and_print(data=df_INDELSUB_summ, x='Event_around_cut', y='value'\
+                , number_of_columns=3\
+                , project_output_dir=project_output_subdir\
+                , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False, show_hue_medians=False\
+                , hue='Event_around_cut', hue_only_for_data_points=True, transparency=0.7 \
+                , clip_right=True, change_edge_color=False\
+                , title=title, xtickt_rotation=0, ylabel=ylabel\
+                , order=['IN', 'DEL', 'SUB', 'OTHERS'] \
+                , integrated_properties_dic=True\
+                , text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.05\
+                , yaxis_formater=100, name_to_save=name_to_save\
+                , data_source=data_source, output_format=output_format\
+                , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+        df_INDELSUB_summ.to_csv(Path(str(project_output_subdir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t')
+        stat_info = df_INDELSUB_summ.groupby('Event_around_cut').value.describe().unstack()
+        save_stat(stat_info, name_to_save, project_output_subdir)
 
-    #     ##########################################################################################
-    #     # plot HORIZONTAL BAR PLOT for individual samples
-    #     ##########################################################################################
-    #     # If more then 40 samples are present, divide the plot into as many plots as needed to have maximum 40 samples in one plot, if not, make one plot with all samples
-    #     # count df_INDELSUB_summ['sample'].unique() and if more than 40, make a list of lists with maximum 40 unique samples in each list
-    #     unique_samples = df_INDELSUB_summ['sample'].unique()
-    #     if len(unique_samples) > 40:
-    #         sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
-    #     else:
-    #         sample_lists = [unique_samples]
-    #     i=1
-    #     for sample_list in sample_lists:
-    #         df_INDELSUB_summ_sample = df_INDELSUB_summ[df_INDELSUB_summ['sample'].isin(sample_list)]
-    #         title = 'INDELSUB analysis not normalised'
-    #         xlabel = 'Average of %Reads from individual samples'
-    #         name_to_save = f'01_2_{i}_INDELSUB_horizontal_barchart_all_samples_not_normalised'
-    #         text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around the cut.\
-    #                         \nOTHERS are combinations of INs, DELs and SUBs (INDELs etc.).\
-    #                         \nIN+DEL+SUB+OTHERS+no_mutation = 100%.'
-    #         INDELSUB_color_dic=  {'IN':'#091f92'\
-    #                             ,'DEL':'#ba8759'\
-    #                             ,'SUB':'#ffcc33'\
-    #                             ,'OTHERS':'#808080'}
-    #         plot = plot_general_stacked_horizontal_barchart(df=df_INDELSUB_summ_sample, x='Event_around_cut', y='sample', values='value', project_output_dir=project_output_subdir, data_source=data_source, title=title, name_to_save=name_to_save, output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False, palette=INDELSUB_color_dic, x_as_perc=True, text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default', xaxis_formater=100, decimals=0, xlim=(0,100), bars_order=['IN', 'DEL', 'SUB', 'OTHERS'], show_plots=show_plots)
+        ##########################################################################################
+        # plot HORIZONTAL BAR PLOT for individual samples
+        ##########################################################################################
+        # If more then 40 samples are present, divide the plot into as many plots as needed to have maximum 40 samples in one plot, if not, make one plot with all samples
+        # count df_INDELSUB_summ['sample'].unique() and if more than 40, make a list of lists with maximum 40 unique samples in each list
+        unique_samples = df_INDELSUB_summ['sample'].unique()
+        if len(unique_samples) > 40:
+            sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
+        else:
+            sample_lists = [unique_samples]
+        i=1
+        for sample_list in sample_lists:
+            df_INDELSUB_summ_sample = df_INDELSUB_summ[df_INDELSUB_summ['sample'].isin(sample_list)]
+            title = 'INDELSUB analysis not normalised'
+            xlabel = 'Average of %Reads from individual samples'
+            name_to_save = f'01_02_{i}_INDELSUB_horizontal_barchart_all_samples_not_normalised'
+            text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around the cut.\
+                            \nOTHERS are combinations of INs, DELs and SUBs (INDELs etc.).\
+                            \nIN+DEL+SUB+OTHERS+no_mutation = 100%.'
+            INDELSUB_color_dic=  {'IN':'#091f92'\
+                                ,'DEL':'#ba8759'\
+                                ,'SUB':'#ffcc33'\
+                                ,'OTHERS':'#808080'}
+            plot = plot_general_stacked_horizontal_barchart(df=df_INDELSUB_summ_sample, x='Event_around_cut', y='sample', values='value', project_output_dir=project_output_subdir, data_source=data_source, title=title, name_to_save=name_to_save, output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False, palette=INDELSUB_color_dic, x_as_perc=True, text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default', xaxis_formater=100, decimals=0, xlim=(0,100), bars_order=['IN', 'DEL', 'SUB', 'OTHERS'], show_plots=show_plots)
 
-    #         # normalise the events for normalised plot form 0-100%
-    #         pivot = pd.crosstab(index=df_INDELSUB_summ_sample['sample'],\
-    #                     columns=df_INDELSUB_summ_sample['Event_around_cut'], \
-    #                     values=df_INDELSUB_summ_sample['value'],\
-    #                     aggfunc='sum', normalize='index')
-    #         df_INDELSUB_samples_norm = pivot.reset_index()
-    #         df_INDELSUB_samples_norm = pd.melt(df_INDELSUB_samples_norm, id_vars=['sample'], value_vars=['IN', 'DEL', 'SUB', 'OTHERS'])
-    #         title = 'INDELSUB analysis normalised'
-    #         name_to_save = f'01_3_{i}_INDELSUB_horizontal_barchart_all_samples_normalised'
-    #         text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around the cut.\
-    #                             \nOTHERS are combinations of INs, DELs and SUBs (INDELs etc.).\
-    #                             \nIN+DEL+SUB+OTHERS = 100%.'
-    #         plot = plot_general_stacked_horizontal_barchart(df=df_INDELSUB_samples_norm, x='Event_around_cut', y='sample', values='value', project_output_dir=project_output_subdir, data_source=data_source, title=title, name_to_save=name_to_save, output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False, palette=INDELSUB_color_dic, x_as_perc=True, text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default', xaxis_formater=1, decimals=0, xlim=(0,1), bars_order=['IN', 'DEL', 'SUB', 'OTHERS'], show_plots=show_plots)
-    #         stat_info = df_INDELSUB_samples_norm.groupby('Event_around_cut').value.describe().unstack()
-    #         save_stat(stat_info, name_to_save, project_output_subdir)
-    #         i+=1
-    # ##########################################################################################
-    # #            I   N    N
-    # #            I   N N  N
-    # #            I   N  N N
-    # #            I   N   NN
-    # #            I   N    N
-    # ##########################################################################################
-    # if plot_INs is True:
-    #     # Get data
-    #     df_IN = df.copy()
-    #     pivot = pd.pivot_table(df_IN, index=['name', 'n_inserted', '4th_nt'], columns=(), values='%Reads', aggfunc='sum', fill_value=0)
-    #     # Find largest number in n_inserted and make in each sample all numbers from 0 to max present. If not present fill with 0.
-    #     max_n_inserted = df_IN['n_inserted'].max()
-    #     all_n_inserted_list = list(range(0, max_n_inserted+1))
-    #     index = pd.MultiIndex.from_product([df_IN['name'].unique(), all_n_inserted_list, df_IN['4th_nt'].unique()], names=['name', 'n_inserted', '4th_nt'])
-    #     pivot = pivot.reindex(index, fill_value=0)
-    #     df_pivot = pivot.reset_index()
-    #     df_pivot = df_pivot[df_pivot['n_inserted']!=0]
-    #     ##########################################################################################
-    #     # SUM up IN>IN_greater_than nt to single column, to change the number, change grater_than
-    #     ##########################################################################################
-    #     pivot = pd.crosstab(index=df_pivot['name'], columns=df_pivot['n_inserted'],\
-    #                         values=df_pivot['%Reads'], aggfunc='sum', normalize='index')
-    #     df_pivot = pivot.reset_index()
-    #     # sum columns where n_inserted>IN_greater_than and discard n_inserted==0
-    #     greater_than = IN_greater_than
-    #     df_pivot[f'greater_than_{greater_than}'] = 0
-    #     for column in df_pivot.columns:
-    #         if isinstance(column, str):
-    #             continue
-    #         if column < (greater_than+1):
-    #             continue
-    #         df_pivot[f'greater_than_{greater_than}'] += df_pivot[column]
-    #         df_pivot.drop(labels=column, axis=1, inplace=True)
-    #     columns = df_pivot.iloc[:0,1:]
-    #     df_pivot = df_pivot.melt(id_vars=['name'], value_vars=columns)
-    #     ##########################################################################################
-    #     # plot VIOLINPLOT
-    #     ##########################################################################################
-    #     # Set charts properties
-    #     color_dic = {'0':'#ffffff', '1':'#A8B7FF', '2':'#536CE8', '3':'#466270', '4':'#514C7A', '5':'#4E8387'\
-    #                 , '6':'#487D72', '7':'#4E9472'\
-    #                 , 0:'#ffffff', 1:'#A8B7FF', 2:'#536CE8', 3:'#466270', 4:'#514C7A', 5:'#4E8387'\
-    #                 , 6:'#487D72', 7:'#4E9472'}
-    #     color_dic[f'greater_than_{IN_greater_than}'] = '#6F79A8'
-    #     title='Normalised numbers od inserted nucleotides around the cut site'
-    #     ylabel='Normalised percentage\n of inserted nucleotides'
-    #     no_of_samples = len(df_pivot['name'].unique())
-    #     text_bellow_chart = f'Only IN events around cut.\
-    #                         \nSum of all IN in one sample = 100%\
-    #                         \n{no_of_gRNA_samples}'
-    #     name_to_save=f'02_1_IN_no_of_IN_nucleotides_summary_violinplot'
-    #     plot = plot_sns_violin_and_print(data=df_pivot, x='n_inserted', y='value', number_of_columns=len(df_pivot['n_inserted'].unique()), show_datapoints=True, jitter=0.1, stripplot_offset=12, dodge=False, clip_right=True, order=None, project_output_dir=project_output_subdir, hue=None, integrated_properties_dic=False, color_dic=color_dic, show_hue_medians=False, title=title, xtickt_rotation=0, ylabel=ylabel, yaxis_formater=1, xlabel="No of inserted nucleotides", name_to_save=name_to_save, text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.05, data_source=data_source, y_min=0, y_max=1.02, output_format=output_format, show_plots=show_plots)
-    #     stat_info = df_pivot.groupby('n_inserted').value.describe().unstack()
-    #     save_stat(stat_info, name_to_save, project_output_subdir)
+            # normalise the events for normalised plot form 0-100%
+            pivot = pd.crosstab(index=df_INDELSUB_summ_sample['sample'],\
+                        columns=df_INDELSUB_summ_sample['Event_around_cut'], \
+                        values=df_INDELSUB_summ_sample['value'],\
+                        aggfunc='sum', normalize='index')
+            df_INDELSUB_samples_norm = pivot.reset_index()
+            df_INDELSUB_samples_norm = pd.melt(df_INDELSUB_samples_norm, id_vars=['sample'], value_vars=['IN', 'DEL', 'SUB', 'OTHERS'])
+            title = 'INDELSUB analysis normalised'
+            name_to_save = f'01_03_{i}_INDELSUB_horizontal_barchart_all_samples_normalised'
+            text_bellow_chart = f'INDELSUBOTHERS category clasified only for events around the cut.\
+                                \nOTHERS are combinations of INs, DELs and SUBs (INDELs etc.).\
+                                \nIN+DEL+SUB+OTHERS = 100%.'
+            plot = plot_general_stacked_horizontal_barchart(df=df_INDELSUB_samples_norm, x='Event_around_cut', y='sample', values='value', project_output_dir=project_output_subdir, data_source=data_source, title=title, name_to_save=name_to_save, output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False, palette=INDELSUB_color_dic, x_as_perc=True, text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default', xaxis_formater=1, decimals=0, xlim=(0,1), bars_order=['IN', 'DEL', 'SUB', 'OTHERS'], show_plots=show_plots)
+            stat_info = df_INDELSUB_samples_norm.groupby('Event_around_cut').value.describe().unstack()
+            save_stat(stat_info, name_to_save, project_output_subdir)
+            i+=1
+    ##########################################################################################
+    #            I   N    N
+    #            I   N N  N
+    #            I   N  N N
+    #            I   N   NN
+    #            I   N    N
+    ##########################################################################################
+    if plot_INs is True:
+        # Get data
+        df_IN = df.copy()
+        pivot = pd.pivot_table(df_IN, index=['name', 'n_inserted', '4th_nt'], columns=(), values='%Reads', aggfunc='sum', fill_value=0)
+        # Find largest number in n_inserted and make in each sample all numbers from 0 to max present. If not present fill with 0.
+        max_n_inserted = df_IN['n_inserted'].max()
+        all_n_inserted_list = list(range(0, max_n_inserted+1))
+        index = pd.MultiIndex.from_product([df_IN['name'].unique(), all_n_inserted_list, df_IN['4th_nt'].unique()], names=['name', 'n_inserted', '4th_nt'])
+        pivot = pivot.reindex(index, fill_value=0)
+        df_pivot = pivot.reset_index()
+        df_pivot = df_pivot[df_pivot['n_inserted']!=0]
+        ##########################################################################################
+        # SUM up IN>IN_greater_than nt to single column, to change the number, change grater_than
+        ##########################################################################################
+        pivot = pd.crosstab(index=df_pivot['name'], columns=df_pivot['n_inserted'],\
+                            values=df_pivot['%Reads'], aggfunc='sum', normalize='index')
+        df_pivot = pivot.reset_index()
+        # sum columns where n_inserted>IN_greater_than and discard n_inserted==0
+        greater_than = IN_greater_than
+        df_pivot[f'greater_than_{greater_than}'] = 0
+        for column in df_pivot.columns:
+            if isinstance(column, str):
+                continue
+            if column < (greater_than+1):
+                continue
+            df_pivot[f'greater_than_{greater_than}'] += df_pivot[column]
+            df_pivot.drop(labels=column, axis=1, inplace=True)
+        columns = df_pivot.iloc[:0,1:]
+        df_pivot = df_pivot.melt(id_vars=['name'], value_vars=columns)
+        ##########################################################################################
+        # plot VIOLINPLOT
+        ##########################################################################################
+        # Set charts properties
+        color_dic = {'0':'#ffffff', '1':'#A8B7FF', '2':'#536CE8', '3':'#466270', '4':'#514C7A', '5':'#4E8387'\
+                    , '6':'#487D72', '7':'#4E9472'\
+                    , 0:'#ffffff', 1:'#A8B7FF', 2:'#536CE8', 3:'#466270', 4:'#514C7A', 5:'#4E8387'\
+                    , 6:'#487D72', 7:'#4E9472'}
+        color_dic[f'greater_than_{IN_greater_than}'] = '#6F79A8'
+        title='Normalised numbers od inserted nucleotides around the cut site'
+        ylabel='Normalised percentage\n of inserted nucleotides'
+        no_of_samples = len(df_pivot['name'].unique())
+        text_bellow_chart = f'Only IN events around cut.\
+                            \nSum of all IN in one sample = 100%\
+                            \n{no_of_gRNA_samples}'
+        name_to_save=f'02_01_IN_no_of_IN_nucleotides_summary_violinplot'
+        plot = plot_sns_violin_and_print(data=df_pivot, x='n_inserted', y='value', number_of_columns=len(df_pivot['n_inserted'].unique()), show_datapoints=True, jitter=0.1, stripplot_offset=12, dodge=False, clip_right=True, order=None, project_output_dir=project_output_subdir, hue=None, integrated_properties_dic=False, color_dic=color_dic, show_hue_medians=False, title=title, xtickt_rotation=0, ylabel=ylabel, yaxis_formater=1, xlabel="No of inserted nucleotides", name_to_save=name_to_save, text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.05, data_source=data_source, y_min=0, y_max=1.02, output_format=output_format, show_plots=show_plots)
+        stat_info = df_pivot.groupby('n_inserted').value.describe().unstack()
+        save_stat(stat_info, name_to_save, project_output_subdir)
 
-    #     title = 'Number od inserted nucleotides'
-    #     xlabel='Normalised percentage of inserted nucleotides'
-    #     name_to_save=f'02_2_IN_no_of_IN_nucleotides_stacked_barchart_name'
-    #     # palette_dic = {0:'#ffffff', 1:'#A8B7FF', 2:'#536CE8', 3:'#424763', 'greater_than_2':'#6F79A8', 'greater_than_3':'#6F79A8'}
-    #     plot = plot_general_stacked_horizontal_barchart(df=df_pivot, x='n_inserted', y='name', project_output_dir=project_output_subdir, values='value', sns_palette=False, palette=color_dic, data_source=data_source, title=title, name_to_save=name_to_save, output_format=output_format, dpi=200, xlabel=xlabel, x_as_perc=True, xaxis_formater=1, decimals=0, xlim=(0,1), text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default', y_order=None, bars_order=None, show_plots=show_plots)
-    #     #########################################################################################
-    #     #########################################################################################
-    #     #########################################################################################
-    #     # Plot if the 4th nucleotide the inserted nucleotide
-    #     # Get data
-    #     df_IN = df.copy()
-    #     df_IN = df_IN[df_IN['Event_around_cut'] == 'IN']
-    #     df_IN = df_IN[df_IN['n_inserted'] == 1]
-    #     pivot = pd.pivot_table(df_IN, index=['sample', '4th_nt_inserted', '4th_nt'], values='%Reads', aggfunc='sum', fill_value=0)
-    #     df_pivot = pivot.reset_index()
-    #     ##########################################################################################
-    #     # plot STACKED HORIZONTAL BARCHART for 4th nt inserted True/False
-    #     ##########################################################################################
-    #     # If more then 40 samples are present, divide the plot into as many plots as needed to have maximum 40 samples in one plot, if not, make one plot with all samples
-    #     # count df_pivot['sample'].unique() and if more than 40, make a list of lists with maximum 40 unique samples in each list
-    #     unique_samples = df_pivot['sample'].unique()
-    #     if len(unique_samples) > 40:
-    #         sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
-    #     else:
-    #         sample_lists = [unique_samples]
-    #     i=1
-    #     for sample_list in sample_lists:
-    #         df_pivot_sample = df_pivot[df_pivot['sample'].isin(sample_list)]
-    #         color_dic={True:'#06145E', False:'#B8BEDB'}
-    #         text_bellow_chart = 'Only 1nt IN around the cut are plotted.\nSequences without DEL/SUB around the cut.'
-    #         title='Is the 4th nucleotide the inserted nucleotide?'
-    #         name_to_save=f'02_3_{i}_4th_nt_inserted_not_normalised'
-    #         xlabel='Sum of %Reads from individual samples'
-    #         plot = plot_general_stacked_horizontal_barchart(df=df_pivot_sample, y='sample'\
-    #             , x='4th_nt_inserted', project_output_dir=project_output_subdir\
-    #             , values='%Reads', sns_palette=False, palette=color_dic\
-    #             , hatches_dic=None\
-    #             , data_source=data_source\
-    #             , title=title\
-    #             , name_to_save=name_to_save, output_format=output_format\
-    #             , dpi=200, xlabel=xlabel, x_as_perc=True, xaxis_formater=100\
-    #             , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default'\
-    #             , bars_order=[True, False], xlim=(0,100), show_plots=show_plots)
-    #         stat_info = df_pivot_sample.groupby('4th_nt_inserted').describe().unstack()
-    #         save_stat(stat_info, name_to_save, project_output_subdir)
-    #         ##########################################################################################
-    #         # Normalise to have True+False = 100%
-    #         pivot_sample = pd.crosstab(index=[df_pivot_sample['sample'], df_pivot_sample['4th_nt']],\
-    #                     columns=df_pivot_sample['4th_nt_inserted'], \
-    #                     values=df_pivot_sample['%Reads'],\
-    #                     aggfunc='sum', normalize='index')
-    #         df_pivot_sample = pivot_sample.reset_index()
+        title = 'Number od inserted nucleotides'
+        xlabel='Normalised percentage of inserted nucleotides'
+        name_to_save=f'02_02_IN_no_of_IN_nucleotides_stacked_barchart_name'
+        # palette_dic = {0:'#ffffff', 1:'#A8B7FF', 2:'#536CE8', 3:'#424763', 'greater_than_2':'#6F79A8', 'greater_than_3':'#6F79A8'}
+        plot = plot_general_stacked_horizontal_barchart(df=df_pivot, x='n_inserted', y='name', project_output_dir=project_output_subdir, values='value', sns_palette=False, palette=color_dic, data_source=data_source, title=title, name_to_save=name_to_save, output_format=output_format, dpi=200, xlabel=xlabel, x_as_perc=True, xaxis_formater=1, decimals=0, xlim=(0,1), text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default', y_order=None, bars_order=None, show_plots=show_plots)
+        #########################################################################################
+        #########################################################################################
+        #########################################################################################
+        # Plot if the 4th nucleotide the inserted nucleotide
+        # Get data
+        df_IN = df.copy()
+        df_IN = df_IN[df_IN['Event_around_cut'] == 'IN']
+        df_IN = df_IN[df_IN['n_inserted'] == 1]
+        pivot = pd.pivot_table(df_IN, index=['sample', '4th_nt'], columns='4th_nt_inserted', values='%Reads', aggfunc='sum', fill_value=0)
+        df_pivot = pivot.reset_index()
 
-    #         list_to_check = [True, False]
-    #         for item in list_to_check:
-    #             if item not in df_pivot_sample.columns.tolist():
-    #                     df_pivot_sample[item] = int()
+        # for each row make two rows and make one column named '4th_nt_inserted' and fill there 'False' or 'True' and in the last column named '%Reads' fill the value from the original row where '4th_nt_inserted' is False or True
+        df_pivot = pd.melt(df_pivot, id_vars=['sample', '4th_nt'], value_vars=[True, False], var_name='4th_nt_inserted', value_name='%Reads')
+        ##########################################################################################
+        # plot STACKED HORIZONTAL BARCHART for 4th nt inserted True/False
+        ##########################################################################################
+        # If more then 40 samples are present, divide the plot into as many plots as needed to have maximum 40 samples in one plot, if not, make one plot with all samples
+        # count df_pivot['sample'].unique() and if more than 40, make a list of lists with maximum 40 unique samples in each list
+        unique_samples = df_pivot['sample'].unique()
+        if len(unique_samples) > 40:
+            sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
+        else:
+            sample_lists = [unique_samples]
+        i=1
+        for sample_list in sample_lists:
+            df_pivot_sample = df_pivot[df_pivot['sample'].isin(sample_list)]
+            color_dic={True:'#06145E', False:'#B8BEDB'}
+            text_bellow_chart = 'Only 1nt IN around the cut are plotted.\nSequences without DEL/SUB around the cut.'
+            title='Is the 4th nucleotide the inserted nucleotide?'
+            name_to_save=f'02_03_{i}_4th_nt_inserted_not_normalised'
+            xlabel='Sum of %Reads from individual samples'
+            plot = plot_general_stacked_horizontal_barchart(df=df_pivot_sample, y='sample'\
+                , x='4th_nt_inserted', project_output_dir=project_output_subdir\
+                , values='%Reads', sns_palette=False, palette=color_dic\
+                , hatches_dic=None\
+                , data_source=data_source\
+                , title=title\
+                , name_to_save=name_to_save, output_format=output_format\
+                , dpi=200, xlabel=xlabel, x_as_perc=True, xaxis_formater=100\
+                , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default'\
+                , bars_order=[True, False], xlim=(0,100), show_plots=show_plots)
+            stat_info = df_pivot_sample.groupby('4th_nt_inserted').describe().unstack()
+            print(stat_info)
+            save_stat(stat_info, name_to_save, project_output_subdir)
+            ##########################################################################################
+            # Normalise to have True+False = 100%
+            pivot_sample = pd.crosstab(index=[df_pivot_sample['sample'], df_pivot_sample['4th_nt']],\
+                        columns=df_pivot_sample['4th_nt_inserted'], \
+                        values=df_pivot_sample['%Reads'],\
+                        aggfunc='sum', normalize='index')
+            df_pivot_sample = pivot_sample.reset_index()
 
-    #         df_pivot_sample = pd.melt(df_pivot_sample, id_vars=(['sample', '4th_nt']), value_vars=[True, False])
+            list_to_check = [True, False]
+            for item in list_to_check:
+                if item not in df_pivot_sample.columns.tolist():
+                        df_pivot_sample[item] = int()
 
-    #         title='Is the 4th nucleotide the inserted nucleotide? Normalised'
-    #         name_to_save=f'02_4_{i}_4th_nt_inserted_normalised'
-    #         plot = plot_general_stacked_horizontal_barchart(df=df_pivot_sample, y='sample'\
-    #             , x='4th_nt_inserted', project_output_dir=project_output_subdir\
-    #             , values='value', sns_palette=False, palette=color_dic\
-    #             , hatches_dic=None\
-    #             , data_source=data_source\
-    #             , title=title\
-    #             , name_to_save=name_to_save, output_format=output_format\
-    #             , dpi=200, xlabel=(xlabel+' normalised')\
-    #             , x_as_perc=True, xaxis_formater=1\
-    #             , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default'\
-    #             , bars_order=[True, False], xlim=(0,1), show_plots=show_plots)
-    #         stat_info = df_pivot_sample.groupby('4th_nt_inserted').describe().unstack()
-    #         save_stat(stat_info, name_to_save, project_output_subdir)
-    #         i+=1
-        
-    #     # Normalise to have True+False = 100%
-    #     pivot = pd.crosstab(index=[df_pivot['sample'], df_pivot['4th_nt']],\
-    #                 columns=df_pivot['4th_nt_inserted'], \
-    #                 values=df_pivot['%Reads'],\
-    #                 aggfunc='sum', normalize='index')
-    #     df_pivot = pivot.reset_index()
-    #     list_to_check = [True, False]
-    #     for item in list_to_check:
-    #         if item not in df_pivot.columns.tolist():
-    #                 df_pivot[item] = int()
+            df_pivot_sample = pd.melt(df_pivot_sample, id_vars=(['sample', '4th_nt']), value_vars=[True, False])
+
+            title='Is the 4th nucleotide the inserted nucleotide? Normalised'
+            name_to_save=f'02_04_{i}_4th_nt_inserted_normalised'
+            plot = plot_general_stacked_horizontal_barchart(df=df_pivot_sample, y='sample'\
+                , x='4th_nt_inserted', project_output_dir=project_output_subdir\
+                , values='value', sns_palette=False, palette=color_dic\
+                , hatches_dic=None\
+                , data_source=data_source\
+                , title=title\
+                , name_to_save=name_to_save, output_format=output_format\
+                , dpi=200, xlabel=(xlabel+' normalised')\
+                , x_as_perc=True, xaxis_formater=1\
+                , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default'\
+                , bars_order=[True, False], xlim=(0,1), show_plots=show_plots)
+            stat_info = df_pivot_sample.groupby('4th_nt_inserted').describe().unstack()
+            save_stat(stat_info, name_to_save, project_output_subdir)
+            i+=1
+        # Normalise to have True+False = 100%
+        pivot = pd.crosstab(index=[df_pivot['sample'], df_pivot['4th_nt']],\
+                    columns=df_pivot['4th_nt_inserted'], \
+                    values=df_pivot['%Reads'],\
+                    aggfunc='sum', normalize='index')
+        df_pivot = pivot.reset_index()
+        list_to_check = [True, False]
+        for item in list_to_check:
+            if item not in df_pivot.columns.tolist():
+                    df_pivot[item] = int()
                     
-    #     df_pivot = pd.melt(df_pivot, id_vars=(['sample', '4th_nt']), value_vars=[True, False])
-    #     df_pivot = df_pivot[df_pivot['4th_nt_inserted']==True]
-    #     # make hue_order according to present 4th nucleotides
-    #     nucleotide_order_list = {'A':1, 'C':2, 'G':3, 'T':4}
-    #     nucleotide_list = df_pivot['4th_nt'].unique()
-    #     sort_list = []
-    #     for nucleotide in nucleotide_list:
-    #         sort_list.append(nucleotide_order_list[nucleotide])
-    #     hue_order = [x for _, x in sorted(zip(sort_list, nucleotide_list))]
-    #     ##########################################################################################
-    #     # plot VIOLINPLOT 1
-    #     ##########################################################################################
-    #     # Set charts properties
-    #     title='Is the 4th nucleotide the inserted nucleotide?'
-    #     no_of_samples = len(df_pivot['sample'].unique())
-    #     ylabel='Normalised percentage\n of inserted 4th nucleotides'
-    #     text_bellow_chart = f'Only 1nt IN around the cut are plotted.\
-    #                         \nSequences without DEL/SUB around the cut.\
-    #                         \nIn individual sample True + False = 100%.\
-    #                         \n{no_of_gRNA_samples}'
-    #     name_to_save = f'02_5_IN_4th_nt_inserted_normalised_violinplot'
-    #     plot = plot_sns_violin_and_print(data=df_pivot, x='4th_nt_inserted', y='value', number_of_columns=1.2\
-    #         , show_datapoints=True, jitter=0.2, stripplot_offset=25, dodge=True\
-    #         , show_hue_medians=False\
-    #         , hue='4th_nt', hue_order=hue_order, hue_only_for_data_points=True \
-    #         , clip_right=True\
-    #         , title=title, xtickt_rotation=0, ylabel=ylabel\
-    #         , order=None, plot_legend=True \
-    #         , integrated_properties_dic=True, text_bellow_chart=text_bellow_chart\
-    #         , y_legend_coordinate=-0.05, yaxis_formater=1\
-    #         , x_max=1\
-    #         , name_to_save=name_to_save\
-    #         , project_output_dir=project_output_subdir \
-    #         , data_source=data_source, output_format=output_format\
-    #         , dpi=200\
-    #         , y_min=0\
-    #         , y_max=1.02, show_plots=show_plots
-    #             )
-    #     stat_info = df_pivot.groupby('4th_nt_inserted').describe().unstack()
-    #     save_stat(stat_info, name_to_save, project_output_subdir)
-    #     ##########################################################################################
-    #     # plot VIOLINPLOT 2
-    #     ##########################################################################################
-    #     name_to_save = f'02_6_IN_4th_nt_inserted_normalised_violinplot'
-    #     text_bellow_chart = f'Only 1nt IN around the cut are plotted.\
-    #                 \nSequences without DEL/SUB around the cut.\
-    #                 \nIn individual sample True + False = 100%.\
-    #                 \nHorizontal lines show medians for individual 4th nucleotide.\
-    #                 \n{no_of_gRNA_samples}'
-    #     # TODO seems median line color is not correct and legend for stripplot is not shown
-    #     plot = plot_sns_violin_and_print(data=df_pivot, x='4th_nt_inserted', y='value', number_of_columns=1\
-    #         , show_datapoints=True, jitter=0.25, stripplot_offset=0, dodge=True\
-    #         , show_hue_medians=True\
-    #         , hue='4th_nt', hue_order=hue_order, hue_only_for_data_points=True \
-    #         , clip_right=False\
-    #         , title=title, xtickt_rotation=0, ylabel=ylabel\
-    #         , order=None, plot_legend=True \
-    #         , integrated_properties_dic=True, text_bellow_chart=text_bellow_chart\
-    #         , y_legend_coordinate=-0.05, yaxis_formater=1\
-    #         , x_max=None\
-    #         , name_to_save=name_to_save\
-    #         , project_output_dir=project_output_subdir \
-    #         , data_source=data_source, output_format=output_format\
-    #         , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
-    #     stat_info = df_pivot.groupby('4th_nt').value.describe().unstack()
-    #     save_stat(stat_info, name_to_save, project_output_subdir)
+        df_pivot = pd.melt(df_pivot, id_vars=(['sample', '4th_nt']), value_vars=[True, False])
+        df_pivot = df_pivot[df_pivot['4th_nt_inserted']==True]
+        # make hue_order according to present 4th nucleotides
+        nucleotide_order_list = {'A':1, 'C':2, 'G':3, 'T':4}
+        nucleotide_list = df_pivot['4th_nt'].unique()
+        sort_list = []
+        for nucleotide in nucleotide_list:
+            sort_list.append(nucleotide_order_list[nucleotide])
+        hue_order = [x for _, x in sorted(zip(sort_list, nucleotide_list))]
+        ##########################################################################################
+        # plot VIOLINPLOT 1
+        ##########################################################################################
+        # Set charts properties
+        title='Is the 4th nucleotide the inserted nucleotide?'
+        no_of_samples = len(df_pivot['sample'].unique())
+        ylabel='Normalised percentage\n of inserted 4th nucleotides'
+        text_bellow_chart = f'Only 1nt IN around the cut are plotted.\
+                            \nSequences without DEL/SUB around the cut.\
+                            \nIn individual sample True + False = 100%.\
+                            \n{no_of_gRNA_samples}'
+        name_to_save = f'02_05_IN_4th_nt_inserted_normalised_violinplot'
+        plot = plot_sns_violin_and_print(data=df_pivot, x='4th_nt_inserted', y='value', number_of_columns=1.2\
+            , show_datapoints=True, jitter=0.2, stripplot_offset=25, dodge=True\
+            , show_hue_medians=False\
+            , hue='4th_nt', hue_order=hue_order, hue_only_for_data_points=True \
+            , clip_right=True\
+            , title=title, xtickt_rotation=0, ylabel=ylabel\
+            , order=None, plot_legend=True \
+            , integrated_properties_dic=True, text_bellow_chart=text_bellow_chart\
+            , y_legend_coordinate=-0.05, yaxis_formater=1\
+            , x_max=1\
+            , name_to_save=name_to_save\
+            , project_output_dir=project_output_subdir \
+            , data_source=data_source, output_format=output_format\
+            , dpi=200\
+            , y_min=0\
+            , y_max=1.02, show_plots=show_plots
+                )
+        stat_info = df_pivot.groupby('4th_nt_inserted').describe().unstack()
+        save_stat(stat_info, name_to_save, project_output_subdir)
+        ##########################################################################################
+        # plot VIOLINPLOT 2
+        ##########################################################################################
+        name_to_save = f'02_06_IN_4th_nt_inserted_normalised_violinplot'
+        text_bellow_chart = f'Only 1nt IN around the cut are plotted.\
+                    \nSequences without DEL/SUB around the cut.\
+                    \nIn individual sample True + False = 100%.\
+                    \nHorizontal lines show medians for individual 4th nucleotide.\
+                    \n{no_of_gRNA_samples}'
+        # TODO seems median line color is not correct and legend for stripplot is not shown
+        plot = plot_sns_violin_and_print(data=df_pivot, x='4th_nt_inserted', y='value', number_of_columns=1\
+            , show_datapoints=True, jitter=0.25, stripplot_offset=0, dodge=True\
+            , show_hue_medians=True\
+            , hue='4th_nt', hue_order=hue_order, hue_only_for_data_points=True \
+            , clip_right=False\
+            , title=title, xtickt_rotation=0, ylabel=ylabel\
+            , order=None, plot_legend=True \
+            , integrated_properties_dic=True, text_bellow_chart=text_bellow_chart\
+            , y_legend_coordinate=-0.05, yaxis_formater=1\
+            , x_max=None\
+            , name_to_save=name_to_save\
+            , project_output_dir=project_output_subdir \
+            , data_source=data_source, output_format=output_format\
+            , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
+        stat_info = df_pivot.groupby('4th_nt').value.describe().unstack()
+        save_stat(stat_info, name_to_save, project_output_subdir)
 
     ##########################################################################################
     #               DDDD    EEEEEE  L
@@ -542,100 +545,100 @@ for key, value in tables_dic.items():
                 aggfunc='sum')
         # reset index and NaN values to 0
         df_pivot = pivot.fillna(0).reset_index()
-        # ##########################################################################################
-        # # If df_pivot is Empty skip the next plot
-        # if df_pivot.empty:
-        #     write_into_report('There is no DEL around the cut, skipping Not-normalised and normalised incidence of DEL according to the orientation plotting.', destination_folder=project_output_dir)
-        # else:
-        #     ##########################################################################################
-        #     # plot VIOLINPLOT not normalised
-        #     ##########################################################################################
-        #     # check if all columns exists, if not make an empty one
-        #     for orientation in order:
-        #         if orientation not in df_pivot.columns.tolist():
-        #             df_pivot[orientation] = int()
+        ##########################################################################################
+        # If df_pivot is Empty skip the next plot
+        if df_pivot.empty:
+            write_into_report('There is no DEL around the cut, skipping Not-normalised and normalised incidence of DEL according to the orientation plotting.', destination_folder=project_output_dir)
+        else:
+            ##########################################################################################
+            # plot VIOLINPLOT not normalised
+            ##########################################################################################
+            # check if all columns exists, if not make an empty one
+            for orientation in order:
+                if orientation not in df_pivot.columns.tolist():
+                    df_pivot[orientation] = int()
 
-        #     columns = df_pivot.iloc[:0,2:]
-        #     df_pivot = df_pivot.melt(id_vars=['name', 'gRNA_seq'], \
-        #         value_vars=columns)
+            columns = df_pivot.iloc[:0,2:]
+            df_pivot = df_pivot.melt(id_vars=['name', 'gRNA_seq'], \
+                value_vars=columns)
 
-        #     # Set charts properties
-        #     title = 'Not-normalised incidence of DEL according to the orientation'
-        #     ylabel = 'Percentage of DEL around the cut'
-        #     no_of_samples = df_pivot.groupby('DEL_orientation').value.count().unique()
-        #     text_bellow_chart = f'Only DELs around the cut are plotted.\
-        #                         \nNot-normalised\
-        #                         \n{no_of_gRNA_samples}'
-        #     name_to_save = f'03_1_DEL_orientation_summary_violinplot'
-        #     plot = plot_sns_violin_and_print(data=df_pivot, x='DEL_orientation', y='value'\
-        #         , number_of_columns=len(df_pivot['DEL_orientation'].unique())/2\
-        #         , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
-        #         , show_hue_medians=False\
-        #         , hue=None, hue_only_for_data_points=False \
-        #         , hatches=True\
-        #         , clip_right=True\
-        #         , title=title, xtickt_rotation=-55, ylabel=ylabel\
-        #         , order=order\
-        #         , plot_legend=False\
-        #         , integrated_properties_dic=True, color_dic=None\
-        #         , text_bellow_chart=text_bellow_chart\
-        #         , y_legend_coordinate=-0.4, yaxis_formater=100\
-        #         , x_max=None\
-        #         , change_edge_color=True\
-        #         , name_to_save=name_to_save\
-        #         , project_output_dir=project_output_subdir\
-        #         , data_source=data_source, output_format=output_format\
-        #         , dpi=200, y_min=0, y_max=100, show_plots=show_plots)
-        #     stat_info = df_pivot.groupby('DEL_orientation').value.describe()
-        #     save_stat(stat_info, name_to_save, project_output_subdir)
-        #     ##########################################################################################
-        #     # plot VIOLINPLOT normalised
-        #     ##########################################################################################
-        #     # normalise data as percentage from row total
-        #     pivot = pd.crosstab(index=[df_orientation['name'], df_orientation['gRNA_seq']]\
-        #         , columns=df_orientation['DEL_orientation'], values=df_orientation['%Reads']\
-        #         , aggfunc='sum', normalize='index')
-        #     df_pivot = pivot.reset_index()
+            # Set charts properties
+            title = 'Not-normalised incidence of DEL according to the orientation'
+            ylabel = 'Percentage of DEL around the cut'
+            no_of_samples = df_pivot.groupby('DEL_orientation').value.count().unique()
+            text_bellow_chart = f'Only DELs around the cut are plotted.\
+                                \nNot-normalised\
+                                \n{no_of_gRNA_samples}'
+            name_to_save = f'03_01_DEL_orientation_summary_violinplot'
+            plot = plot_sns_violin_and_print(data=df_pivot, x='DEL_orientation', y='value'\
+                , number_of_columns=len(df_pivot['DEL_orientation'].unique())/2\
+                , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
+                , show_hue_medians=False\
+                , hue=None, hue_only_for_data_points=False \
+                , hatches=True\
+                , clip_right=True\
+                , title=title, xtickt_rotation=-55, ylabel=ylabel\
+                , order=order\
+                , plot_legend=False\
+                , integrated_properties_dic=True, color_dic=None\
+                , text_bellow_chart=text_bellow_chart\
+                , y_legend_coordinate=-0.4, yaxis_formater=100\
+                , x_max=None\
+                , change_edge_color=True\
+                , name_to_save=name_to_save\
+                , project_output_dir=project_output_subdir\
+                , data_source=data_source, output_format=output_format\
+                , dpi=200, y_min=0, y_max=100, show_plots=show_plots)
+            stat_info = df_pivot.groupby('DEL_orientation').value.describe()
+            save_stat(stat_info, name_to_save, project_output_subdir)
+            ##########################################################################################
+            # plot VIOLINPLOT normalised
+            ##########################################################################################
+            # normalise data as percentage from row total
+            pivot = pd.crosstab(index=[df_orientation['name'], df_orientation['gRNA_seq']]\
+                , columns=df_orientation['DEL_orientation'], values=df_orientation['%Reads']\
+                , aggfunc='sum', normalize='index')
+            df_pivot = pivot.reset_index()
 
-        #     # check if all columns exists, if not make an empty one
-        #     order = ['upstream', 'bidirectional', 'downstream', 'cannot be determined']
-        #     for orientation in order:
-        #         if orientation not in df_pivot.columns.tolist():
-        #             df_pivot[orientation] = int()
+            # check if all columns exists, if not make an empty one
+            order = ['upstream', 'bidirectional', 'downstream', 'cannot be determined']
+            for orientation in order:
+                if orientation not in df_pivot.columns.tolist():
+                    df_pivot[orientation] = int()
 
-        #     columns = df_pivot.iloc[:0,2:]
-        #     df_pivot = df_pivot.melt(id_vars=['name', 'gRNA_seq'], \
-        #         value_vars=columns)
+            columns = df_pivot.iloc[:0,2:]
+            df_pivot = df_pivot.melt(id_vars=['name', 'gRNA_seq'], \
+                value_vars=columns)
 
-        #     # Set charts properties
-        #     title = 'Normalised incidence of DEL according to the orientation'
-        #     ylabel = 'Normalised percentage of DEL\naround the cut'
-        #     no_of_samples = df_pivot.groupby('DEL_orientation').value.count().unique()
-        #     text_bellow_chart = f'Only DELs around the cut are plotted.\
-        #                         \nNormalised to: SUM of all DEL orientation in individual sample = 100%\
-        #                         \n{no_of_gRNA_samples}'
-        #     name_to_save = f'03_2_DEL_orientation_summary_violinplot'
-        #     plot = plot_sns_violin_and_print(data=df_pivot, x='DEL_orientation', y='value'\
-        #         , number_of_columns=len(df_pivot['DEL_orientation'].unique())/2\
-        #         , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
-        #         , show_hue_medians=False\
-        #         , hue=None, hue_only_for_data_points=False \
-        #         , hatches=True\
-        #         , clip_right=True\
-        #         , title=title, xtickt_rotation=-55, ylabel=ylabel\
-        #         , order=order\
-        #         , plot_legend=False\
-        #         , integrated_properties_dic=True, color_dic=None\
-        #         , text_bellow_chart=text_bellow_chart\
-        #         , y_legend_coordinate=-0.4, yaxis_formater=1\
-        #         , x_max=None\
-        #         , change_edge_color=True\
-        #         , name_to_save=name_to_save\
-        #         , project_output_dir=project_output_subdir\
-        #         , data_source=data_source, output_format=output_format\
-        #         , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
-        #     stat_info = df_pivot.groupby('DEL_orientation').value.describe()
-        #     save_stat(stat_info, name_to_save, project_output_subdir)
+            # Set charts properties
+            title = 'Normalised incidence of DEL according to the orientation'
+            ylabel = 'Normalised percentage of DEL\naround the cut'
+            no_of_samples = df_pivot.groupby('DEL_orientation').value.count().unique()
+            text_bellow_chart = f'Only DELs around the cut are plotted.\
+                                \nNormalised to: SUM of all DEL orientation in individual sample = 100%\
+                                \n{no_of_gRNA_samples}'
+            name_to_save = f'03_02_DEL_orientation_summary_violinplot'
+            plot = plot_sns_violin_and_print(data=df_pivot, x='DEL_orientation', y='value'\
+                , number_of_columns=len(df_pivot['DEL_orientation'].unique())/2\
+                , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
+                , show_hue_medians=False\
+                , hue=None, hue_only_for_data_points=False \
+                , hatches=True\
+                , clip_right=True\
+                , title=title, xtickt_rotation=-55, ylabel=ylabel\
+                , order=order\
+                , plot_legend=False\
+                , integrated_properties_dic=True, color_dic=None\
+                , text_bellow_chart=text_bellow_chart\
+                , y_legend_coordinate=-0.4, yaxis_formater=1\
+                , x_max=None\
+                , change_edge_color=True\
+                , name_to_save=name_to_save\
+                , project_output_dir=project_output_subdir\
+                , data_source=data_source, output_format=output_format\
+                , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
+            stat_info = df_pivot.groupby('DEL_orientation').value.describe()
+            save_stat(stat_info, name_to_save, project_output_subdir)
         ##########################################################################################
         ##########################################################################################
         ##########################################################################################
@@ -647,117 +650,115 @@ for key, value in tables_dic.items():
         df_CutType = df_CutType[df_CutType['Gap_around_cut'] == True]
         # Keep only Event_around_cut for DEL
         # df_CutType = df_CutType[df_CutType['Event_around_cut'] == 'DEL']
-        df_CutType['Maximal_MH_len'].unique()
         # Make new column MH_around_cut, '0' is False, 'gap_out_of_cut' is 'gap span analysed window' and all other values are True
         df_CutType['MH_around_cut'] = df_CutType['Maximal_MH_len'].apply(lambda x: 'gap spans analysed window' if x == 'gap_out_of_cut' else ('False' if x == '0' else 'True'))
         df_CutType['MH_around_cut'].unique()
         # make pivot, where all samples have individual row and values are sum of individual events
-        # pivot = pd.pivot_table(df_CutType, index=['name', 'gRNA_seq'], columns=['Cut_type', 'MH_around_cut'], values='%Reads', aggfunc='sum', fill_value=0)
-        # # If df_pivot is Empty skip the next plot
-        # if pivot.empty:
-        #     write_into_report('There is no DEL for blunt/stagg, skipping Blunt/Staggered cut ratio plotting.', destination_folder=project_output_dir)
-        # else:
-        #     df_Blunt_Stagg_samples = pivot.reset_index()
-        #     # Flatten the index
-        #     df_Blunt_Stagg_samples.columns = ['_'.join(map(str, col)).strip('_') for col in df_Blunt_Stagg_samples.columns]
-        #     ## check if all events are present, if not, add missing column with 0
-        #     df_Blunt_Stagg_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_Blunt_Stagg_samples, 'BluntStag', cut_maximum, cut_minimum)
-        #     # make single column table
-        #     df_Blunt_Stagg_samples = pd.melt(df_Blunt_Stagg_samples, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
-        #     pivot = pd.crosstab(index=[df_Blunt_Stagg_samples['name'],df_Blunt_Stagg_samples['gRNA_seq']], columns=df_Blunt_Stagg_samples['variable'], values=df_Blunt_Stagg_samples['value'], aggfunc='sum', normalize='index')
-        #     df_Blunt_Stagg_samples_norm = pivot.reset_index()
-        #     df_Blunt_Stagg_samples_norm = pd.melt(df_Blunt_Stagg_samples_norm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
-        #     # In column variable rename values
-        #     df_Blunt_Stagg_samples_norm['variable'] = df_Blunt_Stagg_samples_norm['variable'].replace({
-        #         '-2_False': '-2nt staggered cut',
-        #         '-2_True': '-2nt staggered cut with complementarity',
-        #         '-1_False': '-1nt staggered cut',
-        #         '-1_True': '-1nt staggered cut with complementarity',
-        #         '0_False': 'blunt cut',
-        #         '0_True': 'blunt cut with complementarity',
-        #         'C_False': 'type of cut cannot be determined',
-        #         'C_True': 'type of cut cannot be determined with complementarity',
-        #         'X_gap spans analysed window': 'DEL span analysed window'
-        #     })
-        #     # Change list_of_events accordingly
-        #     list_of_events = ['-2nt staggered cut', '-2nt staggered cut with complementarity', '-1nt staggered cut', '-1nt staggered cut with complementarity', 'blunt cut', 'blunt cut with complementarity', 'type of cut cannot be determined', 'type of cut cannot be determined with complementarity', 'DEL span analysed window']
-        #     # check if all events are present in list_of_events, if not add based on the df_Blunt_Stagg_samples_norm['variable'].unique()
-        #     for event in df_Blunt_Stagg_samples_norm['variable'].unique():
-        #         if event not in list_of_events:
-        #             list_of_events.append(event)
-        #     ##########################################################################################
-        #     # Horizontal bar charts for Blunt/Staggered cuts
-        #     ##########################################################################################
-        #     color_dic = make_color_dic_CutType(list_of_events)
-        #     hatches_dic = make_hatches_dic_CutType(list_of_events)
-        #     if plot_DEL_individual_gRNAs is True:
-        #         # If more then 40 samples are present, divide the plot into as many plots as needed to have maximum 40 samples in one plot, if not, make one plot with all samples
-        #         unique_samples = df_Blunt_Stagg_samples_norm['name'].unique()
-        #         if len(unique_samples) > 40:
-        #             sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
-        #         else:
-        #             sample_lists = [unique_samples]
-        #         i=1
-        #         for sample_list in sample_lists:
-        #             df_Blunt_Stagg_samples_norm_sample = df_Blunt_Stagg_samples_norm[df_Blunt_Stagg_samples_norm['name'].isin(sample_list)]
-        #             # normalise the events for normalised plot form 0-100%
-        #             title = 'Staggered/Blunt cut ratio for DEL adjacent or around the cut site'
-        #             xlabel = 'Average of %Reads from individual samples'
-        #             name_to_save = f'03_3_{i}_Stagg_blunt_ratio_all_samples'
-        #             text_bellow_chart = 'Only DELs around the cut are plotted.\
-        #                             \nNormalised to: SUM of all DEL categories around the cut in individual sample = 100%.'
+        pivot = pd.pivot_table(df_CutType, index=['name', 'gRNA_seq'], columns=['Cut_type', 'MH_around_cut'], values='%Reads', aggfunc='sum', fill_value=0)
+        # If df_pivot is Empty skip the next plot
+        if pivot.empty:
+            write_into_report('There is no DEL for blunt/stagg, skipping Blunt/Staggered cut ratio plotting.', destination_folder=project_output_dir)
+        else:
+            df_Blunt_Stagg_samples = pivot.reset_index()
+            # Flatten the index
+            df_Blunt_Stagg_samples.columns = ['_'.join(map(str, col)).strip('_') for col in df_Blunt_Stagg_samples.columns]
+            ## check if all events are present, if not, add missing column with 0
+            df_Blunt_Stagg_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_Blunt_Stagg_samples, 'BluntStag', cut_maximum, cut_minimum)
+            # make single column table
+            df_Blunt_Stagg_samples = pd.melt(df_Blunt_Stagg_samples, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
+            pivot = pd.crosstab(index=[df_Blunt_Stagg_samples['name'],df_Blunt_Stagg_samples['gRNA_seq']], columns=df_Blunt_Stagg_samples['variable'], values=df_Blunt_Stagg_samples['value'], aggfunc='sum', normalize='index')
+            df_Blunt_Stagg_samples_norm = pivot.reset_index()
+            df_Blunt_Stagg_samples_norm = pd.melt(df_Blunt_Stagg_samples_norm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
+            # In column variable rename values
+            df_Blunt_Stagg_samples_norm['variable'] = df_Blunt_Stagg_samples_norm['variable'].replace({
+                '-2_False': '-2nt staggered cut',
+                '-2_True': '-2nt staggered cut with complementarity',
+                '-1_False': '-1nt staggered cut',
+                '-1_True': '-1nt staggered cut with complementarity',
+                '0_False': 'blunt cut',
+                '0_True': 'blunt cut with complementarity',
+                'C_False': 'type of cut cannot be determined',
+                'C_True': 'type of cut cannot be determined with complementarity',
+                'X_gap spans analysed window': 'DEL span analysed window'
+            })
+            # Change list_of_events accordingly
+            list_of_events = ['-2nt staggered cut', '-2nt staggered cut with complementarity', '-1nt staggered cut', '-1nt staggered cut with complementarity', 'blunt cut', 'blunt cut with complementarity', 'type of cut cannot be determined', 'type of cut cannot be determined with complementarity', 'DEL span analysed window']
+            # check if all events are present in list_of_events, if not add based on the df_Blunt_Stagg_samples_norm['variable'].unique()
+            for event in df_Blunt_Stagg_samples_norm['variable'].unique():
+                if event not in list_of_events:
+                    list_of_events.append(event)
+            ##########################################################################################
+            # Horizontal bar charts for Blunt/Staggered cuts
+            ##########################################################################################
+            color_dic = make_color_dic_CutType(list_of_events)
+            hatches_dic = make_hatches_dic_CutType(list_of_events)
+            if plot_DEL_individual_gRNAs is True:
+                # If more then 40 samples are present, divide the plot into as many plots as needed to have maximum 40 samples in one plot, if not, make one plot with all samples
+                unique_samples = df_Blunt_Stagg_samples_norm['name'].unique()
+                if len(unique_samples) > 40:
+                    sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
+                else:
+                    sample_lists = [unique_samples]
+                i=1
+                for sample_list in sample_lists:
+                    df_Blunt_Stagg_samples_norm_sample = df_Blunt_Stagg_samples_norm[df_Blunt_Stagg_samples_norm['name'].isin(sample_list)]
+                    # normalise the events for normalised plot form 0-100%
+                    title = 'Staggered/Blunt cut ratio for DEL adjacent or around the cut site'
+                    xlabel = 'Average of %Reads from individual samples'
+                    name_to_save = f'03_03_{i}_Stagg_blunt_ratio_all_samples'
+                    text_bellow_chart = 'Only DELs around the cut are plotted.\
+                                    \nNormalised to: SUM of all DEL categories around the cut in individual sample = 100%.'
 
-        #             plot = plot_general_stacked_horizontal_barchart(df=df_Blunt_Stagg_samples_norm_sample, x='variable'\
-        #             , y='name', values='value', project_output_dir=project_output_subdir\
-        #             , data_source=data_source, title=title, name_to_save=name_to_save\
-        #             , output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False\
-        #             , palette=color_dic, hatches_dic=hatches_dic, x_as_perc=True\
-        #             , xaxis_formater=1, decimals=0, xlim=(0,1)\
-        #             , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default'\
-        #             , bars_order=list_of_events, show_plots=show_plots)
-        #             stat_info = df_Blunt_Stagg_samples_norm_sample.groupby('variable').value.describe()
-        #             save_stat(stat_info, name_to_save, project_output_subdir)
-        #             i+=1
-        #     ##########################################################################################
-        #     # plot VIOLINPLOT without PAM proximal/distal orientation
-        #     ##########################################################################################
-        #     title='Normalised Staggered/Blunt representation'
-        #     ylabel='Normalised percentage of DELs \naround cuts events'
-        #     text_bellow_chart = f'Only DELs around the cut are plotted.\
-        #                         \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
-        #                         \n{no_of_gRNA_samples}'
-        #     name_to_save = f'03_4_DEL_Stagg_blunt_summary_violinplot'
-        #     plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable', y='value'\
-        #         , number_of_columns=len(df_Blunt_Stagg_samples_norm['variable'].unique())/2\
-        #         , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=False\
-        #         , show_hue_medians=False\
-        #         , hue=None, hue_only_for_data_points=False \
-        #         , clip_right=True\
-        #         , title=title, xtickt_rotation=-55, ylabel=ylabel\
-        #         , order=list_of_events\
-        #         , plot_legend=False\
-        #         , integrated_properties_dic=False, color_dic=color_dic\
-        #         , hatches=True, hatches_list=hatches_dic\
-        #         , text_bellow_chart=text_bellow_chart\
-        #         , y_legend_coordinate=-0.85, yaxis_formater=1\
-        #         , x_max=None\
-        #         , change_edge_color=False\
-        #         , name_to_save=name_to_save\
-        #         , project_output_dir=project_output_subdir\
-        #         , data_source=data_source, output_format=output_format\
-        #         , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
-        #     stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
-        #     save_stat(stat_info, name_to_save, project_output_subdir)
+                    plot = plot_general_stacked_horizontal_barchart(df=df_Blunt_Stagg_samples_norm_sample, x='variable'\
+                    , y='name', values='value', project_output_dir=project_output_subdir\
+                    , data_source=data_source, title=title, name_to_save=name_to_save\
+                    , output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False\
+                    , palette=color_dic, hatches_dic=hatches_dic, x_as_perc=True\
+                    , xaxis_formater=1, decimals=0, xlim=(0,1)\
+                    , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default'\
+                    , bars_order=list_of_events, show_plots=show_plots)
+                    stat_info = df_Blunt_Stagg_samples_norm_sample.groupby('variable').value.describe()
+                    save_stat(stat_info, name_to_save, project_output_subdir)
+                    i+=1
+            ##########################################################################################
+            # plot VIOLINPLOT without PAM downstream/upstream orientation
+            ##########################################################################################
+            title='Normalised Staggered/Blunt representation'
+            ylabel='Normalised percentage of DELs \naround cuts events'
+            text_bellow_chart = f'Only DELs around the cut are plotted.\
+                                \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
+                                \n{no_of_gRNA_samples}'
+            name_to_save = f'03_04_DEL_Stagg_blunt_summary_violinplot'
+            plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable', y='value'\
+                , number_of_columns=len(df_Blunt_Stagg_samples_norm['variable'].unique())/2\
+                , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=False\
+                , show_hue_medians=False\
+                , hue=None, hue_only_for_data_points=False \
+                , clip_right=True\
+                , title=title, xtickt_rotation=-55, ylabel=ylabel\
+                , order=list_of_events\
+                , plot_legend=False\
+                , integrated_properties_dic=False, color_dic=color_dic\
+                , hatches=True, hatches_list=hatches_dic\
+                , text_bellow_chart=text_bellow_chart\
+                , y_legend_coordinate=-0.85, yaxis_formater=1\
+                , x_max=None\
+                , change_edge_color=False\
+                , name_to_save=name_to_save\
+                , project_output_dir=project_output_subdir\
+                , data_source=data_source, output_format=output_format\
+                , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
+            stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
+            save_stat(stat_info, name_to_save, project_output_subdir)
         ##########################################################################################
-        # plot VIOLINPLOTs with PAM proximal/distal orientation
+        # plot VIOLINPLOTs with PAM downstream/upstream orientation
         ##########################################################################################
         # make pivot, where all samples have individual row and values are sum of individual events
-        # TODO for columns add the orientation
         pivot = pd.pivot_table(df_CutType, index=['name', 'gRNA_seq'], columns=['DEL_orientation', 'Cut_type', 'MH_around_cut'], values='%Reads', aggfunc='sum', fill_value=0)
         # make order for pivot table based on the upstream/downstream, cut maximum/minimum and presence of MH around the cut
         # If pivot is Empty skip the next plot
         if pivot.empty:
-            write_into_report('There is no DEL for PAM proximal/distal orientation, skipping plotting.', destination_folder=project_output_dir)
+            write_into_report('There is no DEL for PAM downstream/upstream orientation, skipping plotting.', destination_folder=project_output_dir)
         else:
             order = list(itertools.product(['U', 'D'], range(cut_maximum, cut_minimum+1), ['False', 'True']))
             order.append(('C', 0, 'True'))
@@ -775,7 +776,7 @@ for key, value in tables_dic.items():
             # # make single column table
             df_Blunt_Stagg_samples = pd.melt(df_Blunt_Stagg_samples, id_vars=['name', 'gRNA_seq'], value_vars=order)
             ###############################################################################
-            # plot VIOLINPLOT with PAM proximal/distal orientation with cannot_be_determined NOT-normalised
+            # plot VIOLINPLOT with PAM downstream/upstream orientation with cannot_be_determined NOT-normalised
             ##########################################################################################
             # Make pivot crosstab without normalisation
             pivot = pd.crosstab(index=[df_Blunt_Stagg_samples['name'],df_Blunt_Stagg_samples['gRNA_seq']]\
@@ -833,7 +834,7 @@ for key, value in tables_dic.items():
             text_bellow_chart = f'Only DELs around the cut are plotted.\
                         \nNot-normalised.\
                         \n{no_of_gRNA_samples}'
-            name_to_save = '03_5_DEL_Stagg_blunt_oriented_summary_violinplot'
+            name_to_save = '03_05_DEL_Stagg_blunt_oriented_summary_violinplot'
             color_dic = make_color_dic_blunt_stagg_orientation(list_of_events)
             plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples, x='variable', y='value'\
                 , number_of_columns=len(list_of_events)/2\
@@ -856,7 +857,7 @@ for key, value in tables_dic.items():
             stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
             save_stat(stat_info, name_to_save, project_output_subdir)
             ##########################################################################################
-            # plot VIOLINPLOT with PAM proximal/distal orientation with cannot_be_determined
+            # plot VIOLINPLOT with PAM downstream/upstream orientation with cannot_be_determined
             ##########################################################################################
             # Make pivot crosstab where values will be normalised to sum of row = 100%
             pivot = pd.crosstab(index=[df_Blunt_Stagg_samples['name'],df_Blunt_Stagg_samples['gRNA_seq']]\
@@ -872,7 +873,7 @@ for key, value in tables_dic.items():
             text_bellow_chart = f'Only DELs around the cut are plotted.\
                                 \nNormalised to: SUM of all DEL categories around the cut\n in individual sample = 100%.\
                                 \n{no_of_gRNA_samples}'
-            name_to_save = '03_6_DEL_Stagg_blunt_oriented_summary_violinplot_normalised'
+            name_to_save = '03_06_DEL_Stagg_blunt_oriented_summary_violinplot_normalised'
             plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable'\
                 , y='value', number_of_columns=len(list_of_events)/2\
                 , show_datapoints=True, jitter=0.10, stripplot_offset=6, dodge=False\
@@ -891,422 +892,483 @@ for key, value in tables_dic.items():
                 , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
             stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
             save_stat(stat_info, name_to_save, project_output_subdir)
-#         ##########################################################################################
-#         ##########################################################################################
-#         ##########################################################################################
-#         # make DataFrame for ramining DEL_orientations
-#         df_CutType = df.copy()
-#         # drop data without gap
-#         df_CutType = df_CutType[df_CutType['n_deleted_around_cut'] != 0]
-#         # filter out deletions which are not around the cut
-#         df_CutType = df_CutType[df_CutType['Gap_around_cut'] == True]
-#         # make DataFrame where samples where DEL_orientation cannot_be_determined is splitted between proximal and distal
-#         df_CutType_cannot_be_determined = df_CutType[df_CutType['DEL_orientation']=='C'].copy()
-#         df_CutType_cannot_be_determined['%Reads'] = df_CutType_cannot_be_determined['%Reads']/2
-#         df_CutType_cannot_be_determined['#Reads'] = df_CutType_cannot_be_determined['#Reads']/2
-#         # TODO change distal and proximal to upstream and downstream
-#         df_CutType_cannot_be_determined_distal = df_CutType_cannot_be_determined.copy()
-#         df_CutType_cannot_be_determined_distal['DEL_orientation'] = 'sU'
-#         df_CutType_cannot_be_determined_proximal = df_CutType_cannot_be_determined.copy()
-#         df_CutType_cannot_be_determined_proximal['DEL_orientation'] = 'sD'
-#         df_CutType_cannot_be_determined = pd.concat([df_CutType_cannot_be_determined_proximal,\
-#                                                         df_CutType_cannot_be_determined_distal],\
-#                                                         ignore_index=True).copy()
+        ##########################################################################################
+        ##########################################################################################
+        ##########################################################################################
+        # make DataFrame for ramining DEL_orientations
+        # take columns name, n_deleted_around_cut, Gap_around_cut, Event_around_cut, DEL_orientation, Original_Sequence_around_cut, Maximal_MH_len, Cut_type, sample, %Reads, #Reads
+        df_CutType = df[['name', 'n_deleted_around_cut', 'Gap_around_cut', 'Event_around_cut', 'DEL_orientation', 'Original_Sequence_around_cut', 'Maximal_MH_len', 'Cut_type', 'sample', '%Reads', '#Reads']].copy()
+        # drop data without gap
+        df_CutType = df_CutType[df_CutType['n_deleted_around_cut'] != 0]
+        # filter out deletions which are not around the cut
+        df_CutType = df_CutType[df_CutType['Gap_around_cut'] == True]
+        # filter out all events which are not DEL
+        df_CutType = df_CutType[df_CutType['Event_around_cut'] == 'DEL']
+        # filter our bidirectional DELs
+        df_CutType = df_CutType[df_CutType['DEL_orientation'] != 'B']
+        df_CutType = df_CutType[df_CutType['DEL_orientation'] != 'X']
+        # make DataFrame where samples where DEL_orientation cannot_be_determined is splitted between downstream and upstream
+        df_CutType_cannot_be_determined = df_CutType[df_CutType['DEL_orientation']=='C'].copy()
+        df_CutType_cannot_be_determined['%Reads'] = df_CutType_cannot_be_determined['%Reads']/2
+        df_CutType_cannot_be_determined['#Reads'] = df_CutType_cannot_be_determined['#Reads']/2
+        df_CutType_cannot_be_determined_upstream = df_CutType_cannot_be_determined.copy()
+        df_CutType_cannot_be_determined_upstream['DEL_orientation'] = 'sU'
+        df_CutType_cannot_be_determined_downstream = df_CutType_cannot_be_determined.copy()
+        df_CutType_cannot_be_determined_downstream['DEL_orientation'] = 'sD'
+        df_CutType_cannot_be_determined = pd.concat([df_CutType_cannot_be_determined_downstream,\
+                                                        df_CutType_cannot_be_determined_upstream],\
+                                                        ignore_index=True).copy()
+        # Remove category C as it was splitted between downstream and upstream
+        df_CutType = df_CutType[df_CutType['DEL_orientation'] != 'C']
 
-#         # filter out deletions which are on both sites of cut, so proximal and distal will remain
-#         df_CutType = df_CutType[df_CutType['DEL_orientation'] != 'B']
-#         df_CutType = df_CutType[df_CutType['DEL_orientation'] != 'C']
-#         df_CutType = pd.concat([df_CutType, df_CutType_cannot_be_determined], ignore_index=True)
-#         # print(df_CutType)
-#         # If df_CutType has zero rows, skip the next plotting
-#         if df_CutType.empty:
-#             write_into_report('There is no DEL for Dino chart plotting, skipping plotting.', destination_folder=project_output_dir)  
-#             plot_DEL_dinochart = False
-#         else:          
-#             #  make column combining DEL_orientation with Cut_type
-#             df_CutType['DEL_orientation_cut_type'] = df_CutType.apply(lambda row: row['DEL_orientation'] + '_' + row['Cut_type'] + '_' + str(row['Likely_cut_type']), axis=1)
-#             df_CutType['n_deleted_around_cut'] = df_CutType.apply(lambda row: -int(row['n_deleted_around_cut']) if (row['DEL_orientation']=='U' or row['DEL_orientation']=='sU') else row['n_deleted_around_cut'], axis=1)
-#             order_list = df_CutType['sample'].unique()
-#             df_CutType['n_deleted_around_cut'] = df_CutType['n_deleted_around_cut'].astype(int)
-#         if plot_DEL_dinochart is True:
-#             subcounter=1
-#             for sample in order_list:
-#                 # print(sample)
-#                 # filter individual gRNA 
-#                 df_Cut_gRNA = df_CutType[df_CutType['sample'].str.contains(sample)]
-#                 seq_around = df_Cut_gRNA['Original_Sequence_around_cut'].unique()
-#                 # print(seq_around)
-#                 name_to_save= f'{file_number}_{counter}_Stagg_blunt_DEL_orientation_dino_30nt_NotNormalised_{subcounter}_' + sample
-#                 title = 'Stagg/blunt + DEL orientation analysis ' + str(sample) + '\n' + str(seq_around)
-#                 xlabel='Number of deleted nucleotides (minus = upstream from the probable cut, plus = downstream from the probable cut)'
-#                 ylabel='Sum of %Reads \n of Staggered/Blunt cut'
-#                 text_bellow_chart = 'Data from deletions around cut only.\n\
-#                 Without deletions with DEL_orientation = bidirectional \n\
-#                 cannot be determined was split between upstream and downstream - gray bars.\n\
-#                 Not normalised data.\
-#                 \nOrientation_CutType_AmbigousNtPresent:\
-#                 \n   Orientation -> U=upstream, D=downstream, sU/D=splitted to U and D as it cannot be determined\
-#                 \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut,\
-#                 \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
-#                 # normalise individual samples -> sum of all DEL = 100%
-#                 pivot = pd.crosstab(index=[df_Cut_gRNA['DEL_orientation_cut_type']\
-#                                             , df_Cut_gRNA['n_deleted_around_cut']]\
-#                         , columns=df_Cut_gRNA['name'], values=df_Cut_gRNA['%Reads']\
-#                         , aggfunc='sum', normalize=False)
-#                 df_pivot = pivot.reset_index()
-#                 # add column with gRNA name, where will be average from all samples
-#                 df_pivot[sample] = df_pivot.iloc[:,2:].to_numpy().mean(axis=1)
+        df_CutType = pd.concat([df_CutType, df_CutType_cannot_be_determined], ignore_index=True)
+        # If df_CutType has zero rows, skip the next plotting
+        if df_CutType.empty:
+            write_into_report('There is no DEL for Dino chart plotting, skipping plotting.', destination_folder=project_output_dir)  
+            plot_DEL_dinochart = False
+        else:
+            # Make new column MH_around_cut, '0' is False, 'gap_out_of_cut' is 'gap span analysed window' and all other values are True
+            df_CutType['MH_around_cut'] = df_CutType['Maximal_MH_len'].apply(lambda x: 'gap spans analysed window' if x == 'gap_out_of_cut' else ('False' if x == '0' else 'True'))
+            #  make column combining DEL_orientation with Cut_type
+            df_CutType['DEL_orientation_cut_type'] = df_CutType.apply(lambda row: row['DEL_orientation'] + '_' + row['Cut_type'] + '_' + str(row['MH_around_cut']), axis=1)
+            df_CutType['n_deleted_around_cut'] = df_CutType.apply(lambda row: -int(row['n_deleted_around_cut']) if (row['DEL_orientation']=='U' or row['DEL_orientation']=='sU') else row['n_deleted_around_cut'], axis=1)
+            order_list = df_CutType['sample'].unique()
+            df_CutType['n_deleted_around_cut'] = df_CutType['n_deleted_around_cut'].astype(int)
+        if plot_DEL_dinochart is True:
+            subcounter=1
+            for sample in order_list:
+                # filter individual gRNA
+                df_Cut_gRNA = df_CutType[df_CutType['sample'].str.contains(sample)]
+                seq_around = df_Cut_gRNA['Original_Sequence_around_cut'].unique()
+                # print(seq_around)
+                name_to_save= f'03_07_{subcounter}_Stagg_blunt_DEL_orientation_dino_30nt_NotNormalised_' + sample
+                title = 'Stagg/blunt + DEL orientation analysis ' + str(sample) + '\n' + str(seq_around)
+                xlabel='Number of deleted nucleotides (minus = upstream from the probable cut, plus = downstream from the probable cut)'
+                ylabel='Sum of %Reads'
+                text_bellow_chart = 'Data from deletions upstream and downstream from the probable cut only. Without bidirectional deletions.\nCannot be determined DELs were split between upstream and downstream.\nNot normalised.'
+                pivot = pd.crosstab(index=[df_Cut_gRNA['DEL_orientation_cut_type']\
+                                            , df_Cut_gRNA['n_deleted_around_cut']]\
+                        , columns=df_Cut_gRNA['name'], values=df_Cut_gRNA['%Reads']\
+                        , aggfunc='sum', normalize=False)
+                df_pivot = pivot.reset_index()
+                # add column with gRNA name, where will be average from all samples
+                df_pivot[sample] = df_pivot.iloc[:,2:].to_numpy().mean(axis=1)
 
-#                 # Order df_pivot according to the DEL_orientation_cut_type to have blunt first
-#                 df_pivot['Orientation'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[0]
-#                 df_pivot['Cut_type'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[1]
-#                 df_pivot['Likely_cut_type'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[2]
-#                 df_pivot = df_pivot.sort_values(by=['Orientation', 'Cut_type', 'Likely_cut_type'], ascending=[True, False, False])
-#                 order=list(df_pivot['DEL_orientation_cut_type'].unique())
+                # Order df_pivot according to the DEL_orientation_cut_type to have blunt first
+                df_pivot['Orientation'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[0]
+                df_pivot['Cut_type'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[1]
+                df_pivot['MH_around_cut'] = df_pivot['DEL_orientation_cut_type'].str.split('_').str[2]
+                df_pivot = df_pivot.sort_values(by=['Orientation', 'Cut_type', 'MH_around_cut'], ascending=[True, False, False])
 
-#                 color_dic = make_color_dic_Dino(df_pivot['DEL_orientation_cut_type'].unique())
-#                 hatches_dic = make_hatches_dic_Dino(df_pivot['DEL_orientation_cut_type'].unique())
-#                 plot = plot_general_stacked_vertical_barchart(df=df_pivot, x='n_deleted_around_cut'\
-#                         , y='DEL_orientation_cut_type', project_output_dir=project_output_subdir\
-#                         , values=sample, sns_palette=False, palette=color_dic\
-#                         , hatches_dic=hatches_dic\
-#                         , data_source=data_source, plot_vertical_line_middle=True\
-#                         , title=title, name_to_save=name_to_save, output_format=output_format\
-#                         , dpi=200, xlabel=xlabel, ylabel=ylabel, y_as_perc=True, yaxis_formater=100\
-#                         , xlim=(-30,30), ylim=None, text_bellow_chart=text_bellow_chart\
-#                         , fill_empty_x=True, order_y=order\
-#                         , y_legend_coordinate=-0.2, show_plots=show_plots)
-#                 subcounter+=1
-#         counter+=1
-#         ##########################################################################################
-#         ##########################################################################################
-#         ##########################################################################################
-#         # Get data
-#         df_CutType = df
-#         ## drop data without gap
-#         df_CutType = df_CutType[df_CutType['n_deleted_around_cut'] != 0]
-#         ## filter out deletions which are not around the cut
-#         df_CutType = df_CutType[df_CutType['Gap_around_cut'] == True]
-#         ## make pivot, where all samples have individual row and values are sum of individual events
-#         pivot = pd.pivot_table(df_CutType, index=['name', 'gRNA_seq', '4th_nt'], columns=['Cut_type', 'Likely_cut_type'], values='%Reads', aggfunc='sum', fill_value=0)
-#         # if pivot is Empty skip the next plot
-#         if pivot.empty:
-#             write_into_report('There is no DEL for plotting, skipping Normalised Staggered/Blunt representation plotting.', destination_folder=project_output_dir)
-#             counter+=3
-#         else:
-#             df_Blunt_Stagg_samples = pivot.reset_index()
-#             # Flatten the index
-#             df_Blunt_Stagg_samples.columns = ['_'.join(map(str, col)).strip('_') for col in df_Blunt_Stagg_samples.columns]
-#             ## check if all events are present, if not, add missing column with 0
-#             df_Blunt_Stagg_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_Blunt_Stagg_samples, 'BluntStag', cut_maximum, cut_minimum)
-#             # make single column table
-#             df_Blunt_Stagg_samples = pd.melt(df_Blunt_Stagg_samples, id_vars=['name', 'gRNA_seq', '4th_nt'], value_vars=list_of_events)
-#             pivot = pd.crosstab(index=[df_Blunt_Stagg_samples['name'],df_Blunt_Stagg_samples['gRNA_seq'],df_Blunt_Stagg_samples['4th_nt']], columns=df_Blunt_Stagg_samples['variable'], values=df_Blunt_Stagg_samples['value'], aggfunc='sum', normalize='index')
-#             df_Blunt_Stagg_samples_norm = pivot.reset_index()
-#             df_Blunt_Stagg_samples_norm = pd.melt(df_Blunt_Stagg_samples_norm, id_vars=['name', 'gRNA_seq', '4th_nt'], value_vars=list_of_events)
-#             ##########################################################################################
-#             # plot STACKED BARPLOT
-#             ##########################################################################################
-#             color_dic=make_color_dic_CutType(list_of_events)
-#             hatches_dic = make_hatches_dic_CutType(list_of_events)
+                df_pivot['DEL_orientation_cut_type'] = df_pivot['DEL_orientation_cut_type'].replace({
+                    'U_-2_False': 'upstream -2nt staggered cut',
+                    'U_-2_True': 'upstream -2nt staggered cut with complementarity',
+                    'U_-1_False': 'upstream -1nt staggered cut',
+                    'U_-1_True': 'upstream -1nt staggered cut with complementarity',
+                    'U_0_False': 'upstream blunt cut',
+                    'U_0_True': 'upstream blunt cut with complementarity',
+                    'D_-2_False': 'downstream -2nt staggered cut',
+                    'D_-2_True': 'downstream -2nt staggered cut with complementarity',
+                    'D_-1_False': 'downstream -1nt staggered cut',
+                    'D_-1_True': 'downstream -1nt staggered cut with complementarity',
+                    'D_0_False': 'downstream blunt cut',
+                    'D_0_True': 'downstream blunt cut with complementarity',
+                    'sU_0_True': 'upstream cannot be determined blunt cut with complementarity',
+                    'sD_0_True': 'downstream cannot be determined blunt cut with complementarity',
+                })
 
-#             title = 'Normalised Staggered/Blunt representation\
-#                     \nin samples divided by 4th nucleotide upstream from PAM'
-#             xlabel = '4th nucleotide upstream from PAM'
-#             ylabel = 'Normalised percentage'
-#             text_bellow_chart = f'Only DELs around the cut are plotted.\
-#                                 \nNormalised to SUM of all DEL categories around the cut in individual sample = 100%,\
-#                                 \n       then samples divided in 4th nt groups and mean was calculated for each DEL categry and plotted.\
-#                                 \n{no_of_gRNA_samples}\
-#                                 \nCutType_AmbigousNtPresent:\
-#                                 \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut, C=type of cut cut cannot be determined\
-#                                 \n   CutType which should be 0 in this plot (if not, check main script) -> O=gap out of the cut, X=no DEL around the cut\
-#                                 \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
-#             name_to_save = f'{file_number}_{counter}_DEL_Stagg_blunt_summary_barchart_4th_nt'
-#             plot = plot_general_stacked_vertical_barchart(df=df_Blunt_Stagg_samples_norm, x='4th_nt'\
-#                 , y='variable', values='value', order_y=list_of_events\
-#                 , project_output_dir=project_output_subdir\
-#                 , sns_palette=False, palette=color_dic\
-#                 , hatches_dic=hatches_dic\
-#                 , title=title, xlabel=xlabel, ylabel=ylabel\
-#                 , text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.1\
-#                 , fill_empty_x = False, xlim=None\
-#                 , y_as_perc=True, ylim=(0,1)\
-#                 , name_to_save=name_to_save, data_source=data_source, output_format=output_format, show_plots=show_plots)
-#             stat_info = df_Blunt_Stagg_samples_norm.groupby('4th_nt').value.describe()
-#             save_stat(stat_info, name_to_save, project_output_subdir)
-#             counter+=1
-#             ##########################################################################################
-#             # plot VIOLINPLOT
-#             ##########################################################################################
-#             title='Normalised Staggered/Blunt representation based on 4th nucleotide upstream from PAM'
-#             ylabel='Normalised percentage of DELs \naround cuts events'
-#             text_bellow_chart = f'Only DELs around the cut are plotted.\
-#                                 \nNormalised to: SUM of all DEL categories around the cut in individual sample = 100%.\
-#                                 \n{no_of_gRNA_samples}\
-#                                 \nCutType_AmbigousNtPresent:\
-#                                 \n   CutType -> -2=2nt upstream staggered cut, -1=1nt upstreamstaggered cut, 0=blunt cut, C=type of cut cut cannot be determined\
-#                                 \n   CutType which should be 0 in this plot (if not, check main script) -> O=gap out of the cut, X=no DEL around the cut\
-#                                 \n   AmbigousNtPresent -> 1=ambiguous nt present in the gap (gap with MH), 0=no ambiguous nt in the gap (no MH)'
-#             name_to_save = f'{file_number}_{counter}_DEL_Stagg_blunt_summary_violinplot_4th_nt'
-#             plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable', y='value'\
-#                     , number_of_columns=len(list_of_events)\
-#                     , show_datapoints=False, jitter=0.05, stripplot_offset=0, dodge=False\
-#                     , show_hue_medians=True\
-#                     , hue='4th_nt', hue_only_for_data_points=False \
-#                     , hatches=False\
-#                     , clip_right=False\
-#                     , title=title, xtickt_rotation=-55, ylabel=ylabel\
-#                     , order=list_of_events\
-#                     , plot_legend=True \
-#                     , integrated_properties_dic=True, text_bellow_chart=text_bellow_chart\
-#                     , y_legend_coordinate=-0.15, yaxis_formater=1\
-#                     , boxplot_distances_with=[0.8, 0.3]\
-#                     , x_max=None\
-#                     , name_to_save=name_to_save\
-#                     , project_output_dir=project_output_subdir \
-#                     , data_source=data_source, output_format=output_format\
-#                     , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
-#             stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
-#             save_stat(stat_info, name_to_save, project_output_subdir)
-#             counter+=1
-#             name_to_save = f'{file_number}_{counter}_DEL_Stagg_blunt_summary_violinplot_4th_nt'
-#             color_dic = make_color_dic_CutType(list_of_events)
-#             plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='4th_nt', y='value'\
-#                     , number_of_columns=16\
-#                     , show_datapoints=False, jitter=0.05, stripplot_offset=0, dodge=False\
-#                     , show_hue_medians=False\
-#                     , hue='variable', hue_order=list_of_events, hue_only_for_data_points=False \
-#                     , hatches=False\
-#                     , clip_right=False\
-#                     , title=title, xtickt_rotation=0, ylabel=ylabel\
-#                     , order=None\
-#                     , plot_legend=True\
-#                     , integrated_properties_dic=False, color_dic=color_dic, text_bellow_chart=text_bellow_chart\
-#                     , y_legend_coordinate=-0.08, yaxis_formater=1\
-#                     , boxplot_distances_with=[0.8, 0.3]\
-#                     , x_max=None\
-#                     , name_to_save=name_to_save\
-#                     , project_output_dir=project_output_subdir \
-#                     , data_source=data_source, output_format=output_format\
-#                     , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
-#             stat_info = df_Blunt_Stagg_samples_norm.groupby('4th_nt').value.describe()
-#             save_stat(stat_info, name_to_save, project_output_subdir)
-#             counter+=1
-#     ##########################################################################################
-#     ##########################################################################################
-#     ##########################################################################################
-#     file_number = '05'
-#     counter=1
-#     if plot_participating_end is True:
-#         df_end = df
-#         # drop data without gap
-#         df_end = df_end[df_end['n_deleted_around_cut'] != 0]
-#         # filter out deletions which are not around the cut
-#         df_end = df_end[df_end['Gap_around_cut'] == True]
-#         # filter out deletions which does not have MH around the cut site
-#         df_end = df_end[df_end['End_participating_on_MH'] != 'X']
-#         # Change values in End_3_5 to be 3', 5' and cannot_be_determined needed for plotting with color_dic
-#         df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'eider 3\' or 5\''})
-#         pivot = pd.pivot_table(df_end, index=['name', 'gRNA_seq'], columns=['End_3_5', 'blunt_cut_with_MH_possible'], values='%Reads', aggfunc='sum', fill_value=0)
-#         # If pitvot is Empty skip the next plot
-#         if pivot.empty:
-#             write_into_report('There is no DEL for plotting, skipping Normalised nad Not-normalised ends participating on the repair.', destination_folder=project_output_dir)
-#             counter+=2
-#         else:
-#             df_end_samples = pivot.reset_index()
-#             # Flattern the MultiIndex columns
-#             df_end_samples.columns = ['_'.join(map(str, col)).strip() for col in df_end_samples.columns.values]
-#             # Rename columns
-#             df_end_samples.rename(columns={'name_': 'name', 'gRNA_seq_':'gRNA_seq', '3\'_True':'3\' possible blunt', '5\'_True':'5\' possible blunt', 'eider 3\' or 5\'_True':'eider 3\' or 5\' possible blunt', '3\'_False':'3\' NOT blunt', '5\'_False':'5\' NOT blunt', 'eider 3\' or 5\'_False':'eider 3\' or 5\' NOT blunt'}, inplace=True)
+                # make order bars starting with upstream and descending cut type, then sU and sD, then downstream and descending cut type
+                order = ['downstream blunt cut with complementarity',
+                        'downstream blunt cut',
+                        'downstream -1nt staggered cut with complementarity',
+                        'downstream -1nt staggered cut',
+                        'downstream -2nt staggered cut with complementarity',
+                        'downstream -2nt staggered cut',
+                        'downstream cannot be determined blunt cut with complementarity',
+                        'upstream cannot be determined blunt cut with complementarity',
+                        'upstream blunt cut with complementarity',
+                        'upstream blunt cut',
+                        'upstream -1nt staggered cut with complementarity',
+                        'upstream -1nt staggered cut',
+                        'upstream -2nt staggered cut with complementarity',
+                        'upstream -2nt staggered cut']
+                list_for_order = df_pivot['DEL_orientation_cut_type'].unique().tolist()
+                # sort list for order based on the order list above
+                list_for_order = sorted(list_for_order, key=lambda x: order.index(x) if x in order else len(order))
 
-#             df_end_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_end_samples, ['3\' possible blunt', '5\' possible blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '5\' NOT blunt', 'eider 3\' or 5\' NOT blunt'], cut_maximum, cut_minimum)
-#             df_end_samples = pd.melt(df_end_samples, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
-#             pivot_normalised = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['variable'], values=df_end_samples['value'], aggfunc='sum', normalize='index')
-#             pivot_NOTnorm = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['variable'], values=df_end_samples['value'], aggfunc='sum')
-#             df_end_samples_norm = pivot_normalised.reset_index()
-#             df_end_samples_norm = pd.melt(df_end_samples_norm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
-#             df_end_samples_NOTnorm = pivot_NOTnorm.reset_index()
-#             df_end_samples_NOTnorm = pd.melt(df_end_samples_NOTnorm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
-#             ##########################################################################################
-#             # Horizontal bar charts for participating ends
-#             ##########################################################################################
-#             # NORMALISED
-#             title = 'Normalised ends participating on the repair'
-#             xlabel = 'Average of %Reads from individual samples'
-#             text_bellow_chart = f'Only DELs around the cut are plotted.\
-#                                 \nNormalised to: SUM of all ends in individual sample = 100%.\
-#                                 \n{no_of_gRNA_samples}'
-#             name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_horizontal_barchart'
-#             color_dic = get_color_dic_35_violin()
-#             plot = plot_general_stacked_horizontal_barchart(df=df_end_samples_norm, x='variable'\
-#                 , y='name', values='value', project_output_dir=project_output_subdir\
-#                 , data_source=data_source, title=title, name_to_save=name_to_save\
-#                 , output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False\
-#                 , palette=color_dic, x_as_perc=True\
-#                 , xaxis_formater=1, decimals=0, xlim=(0,1)\
-#                 , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default' \
-#                 , bars_order=['5\' NOT blunt', '5\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '3\' possible blunt'], show_plots=show_plots)
-#             stat_info = df_end_samples_norm.groupby('variable').value.describe()
-#             save_stat(stat_info, name_to_save, project_output_subdir)
-#             counter+=1
+                color_dic = make_color_dic_Dino(df_pivot['DEL_orientation_cut_type'].unique())
+                hatches_dic = make_hatches_dic_Dino(df_pivot['DEL_orientation_cut_type'].unique())
+                plot = plot_general_stacked_vertical_barchart(df=df_pivot, x='n_deleted_around_cut'\
+                        , y='DEL_orientation_cut_type', project_output_dir=project_output_subdir\
+                        , values=sample, sns_palette=False, palette=color_dic\
+                        , hatches_dic=hatches_dic\
+                        , data_source=data_source, plot_vertical_line_middle=True\
+                        , title=title, name_to_save=name_to_save, output_format=output_format\
+                        , dpi=200, xlabel=xlabel, ylabel=ylabel, y_as_perc=True, yaxis_formater=100\
+                        , xlim=(-30,30), ylim=None, text_bellow_chart=text_bellow_chart\
+                        , fill_empty_x=True, order_y=list_for_order\
+                        , y_legend_coordinate=-0.2, show_plots=show_plots)
+                subcounter+=1
+        else:
+            print('Dinocharts are not going to be plotted.')
+        ##########################################################################################
+        ##########################################################################################
+        ##########################################################################################
+        # Get data
+        df_CutType = df.copy()
+        # drop data without gap
+        df_CutType = df_CutType[df_CutType['n_deleted_around_cut'] != 0]
+        # filter out deletions which are not around the cut
+        df_CutType = df_CutType[df_CutType['Gap_around_cut'] == True]
+        # filter out all events which are not DEL
+        df_CutType = df_CutType[df_CutType['Event_around_cut'] == 'DEL']
+        # Make new column MH_around_cut, '0' is False, 'gap_out_of_cut' is 'gap span analysed window' and all other values are True
+        df_CutType['MH_around_cut'] = df_CutType['Maximal_MH_len'].apply(lambda x: 'gap spans analysed window' if x == 'gap_out_of_cut' else ('False' if x == '0' else 'True'))
+        # make pivot, where all samples have individual row and values are sum of individual events
+        pivot = pd.pivot_table(df_CutType, index=['name', 'gRNA_seq', '4th_nt'], columns=['Cut_type', 'MH_around_cut'], values='%Reads', aggfunc='sum', fill_value=0)
+        # if pivot is Empty skip the next plot
+        if pivot.empty:
+            write_into_report('There is no DEL for plotting, skipping Normalised Staggered/Blunt representation plotting.', destination_folder=project_output_dir)
+        else:
+            df_Blunt_Stagg_samples = pivot.reset_index()
+            # Flatten the index
+            df_Blunt_Stagg_samples.columns = ['_'.join(map(str, col)).strip('_') for col in df_Blunt_Stagg_samples.columns]
+            ## check if all events are present, if not, add missing column with 0
+            df_Blunt_Stagg_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_Blunt_Stagg_samples, 'BluntStag', cut_maximum, cut_minimum)
+            # make single column table
+            df_Blunt_Stagg_samples = pd.melt(df_Blunt_Stagg_samples, id_vars=['name', 'gRNA_seq', '4th_nt'], value_vars=list_of_events)
+            # rename variable     
+            df_Blunt_Stagg_samples['variable'] = df_Blunt_Stagg_samples['variable'].replace({
+                '-2_False': '-2nt staggered cut',
+                '-2_True': '-2nt staggered cut with complementarity',
+                '-1_False': '-1nt staggered cut',
+                '-1_True': '-1nt staggered cut with complementarity',
+                '0_False': 'blunt cut',
+                '0_True': 'blunt cut with complementarity',
+                'C_False': 'type of cut cannot be determined',
+                'C_True': 'type of cut cannot be determined with complementarity',
+                'X_gap spans analysed window': 'DEL span analysed window'
+            })
+            df_Blunt_Stagg_samples
+            # Make list of events based on the variable column
+            list_of_events = df_Blunt_Stagg_samples['variable'].unique().tolist()
+            pivot = pd.crosstab(index=[df_Blunt_Stagg_samples['name'],df_Blunt_Stagg_samples['gRNA_seq'],df_Blunt_Stagg_samples['4th_nt']], columns=df_Blunt_Stagg_samples['variable'], values=df_Blunt_Stagg_samples['value'], aggfunc='sum', normalize='index')
+            df_Blunt_Stagg_samples_norm = pivot.reset_index()
+            df_Blunt_Stagg_samples_norm = pd.melt(df_Blunt_Stagg_samples_norm, id_vars=['name', 'gRNA_seq', '4th_nt'], value_vars=list_of_events)
+            ##########################################################################################
+            # plot STACKED BARPLOT
+            ##########################################################################################
+            color_dic=make_color_dic_CutType(list_of_events)
+            hatches_dic = make_hatches_dic_CutType(list_of_events)
 
-#             # NOT-NORMALISED
-#             title = 'Ends participating on the repair'
-#             xlabel = 'Average of %Reads from individual samples'
-#             text_bellow_chart = f'Only DELs around the cut are plotted.\
-#                                 \n{no_of_gRNA_samples}'
-#             name_to_save = f'{file_number}_{counter}_DEL_end_summary_NOTnorm_horizontal_barchart'
-#             # TODO solve bars_order, color_dic, hatches_dic
-#             plot = plot_general_stacked_horizontal_barchart(df=df_end_samples_NOTnorm, x='variable'\
-#                 , y='name', values='value', project_output_dir=project_output_subdir\
-#                 , data_source=data_source, title=title, name_to_save=name_to_save\
-#                 , output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False\
-#                 , palette=color_dic, x_as_perc=True\
-#                 , xaxis_formater=100, decimals=0, xlim=(0,100)\
-#                 , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default' \
-#                 , bars_order=['5\' NOT blunt', '5\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '3\' possible blunt'], show_plots=show_plots)
-#             stat_info = df_end_samples_NOTnorm.groupby('variable').value.describe()
-#             save_stat(stat_info, name_to_save, project_output_subdir)
-#             counter+=1
-#             #########################################################################################
-#             # plot VIOLINPLOT
-#             ##########################################################################################
-#             # NORMALISED
-#             # Set charts properties for violinplot
-#             title = 'Normalised ends participating on the repair'
-#             ylabel = 'Normalised percentage of ends \n around cut events'
-#             text_bellow_chart = f'Only DELs around the cut are plotted.\
-#                                 \nNormalised to: SUM of all ends in individual sample = 100%\
-#                                 \n{no_of_gRNA_samples}'
-#             name_to_save = f'{file_number}_{counter}_DEL_end_summary_norm_violinplot'
-#             color_dic = get_color_dic_35_violin()
-#             # TODO split it to True/False for can be blunt cut with MH
-#             plot = plot_sns_violin_and_print(data=df_end_samples_norm, x='variable', y='value'\
-#                 , number_of_columns=3\
-#                 , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
-#                 , show_hue_medians=False\
-#                 , hue=None, hue_only_for_data_points=False \
-#                 , hatches=False\
-#                 , clip_right=True\
-#                 , title=title, xtickt_rotation=-55, ylabel=ylabel\
-#                 , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', '3\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']\
-#                 , plot_legend=False\
-#                 , integrated_properties_dic=False, color_dic=color_dic\
-#                 , text_bellow_chart=text_bellow_chart\
-#                 , y_legend_coordinate=-0.45, yaxis_formater=1\
-#                 , x_max=None\
-#                 , change_edge_color=False\
-#                 , name_to_save=name_to_save\
-#                 , project_output_dir=project_output_subdir\
-#                 , data_source=data_source, output_format=output_format\
-#                 , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
-#             stat_info = df_end_samples_norm.groupby('variable').value.describe()
-#             save_stat(stat_info, name_to_save, project_output_subdir)
+            title = 'Normalised Staggered/Blunt representation\
+                    \nin samples divided by 4th nucleotide upstream from PAM'
+            xlabel = '4th nucleotide upstream from PAM'
+            ylabel = 'Normalised percentage of\nDELs around cut events'
+            text_bellow_chart = f'Only DELs around the cut are plotted.\
+                                \nNormalised to SUM of all DEL categories around the cut in individual sample = 100%,\
+                                \n       then samples divided in 4th nt groups and mean was calculated for each DEL categry and plotted.\
+                                \n{no_of_gRNA_samples}'
+            name_to_save = f'03_08_DEL_Stagg_blunt_summary_barchart_4th_nt'
+            plot = plot_general_stacked_vertical_barchart(df=df_Blunt_Stagg_samples_norm, x='4th_nt'\
+                , y='variable', values='value', order_y=list_of_events\
+                , project_output_dir=project_output_subdir\
+                , sns_palette=False, palette=color_dic\
+                , hatches_dic=hatches_dic\
+                , title=title, xlabel=xlabel, ylabel=ylabel\
+                , text_bellow_chart=text_bellow_chart, y_legend_coordinate=-0.1\
+                , fill_empty_x = False, xlim=None\
+                , y_as_perc=True, ylim=(0,1)\
+                , name_to_save=name_to_save, data_source=data_source, output_format=output_format, show_plots=show_plots)
+            stat_info = df_Blunt_Stagg_samples_norm.groupby('4th_nt').value.describe()
+            save_stat(stat_info, name_to_save, project_output_subdir)
+            ##########################################################################################
+            # plot VIOLINPLOT
+            ##########################################################################################
+            title='Normalised Staggered/Blunt representation based on 4th nucleotide upstream from PAM'
+            ylabel='Normalised percentage of DELs \naround cuts events'
+            text_bellow_chart = f'Only DELs around the cut are plotted.\
+                                \nNormalised to: SUM of all DEL categories around the cut in individual sample = 100%.\
+                                \n{no_of_gRNA_samples}'
+            name_to_save = f'03_09_DEL_Stagg_blunt_summary_violinplot_4th_nt'
+            plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='variable', y='value'\
+                    , number_of_columns=len(list_of_events)*1.5\
+                    , show_datapoints=False, jitter=0.05, stripplot_offset=0, dodge=False\
+                    , show_hue_medians=True\
+                    , hue='4th_nt', hue_only_for_data_points=False \
+                    , hatches=False\
+                    , clip_right=False\
+                    , title=title, xtickt_rotation=-55, ylabel=ylabel\
+                    , order=list_of_events\
+                    , plot_legend=True \
+                    , integrated_properties_dic=True, text_bellow_chart=text_bellow_chart\
+                    , y_legend_coordinate=-0.75, yaxis_formater=1\
+                    , boxplot_distances_with=[0.8, 0.3]\
+                    , x_max=None\
+                    , name_to_save=name_to_save\
+                    , project_output_dir=project_output_subdir \
+                    , data_source=data_source, output_format=output_format\
+                    , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
+            stat_info = df_Blunt_Stagg_samples_norm.groupby('variable').value.describe()
+            save_stat(stat_info, name_to_save, project_output_subdir)
 
-#             # NOT- NORMALISED
-#             # Set charts properties for violinplot
-#             title = 'Ends participating on the repair'
-#             ylabel = 'Percentage from all events'
-#             text_bellow_chart = f'Only DELs around the cut are plotted.\
-#                                 \n{no_of_gRNA_samples}'
-#             name_to_save = f'{file_number}_{counter}_DEL_end_summary_NOTnorm_violinplot'
-#             # TODO split it to True/False for can be blunt cut with MH
-#             plot = plot_sns_violin_and_print(data=df_end_samples_NOTnorm, x='variable', y='value'\
-#                 , number_of_columns=3\
-#                 , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
-#                 , show_hue_medians=False\
-#                 , hue=None, hue_only_for_data_points=False \
-#                 , hatches=False\
-#                 , clip_right=True\
-#                 , title=title, xtickt_rotation=-55, ylabel=ylabel\
-#                 , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', '3\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']\
-#                 , plot_legend=False\
-#                 , integrated_properties_dic=False, color_dic=color_dic\
-#                 , text_bellow_chart=text_bellow_chart\
-#                 , y_legend_coordinate=-0.45, yaxis_formater=100\
-#                 , x_max=None\
-#                 , change_edge_color=False\
-#                 , name_to_save=name_to_save\
-#                 , project_output_dir=project_output_subdir\
-#                 , data_source=data_source, output_format=output_format\
-#                 , dpi=200, y_min=0, show_plots=show_plots)
-#             stat_info = df_end_samples_NOTnorm.groupby('variable').value.describe()
-#             save_stat(stat_info, name_to_save, project_output_subdir)
-#         ##########################################################################################
-#         if plot_participating_end_dinochart is True:
-#             # make DataFrame for ramining DEL_orientations
-#             df_end = df.copy()
-#             # drop data without gap
-#             df_end = df_end[df_end['n_deleted_around_cut'] != 0]
-#             # filter out deletions which are not around the cut
-#             df_end = df_end[df_end['Gap_around_cut'] == True]
-#             # print(df_end)
-#             # if df_end has zero rows, skip the next plotting
-#             if df_end.empty:
-#                 write_into_report('There is no DEL for Dino chart plotting, skipping plotting.', destination_folder=project_output_subdir)  
-#                 continue
-#             # make DataFrame where samples where DEL_orientation cannot_be_determined is splitted between proximal and distal
-#             df_end_cannot_be_determined = df_end[df_end['DEL_orientation']=='C'].copy()
-#             df_end_cannot_be_determined['%Reads'] = df_end_cannot_be_determined['%Reads']/2
-#             df_end_cannot_be_determined['#Reads'] = df_end_cannot_be_determined['#Reads']/2
-#             df_end_cannot_be_determined_distal = df_end_cannot_be_determined.copy()
-#             df_end_cannot_be_determined_distal['DEL_orientation'] = 'sU'
-#             df_end_cannot_be_determined_proximal = df_end_cannot_be_determined.copy()
-#             df_end_cannot_be_determined_proximal['DEL_orientation'] = 'sD'
-#             df_end_cannot_be_determined = pd.concat([df_end_cannot_be_determined_proximal,\
-#                                                             df_end_cannot_be_determined_distal],\
-#                                                             ignore_index=True).copy()
+            name_to_save = f'03_10_DEL_Stagg_blunt_summary_violinplot_4th_nt'
+            color_dic = make_color_dic_CutType(list_of_events)
+            hatches_dic = make_hatches_dic_CutType(list_of_events)
+            plot = plot_sns_violin_and_print(data=df_Blunt_Stagg_samples_norm, x='4th_nt', y='value'\
+                    , number_of_columns=16\
+                    , show_datapoints=False, jitter=0.05, stripplot_offset=0, dodge=False\
+                    , show_hue_medians=False\
+                    , hue='variable', hue_order=list_of_events, hue_only_for_data_points=False \
+                    , hatches=hatches_dic\
+                    , clip_right=False\
+                    , title=title, xtickt_rotation=0, ylabel=ylabel\
+                    , order=None\
+                    , plot_legend=True\
+                    , integrated_properties_dic=False, color_dic=color_dic, text_bellow_chart=text_bellow_chart\
+                    , y_legend_coordinate=-0.08, yaxis_formater=1\
+                    , boxplot_distances_with=[0.8, 0.3]\
+                    , x_max=None\
+                    , name_to_save=name_to_save\
+                    , project_output_dir=project_output_subdir \
+                    , data_source=data_source, output_format=output_format\
+                    , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
+            stat_info = df_Blunt_Stagg_samples_norm.groupby('4th_nt').value.describe()
+            save_stat(stat_info, name_to_save, project_output_subdir)
+    ##########################################################################################
+    ##########################################################################################
+    ##########################################################################################
+    if plot_participating_end is True:
+        df_end = df.copy()
+        # drop data without gap
+        df_end = df_end[df_end['n_deleted_around_cut'] != 0]
+        # filter out deletions which are not around the cut
+        df_end = df_end[df_end['Gap_around_cut'] == True]
+        # Keep only DELs
+        df_end = df_end[df_end['Event_around_cut'] == 'DEL']
+        # filter out deletions which does not have MH around the cut site
+        df_end = df_end[df_end['End_participating_on_MH'] != 'X']
+        # Change values in End_3_5 to be 3', 5' and cannot_be_determined needed for plotting with color_dic
+        df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'eider 3\' or 5\''})
+        pivot = pd.pivot_table(df_end, index=['name', 'gRNA_seq'], columns=['End_3_5', 'blunt_cut_with_MH_possible'], values='%Reads', aggfunc='sum', fill_value=0)
+        # If pitvot is Empty skip the next plot
+        if pivot.empty:
+            write_into_report('There is no DEL for plotting, skipping Normalised nad Not-normalised ends participating on the repair.', destination_folder=project_output_dir)
+        else:
+            df_end_samples = pivot.reset_index()
+            # Flattern the MultiIndex columns
+            df_end_samples.columns = ['_'.join(map(str, col)).strip() for col in df_end_samples.columns.values]
+            # Rename columns
+            df_end_samples.rename(columns={'name_': 'name', 'gRNA_seq_':'gRNA_seq', '3\'_True':'3\' possible blunt', '5\'_True':'5\' possible blunt', 'eider 3\' or 5\'_True':'eider 3\' or 5\' possible blunt', '3\'_False':'3\' NOT blunt', '5\'_False':'5\' NOT blunt', 'eider 3\' or 5\'_False':'eider 3\' or 5\' NOT blunt'}, inplace=True)
 
-#             # filter out deletions which are on both sites of cut, so proximal and distal will remain
-#             df_end = df_end[df_end['DEL_orientation'] != 'B']
-#             df_end = df_end[df_end['DEL_orientation'] != 'C']
-#             df_end = pd.concat([df_end, df_end_cannot_be_determined], ignore_index=True)
+            df_end_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_end_samples, ['3\' possible blunt', '5\' possible blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '5\' NOT blunt', 'eider 3\' or 5\' NOT blunt'], cut_maximum, cut_minimum)
+            df_end_samples = pd.melt(df_end_samples, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
+            pivot_normalised = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['variable'], values=df_end_samples['value'], aggfunc='sum', normalize='index')
+            pivot_NOTnorm = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['variable'], values=df_end_samples['value'], aggfunc='sum')
+            df_end_samples_norm = pivot_normalised.reset_index()
+            df_end_samples_norm = pd.melt(df_end_samples_norm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
+            df_end_samples_NOTnorm = pivot_NOTnorm.reset_index()
+            df_end_samples_NOTnorm = pd.melt(df_end_samples_NOTnorm, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
+            ##########################################################################################
+            # Horizontal bar charts for participating ends
+            ##########################################################################################
+            # NORMALISED
+            # If more then 40 samples are present, divide the plot into as many plots as needed to have maximum 40 samples in one plot, if not, make one plot with all samples
+            # count df_end_samples_norm['sample'].unique() and if more than 40, make a list of lists with maximum 40 unique samples in each list
+            unique_samples = df_end_samples_norm['name'].unique()
+            if len(unique_samples) > 40:
+                sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
+            else:
+                sample_lists = [unique_samples]
+            i=1
+            for sample_list in sample_lists:
+                df_end_samples_norm_part = df_end_samples_norm[df_end_samples_norm['name'].isin(sample_list)]
+                title = 'Normalised ends participating on the repair'
+                xlabel = 'Average of %Reads from individual samples'
+                text_bellow_chart = f'Only DELs with complementarity are plotted.\
+                                    \nNormalised to: SUM of all ends in individual sample = 100%.\
+                                    \n{no_of_gRNA_samples}'
+                name_to_save = f'04_01_{i}_DEL_end_summary_norm_horizontal_barchart'
+                color_dic = get_color_dic_35_violin()
+                plot = plot_general_stacked_horizontal_barchart(df=df_end_samples_norm_part, x='variable'\
+                    , y='name', values='value', project_output_dir=project_output_subdir\
+                    , data_source=data_source, title=title, name_to_save=name_to_save\
+                    , output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False\
+                    , palette=color_dic, x_as_perc=True\
+                    , xaxis_formater=1, decimals=0, xlim=(0,1)\
+                    , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default' \
+                    , bars_order=['5\' NOT blunt', '5\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '3\' possible blunt'], show_plots=show_plots)
+                stat_info = df_end_samples_norm_part.groupby('variable').value.describe()
+                save_stat(stat_info, name_to_save, project_output_subdir)
 
-#             df_end['DEL_orientation_participating_end'] = df_end.apply(lambda row: row['DEL_orientation'] + '_' + str(row['End_3_5']) + '_' + str(row['blunt_cut_with_MH_possible']), axis=1)
-#             df_end['n_deleted_around_cut'] = df_end.apply(lambda row: -int(row['n_deleted_around_cut']) if (row['DEL_orientation']=='U' or row['DEL_orientation']=='sU') else row['n_deleted_around_cut'], axis=1)
-#             df_end['n_deleted_around_cut'] = df_end['n_deleted_around_cut'].astype(int)
+                # NOT-NORMALISED
+                df_end_samples_NOTnorm_part = df_end_samples_NOTnorm[df_end_samples_NOTnorm['name'].isin(sample_list)]
+                title = 'Ends participating on the repair'
+                xlabel = 'Average of %Reads from individual samples'
+                text_bellow_chart = f'Only DELs with complementarity are plotted.\
+                                    \n{no_of_gRNA_samples}'
+                name_to_save = f'04_02_{i}_DEL_end_summary_NOTnorm_horizontal_barchart'
+                plot = plot_general_stacked_horizontal_barchart(df=df_end_samples_NOTnorm_part, x='variable'\
+                    , y='name', values='value', project_output_dir=project_output_subdir\
+                    , data_source=data_source, title=title, name_to_save=name_to_save\
+                    , output_format=output_format, dpi=200, xlabel=xlabel, sns_palette=False\
+                    , palette=color_dic, x_as_perc=True\
+                    , xaxis_formater=100, decimals=0, xlim=(0,100)\
+                    , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default' \
+                    , bars_order=['5\' NOT blunt', '5\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '3\' possible blunt'], show_plots=show_plots)
+                stat_info = df_end_samples_NOTnorm_part.groupby('variable').value.describe()
+                save_stat(stat_info, name_to_save, project_output_subdir)
+                i+=1
+            #########################################################################################
+            # plot VIOLINPLOT
+            ##########################################################################################
+            # NORMALISED
+            # Set charts properties for violinplot
+            title = 'Normalised ends participating on the repair'
+            ylabel = 'Normalised percentage of ends \n around cut events'
+            text_bellow_chart = f'Only DELs with complementarity are plotted.\
+                                \nNormalised to: SUM of all ends in individual sample = 100%\
+                                \n{no_of_gRNA_samples}'
+            name_to_save = f'04_03_DEL_end_summary_norm_violinplot'
+            color_dic = get_color_dic_35_violin()
+            plot = plot_sns_violin_and_print(data=df_end_samples_norm, x='variable', y='value'\
+                , number_of_columns=3\
+                , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
+                , show_hue_medians=False\
+                , hue=None, hue_only_for_data_points=False \
+                , hatches=False\
+                , clip_right=True\
+                , title=title, xtickt_rotation=-55, ylabel=ylabel\
+                , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', '3\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']\
+                , plot_legend=False\
+                , integrated_properties_dic=False, color_dic=color_dic\
+                , text_bellow_chart=text_bellow_chart\
+                , y_legend_coordinate=-0.45, yaxis_formater=1\
+                , x_max=None\
+                , change_edge_color=False\
+                , name_to_save=name_to_save\
+                , project_output_dir=project_output_subdir\
+                , data_source=data_source, output_format=output_format\
+                , dpi=200, y_min=0, y_max=1.02, show_plots=show_plots)
+            stat_info = df_end_samples_norm.groupby('variable').value.describe()
+            save_stat(stat_info, name_to_save, project_output_subdir)
 
-#             subcounter=1
-#             for sample in df_end['sample'].unique():
-#                 print(sample)
-#                 # filter individual gRNA
-#                 df_end_gRNA = df_end[df_end['sample'].str.contains(sample)]
-#                 seq_around = df_end_gRNA['Original_Sequence_around_cut'].unique()
-#                 print(seq_around)
-#                 name_to_save= f'{file_number}_{counter}_end_participating_DEL_orientation_dino_30nt_NotNormalised_{subcounter}_' + sample
-#                 title = 'End participating on the repair + DEL orientation analysis ' + str(sample) + '\n' + str(seq_around)
-#                 xlabel='Number of deleted nucleotides (minus = upstream from the probable cut, plus = downstream from the probable cut)'
-#                 ylabel='Sum of %Reads \n of ends participating in the repair'
-#                 text_bellow_chart = 'Data from deletions around cut only.\n\
-#                     Without deletions with DEL_orientation = bidirectional \n\
-#                     cannot be determined was split between upstream and downstream - gray bars.\n\
-#                     Not normalised data.'
-#                 # TODO normalise individual samples -> sum of all U/D DEL around the cut would be = 100%
-#                 pivot = pd.crosstab(index=[df_end_gRNA['DEL_orientation_participating_end']\
-#                                             , df_end_gRNA['n_deleted_around_cut']]\
-#                         , columns=df_end_gRNA['name'], values=df_end_gRNA['%Reads']\
-#                         , aggfunc='sum', normalize=False)
-#                 df_pivot = pivot.reset_index()
-#                 # add column with gRNA name, where will be average from all samples
-#                 # TODO what is the reason for the row below?
-#                 df_pivot[sample] = df_pivot.iloc[:,2:].to_numpy().mean(axis=1)
-#                 df_pivot = df_pivot.sort_values(by=['DEL_orientation_participating_end'], ascending=[False])
-#                 order = list(df_pivot['DEL_orientation_participating_end'].unique())
-#                 color_dic = make_color_dic_Dino_end(df_pivot['DEL_orientation_participating_end'].unique())
-#                 plot = plot_general_stacked_vertical_barchart(df=df_pivot, x='n_deleted_around_cut'\
-#                         , y='DEL_orientation_participating_end', project_output_dir=project_output_subdir\
-#                         , values=sample, sns_palette=False, palette=color_dic\
-#                         , data_source=data_source, plot_vertical_line_middle=True\
-#                         , title=title, name_to_save=name_to_save, output_format=output_format\
-#                         , dpi=200, xlabel=xlabel, ylabel=ylabel, y_as_perc=True, yaxis_formater=100\
-#                         , xlim=(-30,30), ylim=None, text_bellow_chart=text_bellow_chart\
-#                         , fill_empty_x=True, order_y=order\
-#                         , y_legend_coordinate=-0.2, show_plots=show_plots)
-#                 subcounter+=1
-# # Write into the report how long the script run took
-# end_time = time.time()
-# total_time = end_time - start_time
-# write_into_report(f'\n\nScript run time: {total_time/60:.2f} minutes.', destination_folder=project_output_subdir)
+            # NOT- NORMALISED
+            # Set charts properties for violinplot
+            title = 'Ends participating on the repair'
+            ylabel = 'Percentage from all events'
+            text_bellow_chart = f'Only DELs with complementarity are plotted.\
+                                \n{no_of_gRNA_samples}'
+            name_to_save = f'04_04_DEL_end_summary_NOTnorm_violinplot'
+            plot = plot_sns_violin_and_print(data=df_end_samples_NOTnorm, x='variable', y='value'\
+                , number_of_columns=3\
+                , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
+                , show_hue_medians=False\
+                , hue=None, hue_only_for_data_points=False \
+                , hatches=False\
+                , clip_right=True\
+                , title=title, xtickt_rotation=-55, ylabel=ylabel\
+                , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', '3\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']\
+                , plot_legend=False\
+                , integrated_properties_dic=False, color_dic=color_dic\
+                , text_bellow_chart=text_bellow_chart\
+                , y_legend_coordinate=-0.45, yaxis_formater=100\
+                , x_max=None\
+                , change_edge_color=False\
+                , name_to_save=name_to_save\
+                , project_output_dir=project_output_subdir\
+                , data_source=data_source, output_format=output_format\
+                , dpi=200, y_min=0, show_plots=show_plots)
+            stat_info = df_end_samples_NOTnorm.groupby('variable').value.describe()
+            save_stat(stat_info, name_to_save, project_output_subdir)
+        ##########################################################################################
+        if plot_participating_end_dinochart is True:
+            # make DataFrame for ramining DEL_orientations
+            df_end = df.copy()
+            # drop data without gap
+            df_end = df_end[df_end['n_deleted_around_cut'] != 0]
+            # filter out deletions which are not around the cut
+            df_end = df_end[df_end['Gap_around_cut'] == True]
+            # Keep only DELs
+            df_end = df_end[df_end['Event_around_cut'] == 'DEL']
+            # if df_end has zero rows, skip the next plotting
+            if df_end.empty:
+                write_into_report('There is no DEL for Dino chart plotting, skipping plotting.', destination_folder=project_output_subdir)  
+                continue
+            # make DataFrame where samples where DEL_orientation cannot_be_determined is splitted between downstream and upstream
+            df_end_cannot_be_determined = df_end[df_end['DEL_orientation']=='C'].copy()
+            df_end_cannot_be_determined['%Reads'] = df_end_cannot_be_determined['%Reads']/2
+            df_end_cannot_be_determined['#Reads'] = df_end_cannot_be_determined['#Reads']/2
+            df_end_cannot_be_determined_upstream = df_end_cannot_be_determined.copy()
+            df_end_cannot_be_determined_upstream['DEL_orientation'] = 'sU'
+            df_end_cannot_be_determined_downstream = df_end_cannot_be_determined.copy()
+            df_end_cannot_be_determined_downstream['DEL_orientation'] = 'sD'
+            df_end_cannot_be_determined = pd.concat([df_end_cannot_be_determined_downstream,\
+                                                            df_end_cannot_be_determined_upstream],\
+                                                            ignore_index=True).copy()
 
-# %%
+            # filter out deletions which are on both sites of cut, so downstream and upstream will remain
+            df_end = df_end[df_end['DEL_orientation'] != 'B']
+            df_end = df_end[df_end['DEL_orientation'] != 'C']
+            df_end = df_end[df_end['DEL_orientation'] != 'X']
+            df_end = pd.concat([df_end, df_end_cannot_be_determined], ignore_index=True)
+
+            df_end['DEL_orientation_participating_end'] = df_end.apply(lambda row: row['DEL_orientation'] + '_' + str(row['End_3_5']) + '_' + str(row['blunt_cut_with_MH_possible']), axis=1)
+            df_end['n_deleted_around_cut'] = df_end.apply(lambda row: -int(row['n_deleted_around_cut']) if (row['DEL_orientation']=='U' or row['DEL_orientation']=='sU') else row['n_deleted_around_cut'], axis=1)
+            df_end['n_deleted_around_cut'] = df_end['n_deleted_around_cut'].astype(int)
+
+            df_end['DEL_orientation_participating_end'].unique()
+            # rename DEL_orientation_participating_end values to be more descriptive for the plot
+            df_end['DEL_orientation_participating_end'] = df_end['DEL_orientation_participating_end'].replace({
+                'U_5_True': 'upstream 5\' possible blunt',
+                'U_5_False': 'upstream 5\' NOT blunt',
+                'U_0_True': 'upstream eider 5\' or 3\' possible blunt',
+                'U_0_False': 'upstream eider 5\' or 3\' NOT blunt',
+                'D_3_True': 'downstream 3\' possible blunt',
+                'D_3_False': 'downstream 3\' NOT blunt',
+                'D_0_True': 'downstream eider 5\' or 3\' possible blunt',
+                'D_0_False': 'downstream eider 5\' or 3\' NOT blunt',
+                'X_0_unknown': 'Unknown, No MH',
+                'sD_0_True': 'downstream cannot be determined blunt cut with complementarity',
+                'sU_0_True': 'upstream cannot be determined blunt cut with complementarity'
+            })
+            subcounter=1
+            for sample in df_end['sample'].unique():
+                print(sample)
+                # filter individual gRNA
+                df_end_gRNA = df_end[df_end['sample'].str.contains(sample)]
+                seq_around = df_end_gRNA['Original_Sequence_around_cut'].unique()
+                name_to_save= f'04_05_{subcounter}_end_participating_DEL_orientation_dino_30nt_NotNormalised_' + sample
+                title = 'End participating on the repair + DEL orientation analysis ' + str(sample) + '\n' + str(seq_around)
+                xlabel='Number of deleted nucleotides (minus = upstream from the probable cut, plus = downstream from the probable cut)'
+                ylabel='Sum of %Reads'
+                text_bellow_chart = 'Data from deletions around cut only.\nWithout bidirectional deletions.\nCannot be determined was split between upstream and downstream.\nNot normalised data.'
+                pivot = pd.crosstab(index=[df_end_gRNA['DEL_orientation_participating_end']\
+                                            , df_end_gRNA['n_deleted_around_cut']]\
+                        , columns=df_end_gRNA['name'], values=df_end_gRNA['%Reads']\
+                        , aggfunc='sum', normalize=False)
+                df_pivot = pivot.reset_index()
+                # add column with gRNA name, where will be average from all samples
+                # TODO what is the reason for the row below?
+                df_pivot[sample] = df_pivot.iloc[:,2:].to_numpy().mean(axis=1)
+                df_pivot = df_pivot.sort_values(by=['DEL_orientation_participating_end'], ascending=[False])
+                order = list(df_pivot['DEL_orientation_participating_end'].unique())
+                color_dic = make_color_dic_Dino_end(df_pivot['DEL_orientation_participating_end'].unique())
+                hatches_dic = make_hatches_dic_Dino_end(df_pivot['DEL_orientation_participating_end'].unique())
+                plot = plot_general_stacked_vertical_barchart(df=df_pivot, x='n_deleted_around_cut'\
+                        , y='DEL_orientation_participating_end', project_output_dir=project_output_subdir\
+                        , values=sample, sns_palette=False, palette=color_dic\
+                        , hatches_dic=hatches_dic\
+                        , data_source=data_source, plot_vertical_line_middle=True\
+                        , title=title, name_to_save=name_to_save, output_format=output_format\
+                        , dpi=200, xlabel=xlabel, ylabel=ylabel, y_as_perc=True, yaxis_formater=100\
+                        , xlim=(-30,30), ylim=None, text_bellow_chart=text_bellow_chart\
+                        , fill_empty_x=True, order_y=order\
+                        , y_legend_coordinate=-0.2, show_plots=show_plots)
+                subcounter+=1
+    else:
+        print('Plots for ends participating on the repair are not going to be plotted.')
+# Write into the report how long the script run took
+end_time = time.time()
+total_time = end_time - start_time
+write_into_report(f'\n\nScript run time: {total_time/60:.2f} minutes.', destination_folder=project_output_subdir)

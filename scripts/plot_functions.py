@@ -591,8 +591,15 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                 handles, labels = ax.get_legend_handles_labels()
                 plt.legend(handles[0:len(data[hue].unique())], labels[0:len(data[hue].unique())], loc='center left', bbox_to_anchor=(1, 0.5))
             else:
-                plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-                 
+                # if there are duplicated labels in legend, it is probably because of the hue, so plot only the first from the duplicated labels
+                handles, labels = ax.get_legend_handles_labels()
+                unique_labels = []
+                unique_handles = []
+                for handle, label in zip(handles, labels):
+                    if label not in unique_labels:
+                        unique_labels.append(label)
+                        unique_handles.append(handle)
+                plt.legend(unique_handles, unique_labels, loc='center left', bbox_to_anchor=(1, 0.5))
     # Plot labels, set lims, etc.
     if title is not None:
         plt.title(title + '\n(plotted ' + date + ')\ndata source: ' + data_source)

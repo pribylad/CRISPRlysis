@@ -5,8 +5,6 @@
 """
 This code is for making dictionaries for plotting colour palettes and hatches
 """
-
-
 def make_color_dic_CutType(list_of_events):
     ''' Makes color dictionary for plotting cut types.
     Parameters:
@@ -32,7 +30,6 @@ def make_color_dic_CutType(list_of_events):
             # Generate random HEX color
             color_dic[l] = f'#{randint(0, 0xFFFFFF):06x}'
             print(f'Note: in make_color_dic_CutType function. Parameter: {l} is not in the colour decision list. It has been added with random color {color_dic[l]}.')
-
     return color_dic
 
 def make_hatches_dic_CutType(list_of_events):
@@ -90,64 +87,51 @@ def make_color_dic_blunt_stagg_orientation(list_of_events):
 def make_color_dic_Dino(list_of_events):
     ''' Makes color dictionary for plotting cut types in Dino-charts.
     Parameters:
-    list_of_events (list): 
-        example 1: ['U_-1_1', 'U_0_0', 'D_0_1', 'D_0_0', 'U_-1_0', 'U_-2_0', 'U_-2_1', 'D_X_0']
-        example 2: ['-1_1', 'O_1', '-2_0', '-2_1', '0_0', 'C_0', 'C_1', 'X_0', '0_1', 'X_1', 'O_0', '-1_0']
+    list_of_events (list)
 
     Returns:
     color_dic
     '''
-    # Initialize an empty dictionary to store the results
-    color_dic = {}
-    # Iterate over each event in the list
+    from random import randint
+    color_dic = {'upstream -2nt staggered cut': '#64b96a',
+                'upstream -2nt staggered cut with complementarity': '#64b96a',
+                'upstream -1nt staggered cut': '#ff6a2a',
+                'upstream -1nt staggered cut with complementarity': '#ff6a2a',
+                'upstream blunt cut': '#ffe46a',
+                'upstream blunt cut with complementarity': '#ffe46a',
+                'downstream -2nt staggered cut': '#64b96a',
+                'downstream -2nt staggered cut with complementarity': '#64b96a',
+                'downstream -1nt staggered cut': '#ff6a2a',
+                'downstream -1nt staggered cut with complementarity': '#ff6a2a',
+                'downstream blunt cut': '#ffe46a',
+                'downstream blunt cut with complementarity': '#ffe46a',
+                'upstream cannot be determined blunt cut with complementarity': '#CCCCCC',
+                'downstream cannot be determined blunt cut with complementarity': '#CCCCCC'}
     for l in list_of_events:
-        split = l.split('_')
-        if len(split) == 2:
-            if split[0] == str(0):
-                color_dic[l] = '#ffe46a'
-            elif split[0] == str(-1):
-                color_dic[l] = '#ff6a2a'
-            elif split[0].startswith('-'):
-                color_dic[l] = '#64b96a'
-        elif len(split) == 3:
-            if split[0].startswith('s'):
-                color_dic[l] = '#CCCCCC'
-            elif split[1].startswith('X'):
-                color_dic[l] = '#CCCCCC'
-            elif split[1] == str(0):
-                color_dic[l] = '#ffe46a'
-            elif split[1] == str(-1):
-                color_dic[l] = '#ff6a2a'
-            elif split[1].startswith('-'):
-                color_dic[l] = '#64b96a'
-        else:
-            color_dic[l] = 'red'  # Default case if it doesn't match any criteria
-            print(f'Error in make_color_dic_Dnino function. Parameter: {l} is not in the colour decision list.')
+        if l not in color_dic:
+            # Generate random HEX color
+            color_dic[l] = f'#{randint(0, 0xFFFFFF):06x}'
+            print(f'Note: in make_color_dic_Dino function. Parameter: {l} is not in the colour decision list. It has been added with random color {color_dic[l]}.')
     return color_dic
 
 def make_hatches_dic_Dino(list_of_events):
     """
     Makes hatches dictionary for plotting cut types in Dino-charts.
     Parameters:
-    list_of_events (list): example: ['U_-1_1', 'U_0_0', 'D_0_1', 'D_0_0', 'U_-1_0', 'U_-2_0', 'U_-2_1']
+    list_of_events (list)
     
     Returns:
     "hatches_dic
     """
     hatches_dic = {}
-    # Iterate over each event in the list
     for l in list_of_events:
-        split = l.split('_')
-        if split[2] == str(0):
+        # if 'complementarity' and also 'upstream' in l:
+        if 'complementarity' in l and 'upstream' in l:
+            hatches_dic[l] = '\\\\'
+        elif 'complementarity' in l and 'downstream' in l:
+            hatches_dic[l] = '//'
+        else:
             hatches_dic[l] = ''
-        elif split[2] == str(1):
-            if split[0] == 'U':
-                hatches_dic[l] = '\\\\'
-            elif split[0] == 'D':
-                hatches_dic[l] = '//'
-            else:
-                hatches_dic[l] = '*'
-                print(f'Error in make_hatches_dic_Dino function. Parameter: {l} is not in the hatch decision list.')
     return hatches_dic
 
 def make_color_dic_Dino_end(list_of_events):
@@ -159,39 +143,43 @@ def make_color_dic_Dino_end(list_of_events):
     Returns:
     color_dic
     '''
-    # Initialize an empty dictionary to store the results
-    color_dic = {}
-    # Iterate over each event in the list
+    from random import randint
+    color_dic = {'upstream 5\' possible blunt': '#d3838c',
+                'upstream 5\' NOT blunt': '#d22d40',
+                'upstream eider 5\' or 3\' possible blunt': "#ffffff",
+                'upstream eider 5\' or 3\' NOT blunt': "#CCCCCC",
+                'downstream 3\' possible blunt': '#668699',
+                'downstream 3\' NOT blunt': '#003657',
+                'downstream eider 5\' or 3\' possible blunt': "#ffffff",
+                'downstream eider 5\' or 3\' NOT blunt': "#CCCCCC",
+                'upstream cannot be determined blunt cut with complementarity': "#CCCCCC",
+                'downstream cannot be determined blunt cut with complementarity': "#CCCCCC"
+                }
     for l in list_of_events:
-        split = l.split('_')
-        if split[1] == str(5):
-            if split[2] == 'False':
-                color_dic[l] = '#d22d40'
-            elif split[2] == 'True':
-                color_dic[l] = '#d3838c'
-            else:
-                color_dic[l] = 'red'  # Default case if it doesn't match any criteria
-                print(f'Error in make_color_dic_Dnino_end function. Parameter: {l} is not in the colour decision list.')
-        elif split[1] == str(3):
-            if split[2] == 'False':
-                color_dic[l] = '#003657'
-            elif split[2] == 'True':
-                color_dic[l] = "#668699"
-            else:
-                color_dic[l] = 'red'  # Default case if it doesn't match any criteria
-                print(f'Error in make_color_dic_Dnino_end function. Parameter: {l} is not in the colour decision list.')
-        elif split[1] == str(0):
-            if split[2] == 'False':
-                color_dic[l] = "#ffe46a"
-            elif split[2] == 'True':
-                color_dic[l] = "#CCCCCC"
-            else:
-                color_dic[l] = 'red'  # Default case if it doesn't match any criteria
-                print(f'Error in make_color_dic_Dnino_end function. Parameter: {l} is not in the colour decision list.')
-        else:
-            color_dic[l] = 'red'  # Default case if it doesn't match any criteria
-            print(f'Error in make_color_dic_Dnino function. Parameter: {l} is not in the colour decision list.')
+        if l not in color_dic:
+            # Generate random HEX color
+            color_dic[l] = f'#{randint(0, 0xFFFFFF):06x}'
+            print(f'Note: in make_color_dic_Dino function. Parameter: {l} is not in the colour decision list. It has been added with random color {color_dic[l]}.')
     return color_dic
+
+def make_hatches_dic_Dino_end(list_of_events):
+    """
+    Makes hatches dictionary for plotting cut types in Dino-charts.
+    Parameters:
+    list_of_events (list): 
+        example: ['U_5_True', 'U_5_False', 'U_3_True', 'U_3_False', 'D_5_True', 'D_5_False', 'D_3_True', 'D_3_False']
+
+    Returns:
+    hatches_dic
+    """
+    hatches_dic = {}
+    for l in list_of_events:
+        # if 'complementarity' and also 'upstream' in l:
+        if 'cannot' in l:
+            hatches_dic[l] = 'xx'
+        else:
+            hatches_dic[l] = ''
+    return hatches_dic
 
 def get_color_dic_35_violin():
     """
