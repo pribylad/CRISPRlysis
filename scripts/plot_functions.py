@@ -642,7 +642,7 @@ def check_if_all_events_are_present_after_pivot_reset_index(df, list_of_events, 
     """
     # TODO solve list of events fo bluntstag
     # Make list based on the cut_maximum and cut_optimum
-    default_events = ['C_False', 'C_True', 'X_gap_spans_analysed_window']
+    default_events = ['C_False', 'C_True', 'X_gap spans analysed window']
     if list_of_events == 'BluntStag':
         list_of_events = []
         for i in range(cut_maximum, cut_minimum+1):
