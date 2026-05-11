@@ -146,12 +146,12 @@ def make_color_dic_Dino_end(list_of_events):
     from random import randint
     color_dic = {'upstream 5\' possible blunt': '#d3838c',
                 'upstream 5\' NOT blunt': '#d22d40',
-                'upstream eider 5\' or 3\' possible blunt': "#ffffff",
-                'upstream eider 5\' or 3\' NOT blunt': "#CCCCCC",
+                'upstream eider 5\' or 3\' possible blunt': "#999999",
+                'upstream no MH from predicted cut sites': "#e7e6e6",
                 'downstream 3\' possible blunt': '#668699',
                 'downstream 3\' NOT blunt': '#003657',
-                'downstream eider 5\' or 3\' possible blunt': "#ffffff",
-                'downstream eider 5\' or 3\' NOT blunt': "#CCCCCC",
+                'downstream eider 5\' or 3\' possible blunt': "#999999",
+                'downstream no MH from predicted cut sites': "#e7e6e6",
                 'upstream cannot be determined blunt cut with complementarity': "#CCCCCC",
                 'downstream cannot be determined blunt cut with complementarity': "#CCCCCC"
                 }

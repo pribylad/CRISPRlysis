@@ -37,15 +37,15 @@
 #############################################
 #                 DICTIONARY                #
 #############################################
-{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/animals/Bae_et_al_2014/02_CRISPResso2/CRISPRessoBatch_on_batch_221208',
-   'project_output_dir':'../../CRISPRlysis_outputs/Bae_et_al_2014',
-   'add_columns':{'organism':'Homo sapiens',
-      'hours_post_inoculation':'72',
-      'deliver_of_nuclease':'xxx',
-      'cell_line':'Hela',
-      'cell_cycle':'dividing'      
+{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/palnts/Cucuy_et_al_2026_filtered_small_Exo/',
+   'project_output_dir':'../../CRISPRlysis_outputs/Cucuy_et_al_2026_Exo',
+   'add_columns':{'organism':'Solanum lycopersicum',
+      'hours_post_inoculation':'48',
+      'deliver_of_nuclease':'RNP',
+      'cell_cycle':'nondividing',
+      'cell_line':'M82'
       },
-   'data_source_original':'Bae et al., 2014',
+   'data_source_original':'Cucuy et al., 2026',
    'cut_position':50,
    'cut_maximum':-2,
    'cut_minimum':0,
@@ -53,12 +53,13 @@
    'minimum_Reads':5,
    'output_format':'png',
    'make_mastertable_00':False,
-   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Bae_et_al_2014/00_mastertable_260509.tsv',
+   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Cucuy_et_al_2026_Exo/00_mastertable_260511.tsv',
    'filter_out_values':{},
    'make_mastertable_01':False,
-   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Bae_et_al_2014/01_mastertable_260509.tsv',
+   'list_of_columns':['order', 'Cas_variant', 'gene', 'TergetNum', 'mutant', 'no_of_targets', 'overhang', 'replicate', 'ProExoInt'],
+   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Cucuy_et_al_2026_Exo/01_mastertable_260511.tsv',
    'make_subtables':True,
-   'subtables_param':[],
+   'subtables_param':['mutant', 'organism'],
    'show_plots':False,
    'plot_INDELs':True,
    'plot_INs':True,
@@ -70,5 +71,5 @@
    'plot_MH':True,
    'plot_MH_dinochart':True,
    'IN_greater_than':6,
-   'sort_alphabetically':False
+   'sort_alphabetically':True
    }

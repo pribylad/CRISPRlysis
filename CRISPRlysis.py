@@ -937,11 +937,12 @@ for key, value in tables_dic.items():
         if plot_DEL_dinochart is True:
             subcounter=1
             for sample in order_list:
-                # filter individual gRNA
-                df_Cut_gRNA = df_CutType[df_CutType['sample'].str.contains(sample)]
+                print(sample)
+                # filter individual gRNA for exact match with sample name
+                df_Cut_gRNA = df_CutType[df_CutType['sample'] == sample]
                 seq_around = df_Cut_gRNA['Original_Sequence_around_cut'].unique()
                 # print(seq_around)
-                name_to_save= f'03_07_{subcounter}_Stagg_blunt_DEL_orientation_dino_30nt_NotNormalised_' + sample
+                name_to_save= f'03_07_{subcounter:03d}_Stagg_blunt_DEL_orientation_dino_30nt_NotNormalised_' + sample
                 title = 'Stagg/blunt + DEL orientation analysis ' + str(sample) + '\n' + str(seq_around)
                 xlabel='Number of deleted nucleotides (minus = upstream from the probable cut, plus = downstream from the probable cut)'
                 ylabel='Sum of %Reads'
@@ -995,7 +996,6 @@ for key, value in tables_dic.items():
                 list_for_order = df_pivot['DEL_orientation_cut_type'].unique().tolist()
                 # sort list for order based on the order list above
                 list_for_order = sorted(list_for_order, key=lambda x: order.index(x) if x in order else len(order))
-
                 color_dic = make_color_dic_Dino(df_pivot['DEL_orientation_cut_type'].unique())
                 hatches_dic = make_hatches_dic_Dino(df_pivot['DEL_orientation_cut_type'].unique())
                 plot = plot_general_stacked_vertical_barchart(df=df_pivot, x='n_deleted_around_cut'\
@@ -1323,11 +1323,11 @@ for key, value in tables_dic.items():
                 'U_5_True': 'upstream 5\' possible blunt',
                 'U_5_False': 'upstream 5\' NOT blunt',
                 'U_0_True': 'upstream eider 5\' or 3\' possible blunt',
-                'U_0_False': 'upstream eider 5\' or 3\' NOT blunt',
+                'U_0_False': 'upstream no MH from predicted cut sites',
                 'D_3_True': 'downstream 3\' possible blunt',
                 'D_3_False': 'downstream 3\' NOT blunt',
                 'D_0_True': 'downstream eider 5\' or 3\' possible blunt',
-                'D_0_False': 'downstream eider 5\' or 3\' NOT blunt',
+                'D_0_False': 'downstream no MH from predicted cut sites',
                 'X_0_unknown': 'Unknown, No MH',
                 'sD_0_True': 'downstream cannot be determined blunt cut with complementarity',
                 'sU_0_True': 'upstream cannot be determined blunt cut with complementarity'
@@ -1336,9 +1336,9 @@ for key, value in tables_dic.items():
             for sample in df_end['sample'].unique():
                 print(sample)
                 # filter individual gRNA
-                df_end_gRNA = df_end[df_end['sample'].str.contains(sample)]
+                df_end_gRNA = df_end[df_end['name'] == sample]
                 seq_around = df_end_gRNA['Original_Sequence_around_cut'].unique()
-                name_to_save= f'04_05_{subcounter}_end_participating_DEL_orientation_dino_30nt_NotNormalised_' + sample
+                name_to_save= f'04_05_{subcounter:03d}_end_participating_DEL_orientation_dino_30nt_NotNormalised_' + sample
                 title = 'End participating on the repair + DEL orientation analysis ' + str(sample) + '\n' + str(seq_around)
                 xlabel='Number of deleted nucleotides (minus = upstream from the probable cut, plus = downstream from the probable cut)'
                 ylabel='Sum of %Reads'
