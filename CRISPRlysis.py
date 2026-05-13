@@ -1,3 +1,4 @@
+# %%
 # pylint: disable=too-many-lines
 # pylint: disable=line-too-long
 # pylint: disable=invalid-name
@@ -7,7 +8,6 @@ This code will runn all the analysis based on the parameters.txt file which must
 Output files will be stored in the 'project_output_dir' which is defined in the parameters.txt
 Example: 'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022'
 """
-# %%
 
 import ast
 import csv
@@ -82,6 +82,7 @@ else:
     list_of_columns = None
 path_to_existing_mastertable_01 = parameters['path_to_existing_mastertable_01']
 make_subtables = parameters['make_subtables']
+path_to_existing_subtable_02 = parameters['path_to_existing_subtable_02']
 subtables_param = parameters['subtables_param']
 filter_out_values = parameters['filter_out_values']
 show_plots = parameters['show_plots']
@@ -96,9 +97,18 @@ plot_participating_end_dinochart = parameters['plot_participating_end_dinochart'
 # plot_MH_dinochart = parameters['plot_MH_dinochart'] 
 IN_greater_than = parameters['IN_greater_than']
 sort_alphabetically = parameters['sort_alphabetically']
+# try if parameter 'random_gen_data' is in parameters, if not, set it to False
+if 'random_gen_data' in parameters:
+    random_gen_data = parameters['random_gen_data']
+else:
+    random_gen_data = False
 
 # Get the current path to the .py file
 current_path = os.path.dirname(os.path.abspath(__file__))
+
+# Check if source_dir exists, if not, raise an error
+if not os.path.exists(source_dir):
+    raise FileNotFoundError(f'Source directory {source_dir} does not exist. Please check the path in parameters.txt and make sure it is correct.')
 
 # Check if project_output_dir exists, if not, create it
 if not os.path.exists(project_output_dir):
@@ -123,7 +133,7 @@ check_if_path_exist_create_if_not(project_output_dir)
 
 # Make new mastertable from CRISPResso2 outputs or load existing one
 if make_mastertable_00 is True:
-    create_mastertable(source_dir, project_output_dir, parameters)
+    create_mastertable(source_dir, project_output_dir, parameters, random_gen_data)
     # create_mastertable does not return the DataFrame, thus the table must be loaded later
     mastertable = pd.read_csv(Path(str(project_output_dir) + '/00_mastertable_' + date + '.tsv'), sep='\t')
     write_into_report(f'00_mastertable shape: {mastertable.shape}', destination_folder=project_output_dir)
@@ -146,7 +156,11 @@ else:
 if make_subtables is True:
     tables_dic = make_subtables_df(df, project_output_dir, subtables_param, date)
 else:
-    tables_dic = {path_to_existing_mastertable_01:subtables_param}
+    if path_to_existing_subtable_02 != '':
+        tables_dic = {path_to_existing_subtable_02:subtables_param}
+        print(f'path_to_existing_subtable_02 is {path_to_existing_subtable_02}')
+    else:
+        tables_dic = {path_to_existing_mastertable_01:subtables_param}
 # if tables_dic is not empty (imported empty from variables_for_analysis_linux.py) it will use the first half of the code.
 # else it will use the bottom part of the code, where there are no sub-tables
 
@@ -362,8 +376,16 @@ for key, value in tables_dic.items():
         df_IN = df_IN[df_IN['Event_around_cut'] == 'IN']
         df_IN = df_IN[df_IN['n_inserted'] == 1]
         pivot = pd.pivot_table(df_IN, index=['sample', '4th_nt'], columns='4th_nt_inserted', values='%Reads', aggfunc='sum', fill_value=0)
+        # check any sample is present, if not, make dummy sample with 0 values to be able to plot
+        # check if columns True and False are present, if not make them with 0 values
+        list_to_check = [True, False]
+        for item in list_to_check:
+            if item not in pivot.columns.tolist():
+                pivot[item] = int()
+        if pivot.shape[0] == 0:
+            pivot = pd.DataFrame({'sample':['dummy_sample'], '4th_nt':['A'], True:[0], False:[0]})
+            pivot = pivot.set_index(['sample', '4th_nt'])
         df_pivot = pivot.reset_index()
-
         # for each row make two rows and make one column named '4th_nt_inserted' and fill there 'False' or 'True' and in the last column named '%Reads' fill the value from the original row where '4th_nt_inserted' is False or True
         df_pivot = pd.melt(df_pivot, id_vars=['sample', '4th_nt'], value_vars=[True, False], var_name='4th_nt_inserted', value_name='%Reads')
         ##########################################################################################
@@ -695,6 +717,10 @@ for key, value in tables_dic.items():
             if plot_DEL_individual_gRNAs is True:
                 # If more then 40 samples are present, divide the plot into as many plots as needed to have maximum 40 samples in one plot, if not, make one plot with all samples
                 unique_samples = df_Blunt_Stagg_samples_norm['name'].unique()
+                if len(unique_samples) > 400:
+                    # shorten the list to unique samples with more than 400 samples, to be able to make plots, if more than 400 samples are present, make a list of lists with maximum 400 unique samples in each list
+                    write_into_report(f'There are {len(unique_samples)} samples, which is more than 400, only first 400 are plotted.', destination_folder=project_output_dir)
+                    unique_samples = unique_samples[:400]
                 if len(unique_samples) > 40:
                     sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
                 else:
@@ -1049,7 +1075,6 @@ for key, value in tables_dic.items():
                 'C_True': 'type of cut cannot be determined with complementarity',
                 'X_gap spans analysed window': 'DEL span analysed window'
             })
-            df_Blunt_Stagg_samples
             # Make list of events based on the variable column
             list_of_events = df_Blunt_Stagg_samples['variable'].unique().tolist()
             pivot = pd.crosstab(index=[df_Blunt_Stagg_samples['name'],df_Blunt_Stagg_samples['gRNA_seq'],df_Blunt_Stagg_samples['4th_nt']], columns=df_Blunt_Stagg_samples['variable'], values=df_Blunt_Stagg_samples['value'], aggfunc='sum', normalize='index')
@@ -1176,6 +1201,10 @@ for key, value in tables_dic.items():
             # If more then 40 samples are present, divide the plot into as many plots as needed to have maximum 40 samples in one plot, if not, make one plot with all samples
             # count df_end_samples_norm['sample'].unique() and if more than 40, make a list of lists with maximum 40 unique samples in each list
             unique_samples = df_end_samples_norm['name'].unique()
+            if len(unique_samples) > 400:
+                # shorten the list to unique samples with more than 400 samples, to be able to make plots, if more than 400 samples are present, make a list of lists with maximum 400 unique samples in each list
+                write_into_report(f'There are {len(unique_samples)} samples, which is more than 400, only first 400 are plotted.', destination_folder=project_output_dir)
+                unique_samples = unique_samples[:400]
             if len(unique_samples) > 40:
                 sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
             else:
@@ -1294,7 +1323,7 @@ for key, value in tables_dic.items():
             # if df_end has zero rows, skip the next plotting
             if df_end.empty:
                 write_into_report('There is no DEL for Dino chart plotting, skipping plotting.', destination_folder=project_output_subdir)  
-                continue
+                # continue
             # make DataFrame where samples where DEL_orientation cannot_be_determined is splitted between downstream and upstream
             df_end_cannot_be_determined = df_end[df_end['DEL_orientation']=='C'].copy()
             df_end_cannot_be_determined['%Reads'] = df_end_cannot_be_determined['%Reads']/2
@@ -1336,7 +1365,7 @@ for key, value in tables_dic.items():
             for sample in df_end['sample'].unique():
                 print(sample)
                 # filter individual gRNA
-                df_end_gRNA = df_end[df_end['name'] == sample]
+                df_end_gRNA = df_end[df_end['sample'] == sample]
                 seq_around = df_end_gRNA['Original_Sequence_around_cut'].unique()
                 name_to_save= f'04_05_{subcounter:03d}_end_participating_DEL_orientation_dino_30nt_NotNormalised_' + sample
                 title = 'End participating on the repair + DEL orientation analysis ' + str(sample) + '\n' + str(seq_around)
@@ -1349,7 +1378,7 @@ for key, value in tables_dic.items():
                         , aggfunc='sum', normalize=False)
                 df_pivot = pivot.reset_index()
                 # add column with gRNA name, where will be average from all samples
-                # TODO what is the reason for the row below?
+                # if more samples share the same name, make average from them
                 df_pivot[sample] = df_pivot.iloc[:,2:].to_numpy().mean(axis=1)
                 df_pivot = df_pivot.sort_values(by=['DEL_orientation_participating_end'], ascending=[False])
                 order = list(df_pivot['DEL_orientation_participating_end'].unique())
