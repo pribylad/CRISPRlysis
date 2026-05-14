@@ -1,5 +1,5 @@
-04_split_index_A. thaliana - embryo - unknown.tsv
-04_split_index_Arabidopsis thaliana - root culture - 504.tsv
+04_split_index_Arabidopsis thaliana - xxx - 504.tsv
+04_split_index_Arabidopsis thaliana - xxx - xxx.tsv
 04_split_index_Chlamydomonas reinhardtii - xxx - 48.tsv
 04_split_index_Homo sapiens - HAP1 - 48to72.tsv
 04_split_index_Homo sapiens - HCT116 - 16.tsv
@@ -23,7 +23,7 @@
 04_split_index_Nicotiana benthamiana - xxx - 336.tsv
 04_split_index_Petunia hybrida - xxx - 24.tsv
 04_split_index_Pleurodeles waltl - xxx - xxx.tsv
-04_split_index_Silene latifolia - xxx - xx.tsv
+04_split_index_Silene latifolia - xxx - xxx.tsv
 04_split_index_Solanum lycopersicum - M82 - 48.tsv
 04_split_index_Solanum lycopersicum - xxx - 24.tsv
 04_split_index_Xenopus tropicalis - xxx - xxx.tsv

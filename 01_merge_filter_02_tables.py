@@ -9,7 +9,7 @@ from datetime import datetime
 # source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260330/'
 # output_file_name = '01_merged_02tables_NoFilter_All_' + datetime.now().strftime('%y%m%d') + '.tsv'
 
-source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260423/'
+source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/All_260512/'
 output_file_name = '01_merged_02tables_NoFilter_All_' + datetime.now().strftime('%y%m%d') + '.tsv'
 
 # source_directory = '/home/lefnui/CRISPRlysis_outputs/02_source_tables/mutants/'

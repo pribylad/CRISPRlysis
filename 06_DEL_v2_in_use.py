@@ -65,18 +65,18 @@ use_3_5_possible = False
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_plants')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/02_plants')
 
-# # 4 with data filtered for overall efficacy >=5% and kingdom = animal, input table is result from 02_filter_low_efficacy.py script
-# filter_criterion = 'efficacy_and_kingdom'
-# filter_value = '95_and_animal'
-# individual_dataset = True
-# no_of_runs = 1
-# data_source = 'animals_filtered_95'
-# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal.tsv'
-# # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_animals')
-# # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/02_animals')
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/04_split_kingdom_animal.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_animals')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/02_animals')
+# 4 with data filtered for overall efficacy >=5% and kingdom = animal, input table is result from 02_filter_low_efficacy.py script
+filter_criterion = 'efficacy_and_kingdom'
+filter_value = '95_and_animal'
+individual_dataset = True
+no_of_runs = 1
+data_source = 'animals_filtered_95'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_animals')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/02_animals')
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/04_split_kingdom_animal.tsv'
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_animals')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/02_animals')
 
 
 # filter_criterion = 'Random_dataset'
@@ -94,22 +94,22 @@ use_3_5_possible = False
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_{filter_criterion}_{filter_value}_random_noPAM')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_{filter_criterion}_{filter_value}_random_noPAM')
 
-# 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
-# Open list_of_datasets.txt and read it as list of datasets to be analysed individually
-# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
-# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
-# mutants = True
-# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_3_mutants.txt'
-list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_4_with_Ponce.txt'
-list_of_datasets = []
-with open(list_of_datasets_file, 'r') as f:
-    for line in f:
-        dataset = line.strip()
-        if dataset:  # Check if the line is not empty
-            list_of_datasets.append(dataset)
-print(list_of_datasets)
-no_of_runs = len(list_of_datasets)
-print(f"No of individual datasets to be analysed: {no_of_runs}")
+# # 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
+# # Open list_of_datasets.txt and read it as list of datasets to be analysed individually
+# # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
+# # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
+# # mutants = True
+# # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_3_mutants.txt'
+# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_4_with_Ponce.txt'
+# list_of_datasets = []
+# with open(list_of_datasets_file, 'r') as f:
+#     for line in f:
+#         dataset = line.strip()
+#         if dataset:  # Check if the line is not empty
+#             list_of_datasets.append(dataset)
+# print(list_of_datasets)
+# no_of_runs = len(list_of_datasets)
+# print(f"No of individual datasets to be analysed: {no_of_runs}")
 
 # # 6 with data from Cristina Ponce Lilli unpublished, withour filtering for efficacy, input table is result from 01_merge_filter_02_tables.py script
 # filter_criterion = 'efficacy_and_author'
@@ -196,27 +196,42 @@ for run in range(no_of_runs):
         default_list = ['kingdom', 'source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation', 'ID_no_rep', 'gRNA_num', 'replicate']
     else:
         default_list = ['source', 'organism', 'cell_line', 'mutant', 'gene', 'gRNA_seq', 'hours_post_inoculation','replicate']
-    # list_of_events = ['upstream', 'both', 'downstream', 'cannot_be_determined', 'X']
-    list_of_events = ['upstream_ambiguous', 'both_ambiguous', 'downstream_ambiguous', 'upstream_NO_ambi', 'both_NO_ambi', 'downstream_NO_ambi', 'cannot_be_determined_ambiguous', 'cannot_be_determined_NO_ambi', 'X_gap_out_of_cut']
-    df_DEL_orientation = df[default_list + ['DEL_orientation', 'Gap_around_cut', 'Maximal_MH_len', '%Reads']]
-    # Filter out rows where Gap_around_cut is False
-    df_DEL_orientation = df_DEL_orientation[df_DEL_orientation['Gap_around_cut'] == True]
-    # Replace values in the DEL_orientation column
-    df_DEL_orientation['DEL_orientation'] = df_DEL_orientation['DEL_orientation'].replace({
-        'U': 'upstream',
-        'B': 'both',
-        'D': 'downstream',
-        'C': 'cannot_be_determined'
-    })
-    order = ['upstream_NO_ambi','upstream_ambiguous', 'both_NO_ambi','both_ambiguous', 'downstream_NO_ambi''downstream_ambiguous', 'cannot_be_determined_ambiguous', 'cannot_be_determined_NO_ambi', 'X_gap_out_of_cut']
+    # list_of_events = ['upstream', 'bidirectional', 'downstream', 'cannot_be_determined', 'X']
+    list_of_events = ['upstream_ambiguous', 'bidirectional_ambiguous', 'downstream_ambiguous', 'upstream_NO_ambi', 'bidirectional_NO_ambi', 'downstream_NO_ambi', 'cannot_be_determined_ambiguous', 'DEL_exceeds_analysed_window', 'gap_outside_of_predicted_cut']
+    df_DEL_orientation = df[default_list + ['DEL_orientation', 'Event_around_cut', 'Gap_around_cut', 'Maximal_MH_len', '%Reads']]
+    # Remove events without DEL
+    df_DEL_orientation = df_DEL_orientation[df_DEL_orientation['Maximal_MH_len'] != 'no_gap_no_MH']
+
+    
     print(df_DEL_orientation['Maximal_MH_len'].unique())
     # Replace in Maximal_MH_len '0' for 'NO_ambi', 'gap_out_of_cut' keep and anything else as 'ambiguous'
-    df_DEL_orientation['Maximal_MH_len'] = df_DEL_orientation['Maximal_MH_len'].replace({'0': 'NO_ambi', 'gap_out_of_cut': 'gap_out_of_cut'})
-    df_DEL_orientation['Maximal_MH_len'] = df_DEL_orientation['Maximal_MH_len'].apply(lambda x: 'ambiguous' if x not in ['NO_ambi', 'gap_out_of_cut'] else x)
+    df_DEL_orientation['Maximal_MH_len'] = df_DEL_orientation['Maximal_MH_len'].replace({'0': 'NO_ambi', 'gap_out_of_cut': ''})
+    df_DEL_orientation['Maximal_MH_len'] = df_DEL_orientation['Maximal_MH_len'].apply(lambda x: 'ambiguous' if x not in ['NO_ambi', ''] else x)
     # Replace column 'DEL_orientation' with merged column of DEL_orientation and Maximal_MH_len
-    df_DEL_orientation['DEL_orientation'] = df_DEL_orientation['DEL_orientation'] + '_' + df_DEL_orientation['Maximal_MH_len']
+    df_DEL_orientation['DEL_orientation'] = df_DEL_orientation['DEL_orientation'] + '_' + df_DEL_orientation['Gap_around_cut'].astype(str) + '_' + df_DEL_orientation['Maximal_MH_len']
     print(df_DEL_orientation['DEL_orientation'].unique())
+
+    # Replace values in the DEL_orientation column
+    df_DEL_orientation['DEL_orientation'] = df_DEL_orientation['DEL_orientation'].replace({
+        'U_True_ambiguous': 'upstream_ambiguous',
+        'B_True_ambiguous': 'bidirectional_ambiguous',
+        'D_True_ambiguous': 'downstream_ambiguous',
+        'U_True_NO_ambi': 'upstream_NO_ambi',
+        'B_True_NO_ambi': 'bidirectional_NO_ambi',
+        'D_True_NO_ambi': 'downstream_NO_ambi',
+        'C_True_ambiguous': 'cannot_be_determined_ambiguous',
+        'U_False_ambiguous': 'gap_outside_of_predicted_cut',
+        'D_False_ambiguous': 'gap_outside_of_predicted_cut',
+        'U_False_NO_ambi': 'gap_outside_of_predicted_cut',
+        'D_False_NO_ambi': 'gap_outside_of_predicted_cut',
+        'X_True_': 'DEL_exceeds_analysed_window',
+        'X_False_': 'gap_outside_of_predicted_cut',
+        'X_False_ambiguous': 'gap_outside_of_predicted_cut',
+        'C_False_ambiguous': 'cannot_be_determined_ambiguous'
+    })
     
+    order = ['upstream_ambiguous', 'upstream_NO_ambi', 'bidirectional_ambiguous', 'bidirectional_NO_ambi', 'downstream_ambiguous', 'downstream_NO_ambi', 'cannot_be_determined_ambiguous', 'DEL_exceeds_analysed_window', 'gap_outside_of_predicted_cut']
+
     df_DEL_orientation
     # Remove columns Gap_around_cut and Maximal_MH_len as they are not needed anymore
     df_DEL_orientation = df_DEL_orientation.drop(columns=['Gap_around_cut', 'Maximal_MH_len'], inplace=False)
@@ -270,14 +285,14 @@ for run in range(no_of_runs):
     hue_order=[
                 'Arabidopsis thaliana - xxx - 504'
                 ,'Arabidopsis thaliana - root culture - 504'
-                ,'Arabidopsis thaliana - xxx - unknown'
+                ,'Arabidopsis thaliana - xxx - xxx'
                 ,'A. thaliana - embryo - unknown'
                 ,'A. thaliana - embryo - T1'
                 ,'Nicotiana benthamiana - xxx - 120'
                 ,'Nicotiana benthamiana - leaf - 120'
                 ,'Nicotiana benthamiana - xxx - 336'
                 ,'Petunia hybrida - xxx - 24'
-                ,'Silene latifolia - xxx - xx'
+                ,'Silene latifolia - xxx - xxx'
                 ,'Solanum lycopersicum - xxx - 24'
                 ,'Solanum lycopersicum - M82 - 48'
                 ,'Homo sapiens - HCT116 - 4'
@@ -313,15 +328,16 @@ for run in range(no_of_runs):
 
     
     if individual_dataset == False:
-        # color_dic = {'upstream':'#f0d271', 'both':'#808080', 'downstream':'#cccccc', 'cannot_be_determined':'#ffffff', 'plant':'#009d73', 'animal':'#cc79a6'}
-        colour_dic = {'upstream_ambiguous':'#f0d271', 'upstream_NO_ambi':'#f0d271', 'both_ambiguous':'#808080', 'both_NO_ambi':'#808080', 'downstream_ambiguous':'#cccccc', 'downstream_NO_ambi':'#cccccc', 'cannot_be_determined_ambiguous':'#ffffff', 'cannot_be_determined_NO_ambi':'#ffffff', 'X_gap_out_of_cut':'#000000', 'plant':'#009d73', 'animal':'#cc79a6'}
+        # color_dic = {'upstream':'#f0d271', 'bidirectional':'#808080', 'downstream':'#cccccc', 'cannot_be_determined':'#ffffff', 'plant':'#009d73', 'animal':'#cc79a6'}
+        colour_dic = {'upstream_ambiguous':'#999999', 'upstream_NO_ambi':'#999999', 'bidirectional_ambiguous':'#ffffff', 'bidirectional_NO_ambi':'#ffffff', 'downstream_ambiguous':'#999999', 'downstream_NO_ambi':'#999999', 'cannot_be_determined_ambiguous':'#ffffff', 'DEL_exceeds_analysed_window':'#ffffff', 'gap_outside_of_predicted_cut':'#000000', 'plant':'#009d73', 'animal':'#cc79a6'}
+        hatches_dic = {'upstream_ambiguous':'\\\\\\', 'upstream_NO_ambi':'', 'bidirectional_ambiguous':'xxx', 'bidirectional_NO_ambi':'', 'downstream_ambiguous':'///', 'downstream_NO_ambi':'', 'cannot_be_determined_ambiguous':'', 'DEL_exceeds_analysed_window':'', 'gap_outside_of_predicted_cut':''}
         plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
             , number_of_columns=15\
             , show_datapoints=True, jitter=0.0, stripplot_offset=0, dodge=True\
             , show_hue_medians=False\
             , hue='organism_cell_line_hpi', hue_only_for_data_points=True \
             , hue_order=hue_order
-            , hatches=False\
+            , hatches=hatches_dic\
             , clip_right=True\
             , title=title, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
             , order=order\
@@ -363,8 +379,10 @@ for run in range(no_of_runs):
     ylabel = 'Normalised percentage \nof DEL around the cut'
     no_of_samples =  len(pivot_table_avg) / len(pivot_table_avg['variable'].unique())
 
-    # colour_dic = {'upstream':'#f0d271', 'both':'#808080', 'downstream':'#cccccc', 'cannot_be_determined':'#ffffff'}
-    colour_dic = {'upstream_ambiguous':'#f0d271', 'upstream_NO_ambi':'#f0d271', 'both_ambiguous':'#808080', 'both_NO_ambi':'#808080', 'downstream_ambiguous':'#cccccc', 'downstream_NO_ambi':'#cccccc', 'cannot_be_determined_ambiguous':'#ffffff', 'cannot_be_determined_NO_ambi':'#ffffff', 'X_gap_out_of_cut':'#000000', 'plant':'#009d73', 'animal':'#cc79a6'}
+    # colour_dic = {'upstream':'#f0d271', 'bidirectional':'#808080', 'downstream':'#cccccc', 'cannot_be_determined':'#ffffff'}
+    # colour_dic = {'upstream_ambiguous':'#f0d271', 'upstream_NO_ambi':'#f0d271', 'bidirectional_ambiguous':'#808080', 'bidirectional_NO_ambi':'#808080', 'downstream_ambiguous':'#cccccc', 'downstream_NO_ambi':'#cccccc', 'cannot_be_determined_ambiguous':'#ffffff', 'DEL_exceeds_analysed_window':'#ffffff', 'gap_outside_of_predicted_cut':'#000000', 'plant':'#009d73', 'animal':'#cc79a6'}
+    colour_dic = {'upstream_ambiguous':'#999999', 'upstream_NO_ambi':'#999999', 'bidirectional_ambiguous':'#ffffff', 'bidirectional_NO_ambi':'#ffffff', 'downstream_ambiguous':'#999999', 'downstream_NO_ambi':'#999999', 'cannot_be_determined_ambiguous':'#ffffff', 'DEL_exceeds_analysed_window':'#ffffff', 'gap_outside_of_predicted_cut':'#000000', 'plant':'#009d73', 'animal':'#cc79a6'}
+    hatches_dic = {'upstream_ambiguous':'\\\\\\', 'upstream_NO_ambi':'', 'bidirectional_ambiguous':'xxx', 'bidirectional_NO_ambi':'', 'downstream_ambiguous':'///', 'downstream_NO_ambi':'', 'cannot_be_determined_ambiguous':'', 'DEL_exceeds_analysed_window':'', 'gap_outside_of_predicted_cut':''}
 
     ##########################################################################################
     # Statistical testing between upstream_abiguous and upstream_NO_ambi
@@ -421,21 +439,23 @@ for run in range(no_of_runs):
                     \nInterpretation based on median log-fold change:\n    {interpretation}\
                     \n    Wilcoxon signed-rank test statistic: {statistic}, p-value: {p_value}\
                     \nNo of samples: {no_of_samples}'
-    
+    # Make a hatches_list based on the hatches_dic but only for the variables in the order list
+    hatches_list = [hatches_dic[var] for var in order]
+
     try:
         plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
             , number_of_columns=len(pivot_table_avg['variable'].unique())/2\
             , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
             , show_hue_medians=False\
             , hue=None, hue_only_for_data_points=False \
-            , hatches=False\
+            , hatches=True, hatches_list=hatches_list\
             , clip_right=True\
             , title=title, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
             , order=order\
             , plot_legend=False\
             , integrated_properties_dic=False, color_dic=colour_dic\
             , text_bellow_chart=text_bellow_chart\
-            , y_legend_coordinate=-0.4, yaxis_formater=100\
+            , y_legend_coordinate=-0.5, yaxis_formater=100\
             , x_max=None\
             , change_edge_color=False\
             # , add_stat=True, stat_pairs=[("upstream_ambiguous", "upstream_NO_ambi")], stat_test='Wilcoxon', stat_format='star', stat_correction='BH'\
@@ -451,14 +471,14 @@ for run in range(no_of_runs):
             , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
             , show_hue_medians=False\
             , hue=None, hue_only_for_data_points=False \
-            , hatches=False\
+            , hatches=True, hatches_list=hatches_list\
             , clip_right=True\
             , title=None, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
             , order=order\
             , plot_legend=False\
             , integrated_properties_dic=False, color_dic=colour_dic\
             , text_bellow_chart=None\
-            , y_legend_coordinate=-0.4, yaxis_formater=100\
+            , y_legend_coordinate=-0.5, yaxis_formater=100\
             , x_max=None\
             , change_edge_color=False\
             , name_to_save=name_to_save\
@@ -473,14 +493,14 @@ for run in range(no_of_runs):
             , show_datapoints=True, jitter=0.10, stripplot_offset=8, dodge=False\
             , show_hue_medians=False\
             , hue=None, hue_only_for_data_points=False \
-            , hatches=False\
+            , hatches=True, hatches_list=hatches_list\
             , clip_right=True\
             , title=None, xtickt_rotation=-55, ylabel=ylabel, xlabel='DEL orientation'\
             , order=order\
             , plot_legend=False\
             , integrated_properties_dic=False, color_dic=colour_dic\
             , text_bellow_chart=None\
-            , y_legend_coordinate=-0.4, yaxis_formater=100\
+            , y_legend_coordinate=-0.5, yaxis_formater=100\
             , x_max=None\
             , change_edge_color=False\
             , name_to_save=name_to_save\
@@ -527,7 +547,7 @@ for run in range(no_of_runs):
     # Change True and False in  blunt_cut_with_MH_possible to 'possible blunt' and 'NOT possible blunt'
     df_end['blunt_cut_with_MH_possible'] = df_end['blunt_cut_with_MH_possible'].replace({'TRUE':'possible blunt', 'FALSE':'NOT blunt', True:'possible blunt', False:'NOT blunt', 'True':'possible blunt', 'False':'NOT blunt'})
 
-    # Make column where both End_3_5 and blunt_cut_with_MH_possible are combined
+    # Make column where bidirectional End_3_5 and blunt_cut_with_MH_possible are combined
     df_end['End_3_5_blunt'] = df_end['End_3_5'] + ' ' + df_end['blunt_cut_with_MH_possible']
     # remove columns End_3_5, blunt_cut_with_MH_possible
     df_end = df_end.drop(columns=['End_3_5', 'blunt_cut_with_MH_possible'], inplace=False)
