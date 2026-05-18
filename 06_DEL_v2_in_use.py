@@ -34,9 +34,9 @@ use_3_5_possible = False
 # data_source = 'all_samples_no_filters'
 # individual_dataset = False
 # no_of_runs = 1
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260409.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples/01_all_samples')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_all_samples')
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_merged_02tables_NoFilter_All_260514.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples/with_Ponce_samples/01_all_samples')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/with_Ponce_samples/01_all_samples')
 
 # # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
 # filter_criterion = 'efficacy'
@@ -65,18 +65,18 @@ use_3_5_possible = False
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_plants')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/02_plants')
 
-# 4 with data filtered for overall efficacy >=5% and kingdom = animal, input table is result from 02_filter_low_efficacy.py script
-filter_criterion = 'efficacy_and_kingdom'
-filter_value = '95_and_animal'
-individual_dataset = True
-no_of_runs = 1
-data_source = 'animals_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_animals')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/02_animals')
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/04_split_kingdom_animal.tsv'
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_animals')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/02_animals')
+# # 4 with data filtered for overall efficacy >=5% and kingdom = animal, input table is result from 02_filter_low_efficacy.py script
+# filter_criterion = 'efficacy_and_kingdom'
+# filter_value = '95_and_animal'
+# individual_dataset = True
+# no_of_runs = 1
+# data_source = 'animals_filtered_95'
+# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_animal.tsv'
+# # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_animals')
+# # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/02_animals')
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/04_split_kingdom_animal.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_animals')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/02_animals')
 
 
 # filter_criterion = 'Random_dataset'
@@ -94,22 +94,23 @@ table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_f
 # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/04_{filter_criterion}_{filter_value}_random_noPAM')
 # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/04_{filter_criterion}_{filter_value}_random_noPAM')
 
-# # 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
-# # Open list_of_datasets.txt and read it as list of datasets to be analysed individually
-# # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
-# # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
-# # mutants = True
-# # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_3_mutants.txt'
+# 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
+# Open list_of_datasets.txt and read it as list of datasets to be analysed individually
+# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
+# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
+mutants = False
+# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_3_mutants.txt'
 # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_4_with_Ponce.txt'
-# list_of_datasets = []
-# with open(list_of_datasets_file, 'r') as f:
-#     for line in f:
-#         dataset = line.strip()
-#         if dataset:  # Check if the line is not empty
-#             list_of_datasets.append(dataset)
-# print(list_of_datasets)
-# no_of_runs = len(list_of_datasets)
-# print(f"No of individual datasets to be analysed: {no_of_runs}")
+list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_5.txt'
+list_of_datasets = []
+with open(list_of_datasets_file, 'r') as f:
+    for line in f:
+        dataset = line.strip()
+        if dataset:  # Check if the line is not empty
+            list_of_datasets.append(dataset)
+print(list_of_datasets)
+no_of_runs = len(list_of_datasets)
+print(f"No of individual datasets to be analysed: {no_of_runs}")
 
 # # 6 with data from Cristina Ponce Lilli unpublished, withour filtering for efficacy, input table is result from 01_merge_filter_02_tables.py script
 # filter_criterion = 'efficacy_and_author'
@@ -169,9 +170,10 @@ for run in range(no_of_runs):
         return pivot_table
     ##########################################################################################
     # Load datafreame
+
     df = pd.read_csv(df_dir, sep='\t')
     df.columns
-    
+
     df['hours_post_inoculation'] = df['hours_post_inoculation'].astype(str)
     df['blunt_cut_with_MH_possible'] = df['blunt_cut_with_MH_possible'].astype(str)
     # change TRUE to True and FALSE to False in blunt_cut_with_MH_possible column
@@ -200,10 +202,13 @@ for run in range(no_of_runs):
     list_of_events = ['upstream_ambiguous', 'bidirectional_ambiguous', 'downstream_ambiguous', 'upstream_NO_ambi', 'bidirectional_NO_ambi', 'downstream_NO_ambi', 'cannot_be_determined_ambiguous', 'DEL_exceeds_analysed_window', 'gap_outside_of_predicted_cut']
     df_DEL_orientation = df[default_list + ['DEL_orientation', 'Event_around_cut', 'Gap_around_cut', 'Maximal_MH_len', '%Reads']]
     # Remove events without DEL
-    df_DEL_orientation = df_DEL_orientation[df_DEL_orientation['Maximal_MH_len'] != 'no_gap_no_MH']
+    df_DEL_orientation = df_DEL_orientation[df_DEL_orientation['Maximal_MH_len'] != 'no_gap']
+    # If Maximal_MH_len is 'gap_out_of_cut' and Gap_around_cut is False and DEL_orientation is 'X', remove those rows as they are missing nt  at the start or end of the aligned sequence and that is because of the trimming of the reads and those are not deletions
+    df_DEL_orientation = df_DEL_orientation[~((df_DEL_orientation['Maximal_MH_len'] == 'gap_out_of_cut') & (df_DEL_orientation['Gap_around_cut'] == False) & (df_DEL_orientation['DEL_orientation'] == 'X'))]
+    # Event around cut cannot be IN, INSUB, SUB (keeping only events with DELs)
+    df_DEL_orientation = df_DEL_orientation[~df_DEL_orientation['Event_around_cut'].isin(['IN', 'INSUB', 'SUB'])]
 
-    
-    print(df_DEL_orientation['Maximal_MH_len'].unique())
+    # print(df_DEL_orientation['Maximal_MH_len'].unique())
     # Replace in Maximal_MH_len '0' for 'NO_ambi', 'gap_out_of_cut' keep and anything else as 'ambiguous'
     df_DEL_orientation['Maximal_MH_len'] = df_DEL_orientation['Maximal_MH_len'].replace({'0': 'NO_ambi', 'gap_out_of_cut': ''})
     df_DEL_orientation['Maximal_MH_len'] = df_DEL_orientation['Maximal_MH_len'].apply(lambda x: 'ambiguous' if x not in ['NO_ambi', ''] else x)
@@ -225,35 +230,42 @@ for run in range(no_of_runs):
         'U_False_NO_ambi': 'gap_outside_of_predicted_cut',
         'D_False_NO_ambi': 'gap_outside_of_predicted_cut',
         'X_True_': 'DEL_exceeds_analysed_window',
-        'X_False_': 'gap_outside_of_predicted_cut',
-        'X_False_ambiguous': 'gap_outside_of_predicted_cut',
-        'C_False_ambiguous': 'cannot_be_determined_ambiguous'
+        'X_False_': 'should be filtered out as they are not deletions',
+        'X_False_ambiguous': 'should not exist',
+        'C_False_ambiguous': 'should not exist'
     })
+
+
+    if 'should not exist' in df_DEL_orientation['DEL_orientation'].unique() or 'should be filtered out as they are not deletions' in df_DEL_orientation['DEL_orientation'].unique():
+        # rise error if there are values in DEL_orientation column that should not exist, as they should have been filtered out in previous steps
+        raise ValueError(f"Values that should not exist are present in DEL_orientation column, those rows should have been filtered out in previous steps: {df_DEL_orientation[df_DEL_orientation['DEL_orientation'] == 'should not exist']} and {df_DEL_orientation[df_DEL_orientation['DEL_orientation'] == 'should be filtered out as they are not deletions']}")
     
     order = ['upstream_ambiguous', 'upstream_NO_ambi', 'bidirectional_ambiguous', 'bidirectional_NO_ambi', 'downstream_ambiguous', 'downstream_NO_ambi', 'cannot_be_determined_ambiguous', 'DEL_exceeds_analysed_window', 'gap_outside_of_predicted_cut']
-
-    df_DEL_orientation
     # Remove columns Gap_around_cut and Maximal_MH_len as they are not needed anymore
     df_DEL_orientation = df_DEL_orientation.drop(columns=['Gap_around_cut', 'Maximal_MH_len'], inplace=False)
-    df_DEL_orientation
-    
+    # if gRNA_num is in df_DEL_orientation and nan in df_DEL_orientation['gRNA_num'] is present, fill with 1
+    if 'gRNA_num' in df_DEL_orientation.columns:
+        df_DEL_orientation['gRNA_num'] = df_DEL_orientation['gRNA_num'].fillna(1)
+    # print error if any row where nan is present in any column
+    if df_DEL_orientation.isna().any(axis=1).any():
+        print("Rows with NaN values found:")
+        print(df_DEL_orientation[df_DEL_orientation.isna().any(axis=1)])
+    # export the rows where nan is present in any column to a tsv file for further analysis
+    df_DEL_orientation[df_DEL_orientation.isna().any(axis=1)].to_csv(Path(str(table_output_dir) + '/' + '05' + '_DEL_orientation_rows_with_nan' + '.tsv'), sep='\t', index=False)
     ##########################################################################################
     #        Deletion orientation around the cut site
     ##########################################################################################
     # Get data
     pivot = pd.pivot_table(df_DEL_orientation, index=default_list, columns='DEL_orientation', values='%Reads', aggfunc='sum', fill_value=0)
+
     # reset pivot and remove index
     df_pivot = pivot.reset_index()
-    df_pivot
-    
     # remove index name
     df_pivot.columns.name = None
     # Save pivot table as tsv
     df_pivot.to_csv(Path(str(table_output_dir) + '/' + '05' + '_DEL_orientation_NOTnormalised_pivot' + '.tsv'), sep='\t')
     # Normalise rows to 100%
     df_pivot.iloc[:, len(default_list):] = df_pivot.iloc[:, len(default_list):].div(df_pivot.iloc[:, len(default_list):].sum(axis=1), axis=0) * 100
-    df_pivot
-    
     # Melt dataframe
     # Check if all list_of_events items are in columns, if not create them with 0 values
     for item in list_of_events:
@@ -276,9 +288,7 @@ for run in range(no_of_runs):
     title = 'Normalised incidence of DEL according to the orientation,\n mean of replicates'
     ylabel = 'Normalised percentage \nof DEL around the cut'
     no_of_samples =  len(pivot_table_avg) / len(pivot_table_avg['variable'].unique())
-    text_bellow_chart = f'Only DELs around the cut are plotted. Without gaps spanning analysed window\
-                        \n - see table with source data.\
-                        \nNormalised to: SUM of all DEL orientation in individual sample = 100%\
+    text_bellow_chart = f'Normalised to: SUM of all DEL orientation in individual sample = 100%\
                         \nNo of samples: {no_of_samples}'
     name_to_save = f'003_1_DEL_orientation_summary_violinplot'
     # hue order
@@ -351,7 +361,7 @@ for run in range(no_of_runs):
             , project_output_dir=charts_output_dir\
             , data_source=data_source, output_format='png'\
             , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
-
+        
         name_to_save = f'003_2_DEL_orientation_summary_violinplot'
         plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
             , number_of_columns=6\
@@ -433,9 +443,7 @@ for run in range(no_of_runs):
 
     # Full plot as png
     name_to_save = f'003_3_DEL_orientation_summary_violinplot'
-    text_bellow_chart = f'Only DELs around the cut are plotted. Without gaps spanning analysed window\
-                    \n - see table with source data.\
-                    \nNormalised to: SUM of all DEL orientation in individual sample = 100%\
+    text_bellow_chart = f'Normalised to: SUM of all DEL orientation in individual sample = 100%\
                     \nInterpretation based on median log-fold change:\n    {interpretation}\
                     \n    Wilcoxon signed-rank test statistic: {statistic}, p-value: {p_value}\
                     \nNo of samples: {no_of_samples}'

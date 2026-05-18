@@ -56,7 +56,8 @@ maximum_to_view = 2    # max lenght of insertion to be views as inependent subse
 # Open list_of_datasets.txt and read it as list of datasets to be analysed individually
 # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
 # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
-list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_4_with_Ponce.txt'
+# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_4_with_Ponce.txt'
+list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_5.txt'
 list_of_datasets = []
 with open(list_of_datasets_file, 'r') as f:
     for line in f:

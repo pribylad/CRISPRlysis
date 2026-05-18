@@ -18,24 +18,28 @@ output_format = 'png'
 # output_format = 'svg'
 show_plots = True
 
-# # 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs and generating 05_tables by 06_DEL.py script
-# filter_criterion = 'None'
-# filter_value = 'None'
-# data_source = 'all_samples_no_filters'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples/01_all_samples')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/01_all_samples')
+# 1 no filter, analysis on all samples after merging 02_mastertable*.tsv tables from CRISPRlysis outputs and generating 05_tables by 06_DEL.py script
+filter_criterion = 'None'
+filter_value = 'None'
+data_source = 'all_samples_no_filters'
+# Original df is used to be split by the clusters obtained from PCA analysis, so it can be used for future analysis of the clusters, split directly the efficacy filtered samples
+original_df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/03_filtered_efficacy_samples_limit5efficacy_All.tsv'
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/with_Ponce_samples/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
+charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/01_no_filter_all_samples/with_Ponce_samples/01_all_samples')
+table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/01_no_filter_all_samples/with_Ponce_samples/01_all_samples')
 
-# 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
-filter_criterion = 'efficacy'
-filter_value = '95'
-data_source = 'all_samples_filtered_95'
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
-# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
-# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
-df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
-charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}/with_Ponce_samples/01_all_samples')
-table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/with_Ponce_samples/01_all_samples')
+# # 2 with data filtered for overall efficacy >=5%, input table is result from 02_filter_low_efficacy.py script
+# filter_criterion = 'efficacy'
+# filter_value = '95'
+# data_source = 'all_samples_filtered_95'
+# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
+# # charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+# # table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/01_all_samples')
+# # Original df is used to be split by the clusters obtained from PCA analysis, so it can be used for future analysis of the clusters
+# original_df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/03_filtered_efficacy_samples_limit5efficacy_All.tsv'
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/01_all_samples/05_pivot_DEL_orientation_normalised_avg.tsv'
+# charts_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_{filter_criterion}_{filter_value}/with_Ponce_samples/01_all_samples')
+# table_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_{filter_criterion}_{filter_value}/with_Ponce_samples/01_all_samples')
 
 
 # # 3 with data filtered for overall efficacy >=5% and 1ntIN >=80%, input table is result from 13_IN_in_use.py script
@@ -56,6 +60,8 @@ df = pd.read_csv(df_dir, sep='\t')
 # Remove the columne Unnamed: 0 if it exists
 if 'Unnamed: 0' in df.columns:
     df = df.drop(columns=['Unnamed: 0'])    
+# Remove rows where variable is 'gap_outside_of_predicted_cut'
+df = df[df['variable'] != 'gap_outside_of_predicted_cut']
 # Convert df['hours_post_inoculation'] to string
 df['hours_post_inoculation'] = df['hours_post_inoculation'].astype(str)
 
@@ -64,6 +70,8 @@ df['organism_cell_line_hpi'] = df['organism'] + ' - ' + df['cell_line'] + ' - ' 
 df
 # %%
 df['organism_cell_line_hpi'].unique()
+# %%
+df['variable'].unique()
 # %%
 # Make PCA analysis where vlues are from column values and categories are from column variable, hue is from column organism_cell_line_hpi and style is from column variable
 # remove columns source, mutant, gene, gRNA_seq, ID_no_rep
@@ -97,12 +105,12 @@ properties_dict = {
     'Homo sapiens - Jurkat - 48to72': {'color': "#810F72", 'marker': 's'},
     'Arabidopsis thaliana - xxx - 504': {'color': '#009d73', 'marker': 'o'},
     'Arabidopsis thaliana - root culture - 504': {'color': '#009d73', 'marker': 'o'},
-    'Arabidopsis thaliana - xxx - unknown': {'color': '#009d73', 'marker': '*'},
+    'Arabidopsis thaliana - xxx - xxx': {'color': '#009d73', 'marker': '*'},
     'A. thaliana - embryo - unknown': {'color': '#009d73', 'marker': '*'},
     'Nicotiana benthamiana - xxx - 120': {'color': '#009d73', 'marker': 'v'},
     'Nicotiana benthamiana - xxx - 336': {'color': '#11775c', 'marker': 'v'},
     'Petunia hybrida - xxx - 24': {'color': '#009d73', 'marker': '>'},
-    'Silene latifolia - xxx - xx': {'color': '#009d73', 'marker': '<'},
+    'Silene latifolia - xxx - xxx': {'color': '#009d73', 'marker': '<'},
     'Solanum lycopersicum - xxx - 24': {'color': '#009d73', 'marker': 's'},
     'Solanum lycopersicum - M82 - 48': {'color': '#009d73', 'marker': '^'},
     'Xenopus tropicalis - xxx - xxx': {'color': "#181766", 'marker': 'o'},
@@ -201,4 +209,32 @@ plt.savefig(output_file, bbox_inches='tight', dpi=300)
 # Save PCA results to TSV
 output_file = os.path.join(table_output_dir, f'06_PCA_DEL_orientation_normalised_avg_{date}.tsv')
 df_pca_result.to_csv(output_file, sep='\t')
+# %%
+# split df into 3 dataframes based on the cluster column use column 'organism_cell_line_hpi' to check which samples are in which cluster
+cluster_0 = df_pca_result[df_pca_result['Cluster'] == 0]
+cluster_1 = df_pca_result[df_pca_result['Cluster'] == 1]
+cluster_2 = df_pca_result[df_pca_result['Cluster'] == 2]
+print("Cluster 0 samples:")
+print(cluster_0.index)
+print("\nCluster 1 samples:")
+print(cluster_1.index)
+print("\nCluster 2 samples:")
+print(cluster_2.index)
+# now split the original df into cluster_0, cluster_1 and cluster_2 and save them as tsv files
+df_to_split = pd.read_csv(original_df_dir, sep='\t')
+# Make column combining organism and cell_line and hours_post_inoculation for filtering
+df_to_split['organism_cell_line_hpi'] = df_to_split['organism'] + ' - ' + df_to_split['cell_line'] + ' - ' + df_to_split['hours_post_inoculation'].astype(str)
+cluster_0_df = df_to_split[df_to_split['organism_cell_line_hpi'].isin(cluster_0.index)]
+cluster_1_df = df_to_split[df_to_split['organism_cell_line_hpi'].isin(cluster_1.index)]
+cluster_2_df = df_to_split[df_to_split['organism_cell_line_hpi'].isin(cluster_2.index)]
+# save cluster_0_df, cluster_1_df and cluster_2_df as tsv files
+output_file = os.path.join(table_output_dir, f'../07_split_cluster_0_DEL_03_filtered_efficacy_samples_limit5efficacy_All_{date}.tsv')
+cluster_0_df.to_csv(output_file, sep='\t', index=False)
+output_file = os.path.join(table_output_dir, f'../07_split_cluster_1_DEL_03_filtered_efficacy_samples_limit5efficacy_All_{date}.tsv')
+cluster_1_df.to_csv(output_file, sep='\t', index=False)
+output_file = os.path.join(table_output_dir, f'../07_split_cluster_2_DEL_03_filtered_efficacy_samples_limit5efficacy_All_{date}.tsv')
+cluster_2_df.to_csv(output_file, sep='\t', index=False)
+
+# %%
+cluster_2_df['organism_cell_line_hpi'].unique()
 # %%

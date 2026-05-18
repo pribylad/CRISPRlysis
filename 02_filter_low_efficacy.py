@@ -89,3 +89,6 @@ print(len(filtered_df['ID_no_rep'].unique()))
 print(len(filtered_df['name'].unique()))
 # print(filtered_df['filter'].unique())
 # %%
+filtered_df['organism_cell_line_hpi'] = filtered_df['organism'] + ' - ' + filtered_df['cell_line'] + ' - ' + filtered_df['hours_post_inoculation'].astype(str)
+filtered_df['organism_cell_line_hpi'].unique()
+# %%

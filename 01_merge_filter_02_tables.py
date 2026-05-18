@@ -38,7 +38,6 @@ organism_dict = {
     'Solanum lycopersicum': 'plant',
     'Homo sapiens': 'animal',
     'Xenopus tropicalis': 'animal',
-    'Solanum lycopersicum': 'plant',
     'Pleurodeles waltl': 'animal',
     'Chlamydomonas reinhardtii': 'plant'
 }

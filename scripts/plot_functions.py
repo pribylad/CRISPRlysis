@@ -285,6 +285,8 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'downstream_NO_ambi':{'color':'#f5ad62','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'deletion_spans_analysed_window':{'color':'#a9a9a9','edge_color':'black', 'hatch':'', 'marker':'o'}
             ,'deletion spans analysed window':{'color':'#a9a9a9','edge_color':'black', 'hatch':'', 'marker':'o'}
+            ,'DEL_exceeds_analysed_window':{'color':'#ffffff','edge_color':'gray', 'hatch':'', 'marker':'o'}
+            ,'gap_outside_of_predicted_cut':{'color':'#000000','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'PAM_distal_nt_in_MH':{'color':'#52D8FF','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'PAM_proximal_nt_in_MH':{'color':'#FADA52','edge_color':'gray', 'hatch':'', 'marker':'o'}
             ,'no_MH_likely':{'color':'#A9A9A9','edge_color':'gray', 'hatch':'', 'marker':'o'}
@@ -321,12 +323,12 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
             ,'Homo sapiens - Hela - 72': {'color': '#520047', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
             ,'Arabidopsis thaliana - xxx - 504': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
             ,'Arabidopsis thaliana - root culture - 504': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 'o'}
-            ,'Arabidopsis thaliana - xxx - unknown': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '*'}
+            ,'Arabidopsis thaliana - xxx - xxx': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '*'}
             ,'A. thaliana - embryo - unknown': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '*'}
             ,'Nicotiana benthamiana - xxx - 120': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 'v'}
             ,'Nicotiana benthamiana - xxx - 336': {'color': "#11775c", 'edge_color':'gray', 'hatch':'', 'marker': 'v'}
             ,'Petunia hybrida - xxx - 24': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '>'}
-            ,'Silene latifolia - xxx - xx': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '<'}
+            ,'Silene latifolia - xxx - xxx': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '<'}
             ,'Solanum lycopersicum - xxx - 24': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': 's'}
             ,'Solanum lycopersicum - M82 - 48': {'color': '#009d73', 'edge_color':'gray', 'hatch':'', 'marker': '^'}
             ,'Chlamydomonas reinhardtii - xxx - 48': {'color': "#8BDFE6", 'edge_color':'gray', 'hatch':'', 'marker': 'x'}
