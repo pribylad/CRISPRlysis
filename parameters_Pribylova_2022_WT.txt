@@ -38,8 +38,8 @@
 #############################################
 #                 DICTIONARY                #
 #############################################
-{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/palnts/Pribylova_et_al_2022/03_for_Meta/to_analyse/WT/',
-   'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022',
+{'source_dir':'/mnt/d/Lab210/DATA/04_1_bp_MH_DNA_repair/data/01_to_use/plants/Pribylova_et_al_2022/03_for_Meta/to_analyse/TRVWT/',
+   'project_output_dir':'../../CRISPRlysis_outputs/Pribylova_et_al_2022/TRVWT',
    'add_columns':{'organism':'Nicotiana benthamiana',
       'hours_post_inoculation':'120',
       'deliver_of_nuclease':'Agroinfiltration',
@@ -54,10 +54,10 @@
    'minimum_Reads':5,
    'output_format':'png',
    'make_mastertable_00':True,
-   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Pribylova_et_al_2022/00_mastertable_260511.tsv',
+   'path_to_existing_mastertable_00':'/home/lefnui/CRISPRlysis_outputs/Pribylova_et_al_2022/00_mastertable_260522.tsv',
    'filter_out_values':{},
    'make_mastertable_01':True,
-   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Pribylova_et_al_2022/01_mastertable_260511.tsv',
+   'path_to_existing_mastertable_01':'/home/lefnui/CRISPRlysis_outputs/Pribylova_et_al_2022/01_mastertable_260522.tsv',
    'make_subtables':True,
    'path_to_existing_subtable_02':'',
    'subtables_param':['gene', 'mutant'],

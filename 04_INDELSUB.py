@@ -50,16 +50,16 @@ show_plots = False
 # data_source = 'all_samples_filtered_95'
 # project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/01_all_samples')
 
-# # 3 with data filtered for overall efficacy >=5% and kingdom = plant, input table is result from 02_filter_low_efficacy.py script
-# filter_criterion = 'efficacy_and_kingdom'
-# filter_value = '95_and_plant'
-# no_of_runs = 1
-# data_source = 'plants_filtered_95'
-# mutants = False
-# # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_plant.tsv'
-# # project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_plants')
-# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/04_split_kingdom_plant.tsv'
-# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_plants')
+# 3 with data filtered for overall efficacy >=5% and kingdom = plant, input table is result from 02_filter_low_efficacy.py script
+filter_criterion = 'efficacy_and_kingdom'
+filter_value = '95_and_plant'
+no_of_runs = 1
+data_source = 'plants_filtered_95'
+mutants = False
+# df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/04_split_kingdom_plant.tsv'
+# project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/02_plants')
+df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/04_split_kingdom_plant.tsv'
+project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_plants')
 
 
 # # 4 with data filtered for overall efficacy >=5% and kingdom = animal, input table is result from 02_filter_low_efficacy.py script
@@ -73,23 +73,23 @@ show_plots = False
 # df_dir = '/home/lefnui/CRISPRlysis_outputs/03_merged_tables/02_filtered_efficacy_95/with_Ponce_samples/04_split_kingdom_animal.tsv'
 # project_output_dir = Path(f'/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_animals')
 
-# 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
-# Open list_of_datasets.txt and read it as list of datasets to be analysed individually
-mutants = False
-# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
-# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
-# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_3_mutants.txt'
-# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_4_with_Ponce.txt'
-list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_5.txt'
-list_of_datasets = []
-with open(list_of_datasets_file, 'r') as f:
-    for line in f:
-        dataset = line.strip()
-        if dataset:  # Check if the line is not empty
-            list_of_datasets.append(dataset)
-print(list_of_datasets)
-no_of_runs = len(list_of_datasets)
-print(f"No of individual datasets to be analysed: {no_of_runs}")
+# # 5 with data filtered for overall efficacy >=5% and individual dataset, input table is result from 02_filter_low_efficacy.py script
+# # Open list_of_datasets.txt and read it as list of datasets to be analysed individually
+# mutants = False
+# # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_1.txt'
+# # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_2.txt'
+# # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_3_mutants.txt'
+# # list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_4_with_Ponce.txt'
+# list_of_datasets_file = '/home/lefnui/git/CRISPRlysis/list_of_individual_samples_5.txt'
+# list_of_datasets = []
+# with open(list_of_datasets_file, 'r') as f:
+#     for line in f:
+#         dataset = line.strip()
+#         if dataset:  # Check if the line is not empty
+#             list_of_datasets.append(dataset)
+# print(list_of_datasets)
+# no_of_runs = len(list_of_datasets)
+# print(f"No of individual datasets to be analysed: {no_of_runs}")
 
 for run in range(no_of_runs):
     if no_of_runs > 1:

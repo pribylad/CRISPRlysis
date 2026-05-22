@@ -518,6 +518,8 @@ for run in range(no_of_runs):
 
         stat_info = pivot_table_avg.groupby('variable').value.describe()
         save_stat(stat_info, name_to_save, charts_output_dir)
+        # save the data used for plotting as tsv
+        pivot_table_avg.to_csv(Path(str(charts_output_dir) + '/' + name_to_save + '.tsv'), sep='\t', index=False)
     except ValueError as e:
         print(f"Error occurred while plotting: {e}")
         print("Skipping plot.")
@@ -606,7 +608,7 @@ for run in range(no_of_runs):
 
     try:
         # Full plot as png
-        name_to_save = f'003_4_DEL_end_summary_norm_violinplot'
+        name_to_save = f'003_5_DEL_end_summary_norm_violinplot'
         plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
             , number_of_columns=3\
             , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
@@ -628,7 +630,7 @@ for run in range(no_of_runs):
             , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
 
         # Without legend etc as png
-        name_to_save = f'003_4_DEL_end_summary_norm_violinplot_small'
+        name_to_save = f'003_5_DEL_end_summary_norm_violinplot_small'
         plot = plot_sns_violin_and_print(data=pivot_table_avg, x='variable', y='value'\
             , number_of_columns=3\
             , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
@@ -669,6 +671,8 @@ for run in range(no_of_runs):
             , project_output_dir=charts_output_dir\
             , data_source=data_source, output_format='svg'\
             , dpi=200, y_min=0, y_max=102, show_plots=show_plots)
+        # Save the data used for plotting as tsv
+        pivot_table_avg.to_csv(Path(str(charts_output_dir) + '/' + name_to_save + '_' + date + '.tsv'), sep='\t', index=False)
     except ValueError as e:
         print(f"Error occurred: {e}")
         print("Skipping plot.")

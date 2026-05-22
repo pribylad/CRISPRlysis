@@ -14,7 +14,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import os
 ##########################################################################################
-output_format = 'png'
+output_format = 'svg'
 # output_format = 'svg'
 show_plots = True
 
