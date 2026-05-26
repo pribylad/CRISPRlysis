@@ -1,126 +1,281 @@
 # %%
-# Load table from where the statistic should be done
-import pandas as pd
-import scipy
-from scipy import stats
-import seaborn as sns
-import os
+"""
+Compositional data testing pipeline:
+  1. Pivot long -> wide, unique ID from organism/cell_line/mutant/gene/gRNA_seq/hpi
+  2. Half-minimum zero imputation
+  3. CLR (Centered Log-Ratio) transform
+  4. Shapiro-Wilk normality test per component per group
+  5. Kruskal-Wallis test per component
+  6. Dunn post-hoc test with Holm correction per component
+
+Requires: pandas, numpy, scipy, scikit_posthocs
+  pip install scikit-posthocs
+"""
+
+import sys
+
 import numpy as np
-import matplotlib.pyplot as plt
-# import statsmodels
+import pandas as pd
+from scipy.stats import shapiro, kruskal
 import scikit_posthocs as sp
-# print version of scikit_posthocs
-print("scikit_posthocs version:", sp.__version__)
-# print version of scipy
-print("scipy version:", scipy.__version__)
-# %%
+import warnings
+warnings.filterwarnings("ignore")
+
+# ── 0. Load long-format data ──────────────────────────────────────────────────
+# # df_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_plants/003_4_DEL_orientation_summary_violinplot_small.tsv"
+# # output_name = "plants_9DELcategories_posthoc_results"
+# # df_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_animals/003_4_DEL_orientation_summary_violinplot_small.tsv"
+# # output_name = "animals_9DELcategories_posthoc_results"
+# # df_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/07_cluster_0_DEL_03_filtered_efficacy_samples_limit5efficacy_All_260518/003_4_DEL_orientation_summary_violinplot_small.tsv"
+# # output_name = "Cluster_0_A_9DELcategories_posthoc_results" # it is cluster A in the paper
+# # df_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/07_cluster_2_DEL_03_filtered_efficacy_samples_limit5efficacy_All_260518/003_4_DEL_orientation_summary_violinplot_small.tsv"
+# # output_name = "Cluster_2_B_9DELcategories_posthoc_results" # it is cluster B in the paper
+# df_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/07_cluster_1_DEL_03_filtered_efficacy_samples_limit5efficacy_All_260518/003_4_DEL_orientation_summary_violinplot_small.tsv"
+# output_name = "Cluster_1_C_9DELcategories_posthoc_results" # it is cluster C in the paper
+# ID_COLS = ["organism", "cell_line", "mutant", "gene", "gRNA_seq", "hours_post_inoculation"]
+# dict_rename = {'upstream_ambiguous':5, 'bidirectional_ambiguous':1, 'downstream_ambiguous':3,
+#                'upstream_NO_ambi':6, 'bidirectional_NO_ambi':2, 'downstream_NO_ambi':4,
+#                'cannot_be_determined_ambiguous':7, 'DEL_exceeds_analysed_window':8,
+#                'gap_outside_of_predicted_cut':9}
+
+# # df_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_plants/001_1_INDELSUB_summary_violinplot_260518.tsv"
+# # output_name = "plants_INDELSUB_posthoc_results"
+# df_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_animals/001_1_INDELSUB_summary_violinplot_260518.tsv"
+# output_name = "animals_INDELSUB_posthoc_results"
+# ID_COLS = ["organism", "cell_line", "mutant", "gene", "gRNA_seq", "hours_post_inoculation"]
+# dict_rename = {}
+
+# # df_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_plants/002_1_IN_no_of_IN_nucleotides_summary_violinplot_small_260514.tsv"
+# # output_name = "plants_IN_posthoc_results"
+# df_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_animals/002_1_IN_no_of_IN_nucleotides_summary_violinplot_small_260514.tsv"
+# output_name = "animals_IN_posthoc_results"
+# ID_COLS = ["ID_no_rep"]
+# dict_rename = {}
+
+
+# df_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/07_cluster_0_DEL_03_filtered_efficacy_samples_limit5efficacy_All_260518/003_5_DEL_end_summary_norm_violinplot_small_260522.tsv"
+# output_name = "Cluster_0_A_DEL_end_posthoc_results" # it is cluster A in the paper
+# df_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/07_cluster_2_DEL_03_filtered_efficacy_samples_limit5efficacy_All_260518/003_5_DEL_end_summary_norm_violinplot_small_260522.tsv"
+# output_name = "Cluster_2_B_DEL_end_posthoc_results" # it is cluster B in the paper
+df_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/07_cluster_1_DEL_03_filtered_efficacy_samples_limit5efficacy_All_260518/003_5_DEL_end_summary_norm_violinplot_small_260522.tsv"
+output_name = "Cluster_1_C_DEL_end_posthoc_results" # it is cluster C in the paper
+ID_COLS = ["organism", "cell_line", "mutant", "gene", "gRNA_seq", "hours_post_inoculation"]
+dict_rename = {}
+
 output_dir = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/00_statistic/"
-# INFO comparing plants vs animals
-df_1 = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_plants/003_4_DEL_orientation_summary_violinplot_small.tsv"
-output_name = "plants_9DELcategories_posthoc_results"
-# df_1 = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_animals/003_4_DEL_orientation_summary_violinplot_small.tsv"
-# output_name = "Kingdoms_9DELcategories_posthoc_results"
-dict_rename = {'upstream_ambiguous':5, 'bidirectional_ambiguous':1, 'downstream_ambiguous':3,
-               'upstream_NO_ambi':6, 'bidirectional_NO_ambi':2, 'downstream_NO_ambi':4,
-               'cannot_be_determined_ambiguous':7, 'DEL_exceeds_analysed_window':8,
-               'gap_outside_of_predicted_cut':9}
 
-# df_1 = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_plants/001_1_INDELSUB_summary_violinplot_260518.tsv"
-# df_1 = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_animals/001_1_INDELSUB_summary_violinplot_260518.tsv"
-# output_name = "Kingdoms_INDELSUB_posthoc_results"
-# dict_rename = {}
+class Tee:
+    """Write to both stdout and a file simultaneously."""
+    def __init__(self, *files):
+        self.files = files
+    def write(self, obj):
+        for f in self.files:
+            f.write(obj)
+            f.flush()
+    def flush(self):
+        for f in self.files:
+            f.flush()
+ 
+_log_file = open(output_dir + output_name + ".txt", "w", encoding="utf-8")
+sys.stdout = Tee(sys.__stdout__, _log_file)
+ 
 
-# df_1 = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_plants/002_1_IN_no_of_IN_nucleotides_summary_violinplot_small_260514.tsv"
-# df_1 = "/home/lefnui/CRISPRlysis_outputs/04_charts/02_filtered_efficacy_95/with_Ponce_samples/02_animals/002_1_IN_no_of_IN_nucleotides_summary_violinplot_small_260514.tsv"
-# output_name = "Kingdoms_IN_posthoc_results"
-# dict_rename = {}
+df_long = pd.read_csv(df_dir, sep="\t")
+
+print(df_long.columns)
+
+if "Event_around_cut" in df_long.columns:
+    df_long = df_long.rename(columns={"Event_around_cut": "variable"})
+
+# ── 1. Build unique sample ID and pivot to wide ───────────────────────────────
 
 
+df_long["sample_id"] = df_long[ID_COLS].astype(str).agg(" - ".join, axis=1)
 
-# load the table into pandas dataframes
-df_1 = pd.read_csv(df_1, sep="\t")
+df_wide = df_long.pivot_table(
+    index="sample_id",
+    columns="variable",
+    values="value",
+    aggfunc="first"
+)
+df_wide.columns.name = None
+df_wide.index.name = "sample_id"
 
-if "Event_around_cut" in df_1.columns:
-    df_1 = df_1.rename(columns={"Event_around_cut": "variable"})
-# %%
-df_1.head()
-# %%
-# print shape of the dataframe
-print("Shape of df 1:", df_1.shape)
-print("No of unique samples in df 1:", len(df_1["variable"])/df_1["variable"].nunique())
-print('')
-print(df_1.columns)
-# %%
-# rename values in column "variable"
-print(df_1["variable"].unique())
+components = list(df_wide.columns)
+X_raw = df_wide.values.astype(float)
 
-# rename values in column "variable"
-df_1["variable"] = df_1["variable"].replace(dict_rename)
-# sort table by column "variable"
-df_1 = df_1.sort_values(by="variable")
-print(df_1["variable"].unique())
-# %%
-# make CLR transformation of "value" column for each group in "variable" column
-# first, add 1 to all values in "value" column to avoid log of zero
-df_1["value"] = df_1["value"] + 1
-# then, for each group in "variable" column, divide "value" column by the sum of "value" column for that group and take log of the result
-df_1["value"] = df_1.groupby("variable")["value"].transform(lambda x: x / x.sum())
-df_1["value"] = df_1["value"].apply(lambda x: np.log(x))
-# %%
-df_1
-# %%
-# test normality of individual "variable" groups with Shapiro-Wilk test
-for group in df_1["variable"].unique():
-    stat, p = stats.shapiro(df_1[df_1["variable"] == group]["value"])
-    print("Group:", group, "Shapiro-Wilk test statistic:", stat, "p-value:", p)
-    # Print if the group is normally distributed or not based on p-value
-    if p > 0.05:
-        print("Group:", group, "is normally distributed")
+print("=" * 65)
+print("COMPOSITIONAL DATA ANALYSIS — COMPARING VARIABLES")
+print("=" * 65)
+print(f"\nSamples    : {len(df_wide)}")
+print(f"Variables  : {len(components)}")
+for c in components:
+    print(f"  - {c} - {dict_rename.get(c, c)}")
+
+# ── 2. Half-minimum zero imputation ──────────────────────────────────────────
+X = X_raw.copy()
+X = np.nan_to_num(X, nan=0.0)
+X[X < 0] = 0.0
+
+nonzero_vals = X[X > 0]
+half_min = nonzero_vals.min() / 2 if len(nonzero_vals) > 0 else 1e-6
+n_zeros = (X == 0).sum()
+X[X == 0] = half_min
+
+print(f"\nZero imputation : {n_zeros} zero cells → half-minimum = {half_min:.6g}")
+
+# ── 3. CLR transform ──────────────────────────────────────────────────────────
+X = X / X.sum(axis=1, keepdims=True)
+log_X = np.log(X)
+X_clr = log_X - log_X.mean(axis=1, keepdims=True)
+
+clr_df = pd.DataFrame(X_clr, columns=components, index=df_wide.index)
+
+print(f"CLR transform   : row sums ≈ 0 (max abs = {np.abs(X_clr.sum(axis=1)).max():.2e})  ✓")
+# ── 4. Shapiro-Wilk per variable ──────────────────────────────────────────────
+print("\n" + "=" * 65)
+print("STEP 1: Shapiro-Wilk Normality Test (CLR values, per variable)")
+print("-" * 65)
+print(f"  {'Variable':<36}  {'W':>7}  {'p-value':>8}  {'Normal?':>8}")
+print(f"  {'-'*36}  {'-'*7}  {'-'*8}  {'-'*8}")
+
+any_nonnormal = False
+for comp in components:
+    vals = clr_df[comp].values
+    if len(vals) >= 3:
+        W, p = shapiro(vals)
+        normal = "yes" if p >= 0.05 else "NO *"
+        if p < 0.05:
+            any_nonnormal = True
+        print(f"  {comp:<36}  {W:>7.4f}  {p:>8.4f}  {normal:>8}")
     else:
-        print("Group:", group, "is NOT normally distributed")
-# %%
-# Do Kruskal-Wallis test to compare groups in "variable" (data did not pass normality test)
-stat, p = stats.kruskal(*[df_1[df_1["variable"] == group]["value"] for group in df_1["variable"].unique()])
-print("Kruskal-Wallis test statistic:", stat, "p-value:", p)
-if p < 0.05:
-    print("There is a significant difference between groups in variable, medians were compared.")
+        print(f"  {comp:<36}  {'n<3':>7}  {'n<3':>8}  {'n/a':>8}")
+
+print(f"\n  * p < 0.05 = non-normal distribution of CLR values.")
+print(f"  → {'Non-normality detected: Kruskal-Wallis is appropriate.' if any_nonnormal else 'All normal: Kruskal-Wallis still valid as robust non-parametric test.'}")
+
+# ── 5. Kruskal-Wallis across all variables ────────────────────────────────────
+#
+# Here each VARIABLE is treated as a group.
+# The CLR-transformed values across all 377 samples are compared between
+# the 9 variables to test: do these categories have different distributions?
+
+print("\n" + "=" * 65)
+print("STEP 2: Kruskal-Wallis Test — all variables compared")
+print("-" * 65)
+
+group_vals = [clr_df[comp].values for comp in components]
+H, p_kw = kruskal(*group_vals)
+sig = "***" if p_kw < 0.001 else ("**" if p_kw < 0.01 else ("*" if p_kw < 0.05 else "ns"))
+
+print(f"\n  H-statistic : {H:.4f}")
+print(f"  p-value     : {p_kw:.4e}")
+print(f"  df          : {len(components) - 1}")
+print(f"  Result      : {sig}  —  {'Variables differ significantly' if p_kw < 0.05 else 'No significant difference detected'}")
+
+# ── 6. Dunn post-hoc with Holm correction ─────────────────────────────────────
+print("\n" + "=" * 65)
+print("STEP 3: Dunn Post-hoc Test — pairwise variable comparisons (Holm)")
+print("=" * 65)
+
+if p_kw >= 0.05:
+    print("\n  KW not significant — post-hoc not warranted.")
 else:
-    print("There is NO significant difference between groups in variable, medians were compared.")
-# %%
-# Do posthoc test to compare groups in "variable" with Dunn's test and adjust p-values with Holm-Bonferroni method
-# compare all groups in "variable" column with each other and save the results in a table
-p_values = sp.posthoc_dunn(df_1, val_col="value", group_col="variable", p_adjust="holm")
-# make another table where if p<0.0001, value is "****", if p<0.001, value is "***", if p<0.01, value is "**", if p<0.05, value is "*", else value is "ns"
-p_values_significance = p_values.copy()
-p_values_significance[(p_values < 0.001)] = "***"
-p_values_significance[(p_values >= 0.001) & (p_values < 0.01)] = "**"
-p_values_significance[(p_values >= 0.01) & (p_values < 0.05)] = "*"
-p_values_significance[p_values >= 0.05] = "ns"
-print(p_values)
-print(p_values_significance)
-# %%
+    # Build long format: one row per (sample, variable) with CLR value
+    long_clr = clr_df.reset_index().melt(
+        id_vars="sample_id", var_name="variable", value_name="clr_value"
+    )
 
+    dunn = sp.posthoc_dunn(
+        long_clr, val_col="clr_value", group_col="variable", p_adjust="holm"
+    )
 
-# save p_values  and p_values_significance to txt file with name "kingdoms_9DELcategories_posthoc_results_group_name.txt" in output_dir and separate by tab and each iteration add to the same file and separate by two empty rows
-# if txt file does not exist, create
-with open(output_dir + output_name + ".txt", "w") as f:
-    p_values.to_csv(f, sep="\t")
-    p_values_significance.to_csv(f, sep="\t")
-    f.write("\n\n")
+    # Reorder to match original component order
+    dunn = dunn.loc[components, components]
 
-# make heatmap of p_values with seaborn and save it as "kingdoms_9DELcategories_posthoc_heatmap_group_name.png" in output_dir
+    # ── Print full matrix ──
+    col_w = 14
+    short = [c[:col_w] for c in components]
 
-plt.figure(figsize=(5, 4))
-sns.heatmap(p_values, annot=False, cmap="coolwarm", cbar=True, vmin=0, vmax=1)
-plt.title("Normality not passed Shapiro-Wilk test p < 0.05\n Kruskal-Wallis test p < 0.05\nDunn's posthoc test results for variable groups\np-values adjusted with Holm-Bonferroni method")
+    print(f"\n  Holm-adjusted p-values (* p<0.05  ** p<0.01  *** p<0.001  ns)\n")
+    # header
+    print(f"  {'':36}", end="")
+    for s in short:
+        print(f"  {s:>{col_w}}", end="")
+    print()
+    print("  " + "-" * (36 + (col_w + 2) * len(components)))
 
+    for row_c in components:
+        print(f"  {row_c[:36]:<36}", end="")
+        for col_c in components:
+            if row_c == col_c:
+                cell = "—"
+            else:
+                p_val = dunn.loc[row_c, col_c]
+                stars = "***" if p_val < 0.001 else ("**" if p_val < 0.01 else ("*" if p_val < 0.05 else "ns"))
+                cell = f"{p_val:.3f}{stars}"
+            print(f"  {cell:>{col_w}}", end="")
+        print()
 
-# set tight layout
-plt.tight_layout()
-# save figure
-plt.savefig(output_dir + output_name + ".png", dpi=300)
-plt.show()
+    # ── Summary of significant pairs ──
+    print(f"\n  Significant pairs (Holm p < 0.05):")
+    found = False
+    for i, r in enumerate(components):
+        for j, c in enumerate(components):
+            if j <= i:
+                continue
+            p_val = dunn.loc[r, c]
+            if p_val < 0.05:
+                stars = "***" if p_val < 0.001 else ("**" if p_val < 0.01 else "*")
+                print(f"    {r}  vs  {c}  →  p = {p_val:.4f} {stars}")
+                found = True
+    if not found:
+        print("    None after Holm correction.")
+    # ── Summary of NON-significant pairs ──
+    print(f"\n  Non-significant pairs (Holm p >= 0.05):")
+    found = False
+    for i, r in enumerate(components):
+        for j, c in enumerate(components):
+            if j <= i:
+                continue
+            p_val = dunn.loc[r, c]
+            if p_val >= 0.05:
+                print(f"    {r}  vs  {c}  →  p = {p_val:.4f}")
+                found = True
+    if not found:
+        print("    None after Holm correction.")
+    # ── Summary of NON-significant pairs and replace component names using dict_rename──
+    print(f"\n  Non-significant pairs (Holm p >= 0.05) with renamed components:\n")
+    found = False
+    for i, r in enumerate(components):
+        for j, c in enumerate(components):
+            if j <= i:
+                continue
+            p_val = dunn.loc[r, c]
+            if p_val >= 0.05:
+                r_renamed = dict_rename.get(r, r)
+                c_renamed = dict_rename.get(c, c)
+                print(f"    {r_renamed}  vs  {c_renamed}  →  p = {p_val:.4f}")
+                found = True
+    if not found:
+        print("    None after Holm correction.")
 
+print("\n" + "=" * 65)
+print("INTERPRETATION")
+print("=" * 65)
+print("""
+What is being tested:
+  Each of the 9 composition categories (variables) is treated as a
+  group. The CLR-transformed values across all samples are compared
+  to ask: do these categories occupy different positions in the
+  composition, i.e. do they differ in their relative abundance?
 
-# %%
+  Kruskal-Wallis: omnibus test — do ANY variables differ?
+  Dunn + Holm:    which specific pairs of variables differ?
+
+Why CLR first:
+  Raw percentages sum to 100% and are not independent. CLR(xᵢ) =
+  log(xᵢ / geometric_mean(x)) removes this constraint so comparisons
+  between variables are valid.
+""")
 
