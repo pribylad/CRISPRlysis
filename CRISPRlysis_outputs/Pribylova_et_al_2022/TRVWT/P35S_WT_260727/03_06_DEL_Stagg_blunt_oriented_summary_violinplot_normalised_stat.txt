@@ -1,0 +1,18 @@
+                                                    count      mean       std       min       25%       50%       75%       max
+variable                                                                                                                       
+DEL span analysed window                             32.0  0.000000  0.000000  0.000000  0.000000  0.000000  0.000000  0.000000
+bidirectional                                        32.0  0.012343  0.012921  0.000000  0.003189  0.009336  0.015504  0.043928
+bidirectional with complementarity                   32.0  0.008982  0.008070  0.000000  0.000000  0.008352  0.013727  0.024548
+downstream -1nt staggered cut                        32.0  0.001829  0.002892  0.000000  0.000000  0.000139  0.002763  0.009647
+downstream -1nt staggered cut with complementarity   32.0  0.001665  0.002653  0.000000  0.000000  0.000000  0.002605  0.011580
+downstream -2nt staggered cut                        32.0  0.000675  0.001504  0.000000  0.000000  0.000000  0.000180  0.005618
+downstream -2nt staggered cut with complementarity   32.0  0.001059  0.002072  0.000000  0.000000  0.000000  0.000653  0.006443
+downstream blunt cut                                 32.0  0.040843  0.048798  0.000000  0.006296  0.014957  0.056456  0.156180
+downstream blunt cut with complementarity            32.0  0.033087  0.029930  0.000000  0.010970  0.022998  0.052893  0.103790
+orientation cannot be determined blunt cut with...   32.0  0.049976  0.137018  0.000000  0.000000  0.000000  0.000000  0.492550
+upstream -1nt staggered cut                          32.0  0.169536  0.120547  0.000000  0.064091  0.184551  0.246874  0.407925
+upstream -1nt staggered cut with complementarity     32.0  0.190068  0.135275  0.000000  0.057002  0.211972  0.298708  0.407203
+upstream -2nt staggered cut                          32.0  0.007182  0.011709  0.000000  0.000000  0.000304  0.010734  0.038400
+upstream -2nt staggered cut with complementarity     32.0  0.066042  0.070279  0.000000  0.012294  0.041102  0.087248  0.222336
+upstream blunt cut                                   32.0  0.218888  0.144492  0.035642  0.114101  0.187831  0.288162  0.551282
+upstream blunt cut with complementarity              32.0  0.197825  0.132465  0.000000  0.117117  0.194482  0.252685  0.445190

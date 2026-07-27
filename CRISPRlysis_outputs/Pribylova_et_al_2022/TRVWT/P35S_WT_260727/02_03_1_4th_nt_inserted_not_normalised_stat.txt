@@ -1,0 +1,18 @@
+               4th_nt_inserted
+%Reads  count  False              32.000000
+               True               32.000000
+        mean   False               2.947662
+               True                9.022178
+        std    False               3.221606
+               True                8.254000
+        min    False               0.181963
+               True                0.370947
+        25%    False               0.529177
+               True                2.826588
+        50%    False               1.471278
+               True                5.660089
+        75%    False               4.228971
+               True               13.617344
+        max    False              11.180638
+               True               29.757364
+dtype: float64

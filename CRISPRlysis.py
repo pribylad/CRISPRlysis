@@ -1,4 +1,3 @@
-# %%
 # pylint: disable=too-many-lines
 # pylint: disable=line-too-long
 # pylint: disable=invalid-name
@@ -34,8 +33,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 # TODO remove statannot once all works on statannotations bellow
-from statannot import add_stat_annotation
-from statannotations.Annotator import Annotator
+# from statannot import add_stat_annotation
+# from statannotations.Annotator import Annotator
 
 from scripts.general_functions import write_into_report, copy_files_with_parent_folder_to_another, find_files_paths_with_criteria, check_if_path_exist_create_if_not
 
@@ -1174,7 +1173,7 @@ for key, value in tables_dic.items():
         # filter out deletions which does not have MH around the cut site
         df_end = df_end[df_end['End_participating_on_MH'] != 'X']
         # Change values in End_3_5 to be 3', 5' and cannot_be_determined needed for plotting with color_dic
-        df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'eider 3\' or 5\''})
+        df_end['End_3_5'] = df_end['End_3_5'].replace({3:'3\'', 5:'5\'', 0:'either 3\' or 5\''})
         pivot = pd.pivot_table(df_end, index=['name', 'gRNA_seq'], columns=['End_3_5', 'blunt_cut_with_MH_possible'], values='%Reads', aggfunc='sum', fill_value=0)
         # If pitvot is Empty skip the next plot
         if pivot.empty:
@@ -1184,9 +1183,9 @@ for key, value in tables_dic.items():
             # Flattern the MultiIndex columns
             df_end_samples.columns = ['_'.join(map(str, col)).strip() for col in df_end_samples.columns.values]
             # Rename columns
-            df_end_samples.rename(columns={'name_': 'name', 'gRNA_seq_':'gRNA_seq', '3\'_True':'3\' possible blunt', '5\'_True':'5\' possible blunt', 'eider 3\' or 5\'_True':'eider 3\' or 5\' possible blunt', '3\'_False':'3\' NOT blunt', '5\'_False':'5\' NOT blunt', 'eider 3\' or 5\'_False':'eider 3\' or 5\' NOT blunt'}, inplace=True)
+            df_end_samples.rename(columns={'name_': 'name', 'gRNA_seq_':'gRNA_seq', '3\'_True':'3\' possible blunt', '5\'_True':'5\' possible blunt', 'either 3\' or 5\'_True':'either 3\' or 5\' possible blunt', '3\'_False':'3\' NOT blunt', '5\'_False':'5\' NOT blunt', 'either 3\' or 5\'_False':'either 3\' or 5\' NOT blunt'}, inplace=True)
 
-            df_end_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_end_samples, ['3\' possible blunt', '5\' possible blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '5\' NOT blunt', 'eider 3\' or 5\' NOT blunt'], cut_maximum, cut_minimum)
+            df_end_samples, list_of_events = check_if_all_events_are_present_after_pivot_reset_index(df_end_samples, ['3\' possible blunt', '5\' possible blunt', 'either 3\' or 5\' possible blunt', '3\' NOT blunt', '5\' NOT blunt', 'either 3\' or 5\' NOT blunt'], cut_maximum, cut_minimum)
             df_end_samples = pd.melt(df_end_samples, id_vars=['name', 'gRNA_seq'], value_vars=list_of_events)
             pivot_normalised = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['variable'], values=df_end_samples['value'], aggfunc='sum', normalize='index')
             pivot_NOTnorm = pd.crosstab(index=[df_end_samples['name'],df_end_samples['gRNA_seq']], columns=df_end_samples['variable'], values=df_end_samples['value'], aggfunc='sum')
@@ -1226,7 +1225,7 @@ for key, value in tables_dic.items():
                     , palette=color_dic, x_as_perc=True\
                     , xaxis_formater=1, decimals=0, xlim=(0,1)\
                     , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default' \
-                    , bars_order=['5\' NOT blunt', '5\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '3\' possible blunt'], show_plots=show_plots)
+                    , bars_order=['5\' NOT blunt', '5\' possible blunt', 'either 3\' or 5\' NOT blunt', 'either 3\' or 5\' possible blunt', '3\' NOT blunt', '3\' possible blunt'], show_plots=show_plots)
                 stat_info = df_end_samples_norm_part.groupby('variable').value.describe()
                 save_stat(stat_info, name_to_save, project_output_subdir)
 
@@ -1244,7 +1243,7 @@ for key, value in tables_dic.items():
                     , palette=color_dic, x_as_perc=True\
                     , xaxis_formater=100, decimals=0, xlim=(0,100)\
                     , text_bellow_chart=text_bellow_chart, y_legend_coordinate='Default' \
-                    , bars_order=['5\' NOT blunt', '5\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt', '3\' NOT blunt', '3\' possible blunt'], show_plots=show_plots)
+                    , bars_order=['5\' NOT blunt', '5\' possible blunt', 'either 3\' or 5\' NOT blunt', 'either 3\' or 5\' possible blunt', '3\' NOT blunt', '3\' possible blunt'], show_plots=show_plots)
                 stat_info = df_end_samples_NOTnorm_part.groupby('variable').value.describe()
                 save_stat(stat_info, name_to_save, project_output_subdir)
                 i+=1
@@ -1268,7 +1267,7 @@ for key, value in tables_dic.items():
                 , hatches=False\
                 , clip_right=True\
                 , title=title, xtickt_rotation=-55, ylabel=ylabel\
-                , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', '3\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']\
+                , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', '3\' possible blunt', 'either 3\' or 5\' NOT blunt', 'either 3\' or 5\' possible blunt']\
                 , plot_legend=False\
                 , integrated_properties_dic=False, color_dic=color_dic\
                 , text_bellow_chart=text_bellow_chart\
@@ -1297,7 +1296,7 @@ for key, value in tables_dic.items():
                 , hatches=False\
                 , clip_right=True\
                 , title=title, xtickt_rotation=-55, ylabel=ylabel\
-                , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', '3\' possible blunt', 'eider 3\' or 5\' NOT blunt', 'eider 3\' or 5\' possible blunt']\
+                , order=['5\' NOT blunt','5\' possible blunt', '3\' NOT blunt', '3\' possible blunt', 'either 3\' or 5\' NOT blunt', 'either 3\' or 5\' possible blunt']\
                 , plot_legend=False\
                 , integrated_properties_dic=False, color_dic=color_dic\
                 , text_bellow_chart=text_bellow_chart\
@@ -1351,11 +1350,11 @@ for key, value in tables_dic.items():
             df_end['DEL_orientation_participating_end'] = df_end['DEL_orientation_participating_end'].replace({
                 'U_5_True': 'upstream 5\' possible blunt',
                 'U_5_False': 'upstream 5\' NOT blunt',
-                'U_0_True': 'upstream eider 5\' or 3\' possible blunt',
+                'U_0_True': 'upstream either 5\' or 3\' possible blunt',
                 'U_0_False': 'upstream no MH from predicted cut sites',
                 'D_3_True': 'downstream 3\' possible blunt',
                 'D_3_False': 'downstream 3\' NOT blunt',
-                'D_0_True': 'downstream eider 5\' or 3\' possible blunt',
+                'D_0_True': 'downstream either 5\' or 3\' possible blunt',
                 'D_0_False': 'downstream no MH from predicted cut sites',
                 'X_0_unknown': 'Unknown, No MH',
                 'sD_0_True': 'downstream cannot be determined blunt cut with complementarity',

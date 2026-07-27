@@ -1,0 +1,143 @@
+########## REPORT ##########
+Violin plot 01_01_INDELSUB_summary_violinplot was created.
+
+Statistic was saved as 01_01_INDELSUB_summary_violinplot_stat.txt
+
+Stacked horizontal barchart 01_02_1_INDELSUB_horizontal_barchart_all_samples_not_normalised was created.
+
+Stacked horizontal barchart 01_03_1_INDELSUB_horizontal_barchart_all_samples_normalised was created.
+
+Statistic was saved as 01_03_1_INDELSUB_horizontal_barchart_all_samples_normalised_stat.txt
+
+Violin plot 02_01_IN_no_of_IN_nucleotides_summary_violinplot was created.
+
+Statistic was saved as 02_01_IN_no_of_IN_nucleotides_summary_violinplot_stat.txt
+
+Stacked horizontal barchart 02_02_IN_no_of_IN_nucleotides_stacked_barchart_name was created.
+
+Stacked horizontal barchart 02_03_1_4th_nt_inserted_not_normalised was created.
+
+Statistic was saved as 02_03_1_4th_nt_inserted_not_normalised_stat.txt
+
+Stacked horizontal barchart 02_04_1_4th_nt_inserted_normalised was created.
+
+Statistic was saved as 02_04_1_4th_nt_inserted_normalised_stat.txt
+
+Violin plot 02_05_IN_4th_nt_inserted_normalised_violinplot was created.
+
+Statistic was saved as 02_05_IN_4th_nt_inserted_normalised_violinplot_stat.txt
+
+Violin plot 02_06_IN_4th_nt_inserted_normalised_violinplot was created.
+
+Statistic was saved as 02_06_IN_4th_nt_inserted_normalised_violinplot_stat.txt
+
+Violin plot 03_01_DEL_orientation_summary_violinplot was created.
+
+Statistic was saved as 03_01_DEL_orientation_summary_violinplot_stat.txt
+
+Violin plot 03_02_DEL_orientation_summary_violinplot was created.
+
+Statistic was saved as 03_02_DEL_orientation_summary_violinplot_stat.txt
+
+Stacked horizontal barchart 03_03_1_Stagg_blunt_ratio_all_samples was created.
+
+Statistic was saved as 03_03_1_Stagg_blunt_ratio_all_samples_stat.txt
+
+Violin plot 03_04_DEL_Stagg_blunt_summary_violinplot was created.
+
+Statistic was saved as 03_04_DEL_Stagg_blunt_summary_violinplot_stat.txt
+
+Violin plot 03_05_DEL_Stagg_blunt_oriented_summary_violinplot was created.
+
+Statistic was saved as 03_05_DEL_Stagg_blunt_oriented_summary_violinplot_stat.txt
+
+Violin plot 03_06_DEL_Stagg_blunt_oriented_summary_violinplot_normalised was created.
+
+Statistic was saved as 03_06_DEL_Stagg_blunt_oriented_summary_violinplot_normalised_stat.txt
+
+Violin plot 01_01_INDELSUB_summary_violinplot was created.
+
+Statistic was saved as 01_01_INDELSUB_summary_violinplot_stat.txt
+
+Stacked horizontal barchart 01_02_1_INDELSUB_horizontal_barchart_all_samples_not_normalised was created.
+
+Stacked horizontal barchart 01_03_1_INDELSUB_horizontal_barchart_all_samples_normalised was created.
+
+Statistic was saved as 01_03_1_INDELSUB_horizontal_barchart_all_samples_normalised_stat.txt
+
+Violin plot 02_01_IN_no_of_IN_nucleotides_summary_violinplot was created.
+
+Statistic was saved as 02_01_IN_no_of_IN_nucleotides_summary_violinplot_stat.txt
+
+Stacked horizontal barchart 02_02_IN_no_of_IN_nucleotides_stacked_barchart_name was created.
+
+Stacked horizontal barchart 02_03_1_4th_nt_inserted_not_normalised was created.
+
+Statistic was saved as 02_03_1_4th_nt_inserted_not_normalised_stat.txt
+
+Stacked horizontal barchart 02_04_1_4th_nt_inserted_normalised was created.
+
+Statistic was saved as 02_04_1_4th_nt_inserted_normalised_stat.txt
+
+Violin plot 02_05_IN_4th_nt_inserted_normalised_violinplot was created.
+
+Statistic was saved as 02_05_IN_4th_nt_inserted_normalised_violinplot_stat.txt
+
+Violin plot 02_06_IN_4th_nt_inserted_normalised_violinplot was created.
+
+Statistic was saved as 02_06_IN_4th_nt_inserted_normalised_violinplot_stat.txt
+
+Violin plot 03_01_DEL_orientation_summary_violinplot was created.
+
+Statistic was saved as 03_01_DEL_orientation_summary_violinplot_stat.txt
+
+Violin plot 03_02_DEL_orientation_summary_violinplot was created.
+
+Statistic was saved as 03_02_DEL_orientation_summary_violinplot_stat.txt
+
+Stacked horizontal barchart 03_03_1_Stagg_blunt_ratio_all_samples was created.
+
+Statistic was saved as 03_03_1_Stagg_blunt_ratio_all_samples_stat.txt
+
+Violin plot 03_04_DEL_Stagg_blunt_summary_violinplot was created.
+
+Statistic was saved as 03_04_DEL_Stagg_blunt_summary_violinplot_stat.txt
+
+Violin plot 03_05_DEL_Stagg_blunt_oriented_summary_violinplot was created.
+
+Statistic was saved as 03_05_DEL_Stagg_blunt_oriented_summary_violinplot_stat.txt
+
+Violin plot 03_06_DEL_Stagg_blunt_oriented_summary_violinplot_normalised was created.
+
+Statistic was saved as 03_06_DEL_Stagg_blunt_oriented_summary_violinplot_normalised_stat.txt
+
+Statistic was saved as 03_08_DEL_Stagg_blunt_summary_barchart_4th_nt_stat.txt
+
+Violin plot 03_09_DEL_Stagg_blunt_summary_violinplot_4th_nt was created.
+
+Statistic was saved as 03_09_DEL_Stagg_blunt_summary_violinplot_4th_nt_stat.txt
+
+Violin plot 03_10_DEL_Stagg_blunt_summary_violinplot_4th_nt was created.
+
+Statistic was saved as 03_10_DEL_Stagg_blunt_summary_violinplot_4th_nt_stat.txt
+
+Stacked horizontal barchart 04_01_1_DEL_end_summary_norm_horizontal_barchart was created.
+
+Statistic was saved as 04_01_1_DEL_end_summary_norm_horizontal_barchart_stat.txt
+
+Stacked horizontal barchart 04_02_1_DEL_end_summary_NOTnorm_horizontal_barchart was created.
+
+Statistic was saved as 04_02_1_DEL_end_summary_NOTnorm_horizontal_barchart_stat.txt
+
+Violin plot 04_03_DEL_end_summary_norm_violinplot was created.
+
+Statistic was saved as 04_03_DEL_end_summary_norm_violinplot_stat.txt
+
+Violin plot 04_04_DEL_end_summary_NOTnorm_violinplot was created.
+
+Statistic was saved as 04_04_DEL_end_summary_NOTnorm_violinplot_stat.txt
+
+
+
+Script run time: 1.70 minutes.
+

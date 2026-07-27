@@ -1,0 +1,10 @@
+              4th_nt_inserted
+value  count  True               32.000000
+       mean   True                0.686759
+       std    True                0.309610
+       min    True                0.138994
+       25%    True                0.498950
+       50%    True                0.806370
+       75%    True                0.943739
+       max    True                0.987302
+dtype: float64

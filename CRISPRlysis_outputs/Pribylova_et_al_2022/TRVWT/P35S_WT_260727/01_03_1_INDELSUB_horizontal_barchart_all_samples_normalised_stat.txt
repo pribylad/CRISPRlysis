@@ -1,0 +1,34 @@
+       Event_around_cut
+count  DEL                 32.000000
+       IN                  32.000000
+       OTHERS              32.000000
+       SUB                 32.000000
+mean   DEL                  0.374520
+       IN                   0.619841
+       OTHERS               0.000433
+       SUB                  0.005205
+std    DEL                  0.276447
+       IN                   0.275213
+       OTHERS               0.000720
+       SUB                  0.006397
+min    DEL                  0.112809
+       IN                   0.134010
+       OTHERS               0.000000
+       SUB                  0.000000
+25%    DEL                  0.181598
+       IN                   0.471878
+       OTHERS               0.000000
+       SUB                  0.000752
+50%    DEL                  0.244582
+       IN                   0.745893
+       OTHERS               0.000000
+       SUB                  0.001538
+75%    DEL                  0.514925
+       IN                   0.814681
+       OTHERS               0.000455
+       SUB                  0.009269
+max    DEL                  0.863071
+       IN                   0.886502
+       OTHERS               0.002437
+       SUB                  0.019954
+dtype: float64
