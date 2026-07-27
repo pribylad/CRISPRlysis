@@ -32,9 +32,7 @@ import more_itertools as mit
 import numpy as np
 import pandas as pd
 import seaborn as sns
-# TODO remove statannot once all works on statannotations bellow
-# from statannot import add_stat_annotation
-# from statannotations.Annotator import Annotator
+
 
 from scripts.general_functions import write_into_report, copy_files_with_parent_folder_to_another, find_files_paths_with_criteria, check_if_path_exist_create_if_not
 
