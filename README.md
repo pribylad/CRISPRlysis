@@ -99,8 +99,6 @@ Sample metadata is parsed from the CRISPResso2 folder name, which must follow`Or
 
 Per-sample annotated tables are also written next to their source CRISPResso2 output, so any anomaly in the mastertable can be traced back to a single input file.
 
-In the shipped example, 73,193 events enter `00_mastertable`; 9,111 survive the`minimum_Reads = 5` filter into `01_mastertable`. The whole run takes under two minutes.
-
 ### Key annotation columns
 
 | Column                                                                           | Meaning                                                                                                                                     |
