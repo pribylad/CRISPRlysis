@@ -1,3 +1,0 @@
-04_split_ProExoInt_Exo.tsv
-04_split_ProExoInt_Int.tsv
-04_split_ProExoInt_Pro.tsv
