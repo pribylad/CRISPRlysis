@@ -785,7 +785,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     else:
         list_d = list_13
 
-    if abs(range_2[0])-cut_optimum>abs(range_1[1])-cut_optimum:
+    if abs(range_2[0])-cut_optimum>abs(range_1[1])-cut_optimum and range_1[1]<=cut_minimum:
         list_f = list_16
     elif abs(range_2[0])-cut_optimum==abs(range_1[1])-cut_optimum:
         if range_1[1]<=abs(cut_minimum):
@@ -851,7 +851,10 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
             else:
                 list_j = list_25
         else:
-            list_j = list_3
+            if range_1[1]<=cut_minimum:
+                list_j = list_3
+            else:
+                list_j = list_5
     ########################################################################################
 
     # Determine for DELetions without shiftable nucleotides - no homology around the cut site
