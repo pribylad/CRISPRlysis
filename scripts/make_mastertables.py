@@ -924,7 +924,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
                    7:list_f,
                    8:list_23,
                    9:list_12,
-                   10:list_17,
+                   10:list_g,
                    11:list_17,
                    12:list_17}
     elif category_1 == 6:
