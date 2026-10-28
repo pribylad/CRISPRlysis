@@ -846,10 +846,10 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
         if abs(range_1[0])-cut_optimum<abs(range_1[1])-cut_optimum:
             list_j = list_5
         elif abs(range_1[0])-cut_optimum==abs(range_1[1])-cut_optimum:
-            if abs(cut_maximum)>abs(cut_minimum):
-                list_j = list_5
-            else:
+            if range_1[1]<=cut_minimum:
                 list_j = list_25
+            else:
+                list_j = list_5
         else:
             if range_1[1]<=cut_minimum:
                 list_j = list_3
