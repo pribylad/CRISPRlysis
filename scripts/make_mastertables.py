@@ -826,7 +826,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
     else:
         list_m = list_28
 
-    list_i = list_13
+    list_i = list_k
     # Solve issues when cut_minimum == cut_optimum
     if abs(cut_optimum)==abs(cut_minimum):
         list_h = list_6
@@ -923,7 +923,7 @@ def return_cut_type_based_on_cut_categories(category_1, range_1, category_2, ran
                    6:list_16,
                    7:list_f,
                    8:list_23,
-                   9:list_12,
+                   9:list_g,
                    10:list_g,
                    11:list_17,
                    12:list_17}
