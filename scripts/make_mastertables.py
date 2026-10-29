@@ -251,8 +251,8 @@ def find_min_and_max_gap_ranges(reference, aligned, original_gap_start, original
     max_range = shift_to_right(original_gap_start, original_gap_end, reference, aligned)
     min_range = shift_to_left(original_gap_start, original_gap_end, reference, aligned)
 
-    # If the gap is short and there is repetition, ti may ends up as False for around cut (category of DEL 1,12), must be treated independently
-    if min_range[1] <= cut_maximum and max_range[0] >= cut_minimum:
+    # If the gap is short and there is repetition, it may ends up as False for around cut (category of DEL 1,12), must be treated independently
+    if min_range[1] < cut_position + cut_maximum and max_range[0] > cut_position + cut_minimum + 1:
         return min_range, max_range, True
     # Analyse if the DEL is around the cut
     if ((min_range[1] < cut_position + cut_maximum) or (min_range[0] > cut_position + cut_minimum + 1)) and ((max_range[1] < cut_position + cut_maximum) or (max_range[0] > cut_position + cut_minimum + 1)):
