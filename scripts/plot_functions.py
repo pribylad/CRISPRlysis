@@ -43,7 +43,8 @@ def save_stat(stat_info, name_to_save, project_output_dir):
     Returns:
     no value, the *stat.txt file will be saved"""
     with open(Path(project_output_dir, f'{name_to_save}_stat.txt'), 'w', encoding='utf-8') as f:
-        f.write(str(stat_info))
+        # write the full table, independent of terminal width and pandas display settings
+        f.write(stat_info.to_string() if hasattr(stat_info, 'to_string') else str(stat_info))
     write_into_report(f'Statistic was saved as {name_to_save}_stat.txt', destination_folder=project_output_dir)
 
 def make_Ubuntu_mnt_path(path):
