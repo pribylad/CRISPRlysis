@@ -379,23 +379,37 @@ def find_microhomology(gap_start, gap_end, gap_span_analysed_window, aligned, re
     ##### EDIT MICROHOMOLOGY TO LENGHT FOR ANALYSED TYPES OF CUTS   #####
     return microhomology_to_right_lenght, microhomology_to_left_lenght, microhomology_lenght, microhomology
 
-def get_insertion_event(row, cut_position):
+def insertion_at_cut(reference, aligned, original, cut_position):
     """
-    Extract the insertion event sequence if there is a PAM-proximal gap next to the cut site.
-
-    Parameters:
-    row (dict): A dictionary containing sequence information.
-    cut_position (int): The position of the cut site.
-
-    Returns:
-    str or None: The insertion event sequence if present, otherwise None.
+    Detect an insertion at the cut and return (insertion_at_cut, inserted_sequence or None).
+    nt -1 is located in this row by finding the row's reference without insertion columns ('-') as one unique
+    contiguous slice of the original window (CRISPResso can start the window of an insertion row later, e.g. Weiss
+    et al. 2022 guides MCsite4_0 and MCsite5_0). If that is not possible (no or several matches), the fixed column
+    cut_position (0-based, i.e. the column right after nt -1) is used.
     """
-    if row['Ref_seq_has_PAM_proximal_gap_next_to_cut_site'] == 1:
-        n = row['n_inserted']
-        insertion_event = row['Aligned_Sequence'][cut_position:cut_position+n]
+    if '-' not in reference:
+        return False, None
+    ungapped = reference.replace('-', '')
+    offsets = [o for o in range(0, len(original) - len(ungapped) + 1) if original[o:o + len(ungapped)] == ungapped]
+    if len(offsets) == 1:
+        # 0-based index of nt -1 within the ungapped reference of this row
+        target, n, column = cut_position - 1 - offsets[0], -1, None
+        for j, c in enumerate(reference):
+            if c != '-':
+                n += 1
+                if n == target:
+                    column = j + 1
+                    break
+        if column is None:
+            return False, None
     else:
-        insertion_event = None
-    return insertion_event
+        column = cut_position
+    # the insertion = run of insertion columns directly after nt -1
+    run = ''
+    while column < len(reference) and reference[column] == '-':
+        run += aligned[column]
+        column += 1
+    return (len(run) > 0), (run if run else None)
 
 def gap_in_aligned_seq(row, position):
     """
@@ -1095,8 +1109,10 @@ def process_table(table, gRNA_seq, sample, parameters_dic, original_seq):
     # Call the above function to add columns based on the function find_microhomology
     apply_return_cut_type_based_on_cut_categories(df, return_cut_type_based_on_cut_categories, ['Cut_type', 'End_participating_on_MH', 'DEL_orientation', 'End_3_5', 'Likely_cut_type'])
 
-    df['Ref_seq_has_PAM_proximal_gap_next_to_cut_site'] = df.apply(lambda row: row['Reference_Sequence'][parameters_dic['cut_position']] == '-', axis=1)
-    df['Insertion_event'] = df.apply(lambda row:  get_insertion_event(row, parameters_dic['cut_position']), axis=1)
+    # locate nt -1 in each row by matching the row's reference to the original window (robust to the window start)
+    ins_at_cut = df.apply(lambda row: insertion_at_cut(row['Reference_Sequence'], row['Aligned_Sequence'], row['Original_Sequence'], parameters_dic['cut_position']), axis=1)
+    df['Ref_seq_has_PAM_proximal_gap_next_to_cut_site'] = [r[0] for r in ins_at_cut]
+    df['Insertion_event'] = [r[1] for r in ins_at_cut]
     df['4th_nt_inserted'] = df.apply(lambda row: row['Insertion_event'] == row['4th_nt'], axis=1)
     df['5th_and_4th_nt_inserted'] = df.apply(lambda row: row['Insertion_event'] == row['5th_and_4th'], axis=1)
     df['Aligned_nt_cut_upstream'] = df.apply(lambda row:  row['Aligned_Sequence'][parameters_dic['cut_position']-1], axis=1)
