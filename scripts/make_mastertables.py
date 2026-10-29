@@ -480,7 +480,7 @@ def mutation_in_distance(cut_position, list_of_mutation_position, distance_from_
     bool: True if any mutation is within the specified distance from the cut site, False otherwise.
     """
     for position in list_of_mutation_position:
-        if (cut_position - distance_from_cut) <= position <= (cut_position + distance_from_cut):
+        if (cut_position - distance_from_cut + 1) <= position <= (cut_position + distance_from_cut):
             return True
     return False
 
