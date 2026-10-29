@@ -497,7 +497,7 @@ def make_seq_around_optimum_cut(Original_Sequence, cut_position, distance):
     seq = Original_Sequence[cut_position - distance:cut_position] + '|' + Original_Sequence[cut_position:cut_position + distance]
     return seq
 
-def create_first_row_in_alleles_freq_table_with_wt_seq(df, project_output_dir):
+def create_first_row_in_alleles_freq_table_with_wt_seq(df, project_output_dir, cut_position=None):
     """
     Create the first row in the alleles frequency table with the wild-type sequence.
 
@@ -517,7 +517,17 @@ def create_first_row_in_alleles_freq_table_with_wt_seq(df, project_output_dir):
         # If no such row is found, use the most frequent Reference_Sequence as the wild-type sequence for Aligned_Sequence and Reference_Sequence. If there are more rows with the same most frequent Reference_Sequence, take the first one.
         # Make empty wt_row with the same columns as df
         wt_row = pd.Series({col: None for col in df.columns})
-        most_frequent_ref_seq = df['Reference_Sequence'].mode()[0]
+        ref_nogap = df.loc[~df['Reference_Sequence'].str.contains('-'), 'Reference_Sequence']
+        if len(ref_nogap) > 0:
+            # the most frequent reference without insertion columns ('-') is the reference window
+            most_frequent_ref_seq = ref_nogap.mode()[0]
+        else:
+            # every row carries insertion columns: remove them separately on each side of the cut so that
+            # nt -1 stays at column cut_position (CRISPResso centres each window on the cut); pad with N
+            ref = df['Reference_Sequence'].mode()[0]
+            up = ref[:cut_position].replace('-', '')
+            down = ref[cut_position:].replace('-', '')
+            most_frequent_ref_seq = up.rjust(cut_position, 'N') + down.ljust(len(ref) - cut_position, 'N')
         wt_row['Aligned_Sequence'] = most_frequent_ref_seq
         wt_row['Reference_Sequence'] = most_frequent_ref_seq
     wt_row['Unedited'] = True
@@ -1137,7 +1147,7 @@ def create_mastertable (project_dir, project_output_dir, parameters_dic, random_
         # nuclease = filepath.split('/')[-2].split('_')[3]
         table = pd.read_csv(filepath, sep='\t')
         # Add first row to the table by create_first_row_in_alleles_freq_table_with_wt_seq 
-        table, original_seq = create_first_row_in_alleles_freq_table_with_wt_seq(table, project_output_dir)
+        table, original_seq = create_first_row_in_alleles_freq_table_with_wt_seq(table, project_output_dir, parameters_dic['cut_position'])
         table = process_table(table, filepath[-24:-4], sample_name, parameters_dic, original_seq)
         # the name of the Allels_frequency_table_* must have sequence of the gRNA at the end of the name
         # it is there automatically if the name of the gRNA is not given into CRISPResso2 tool
