@@ -253,11 +253,17 @@ def find_min_and_max_gap_ranges(reference, aligned, original_gap_start, original
 
     # If the gap is short and there is repetition, it may ends up as False for around cut (category of DEL 1,12), must be treated independently
     if min_range[1] < cut_position + cut_maximum and max_range[0] > cut_position + cut_minimum + 1:
-        return min_range, max_range, True
+        around_cut = True
     # Analyse if the DEL is around the cut
-    if ((min_range[1] < cut_position + cut_maximum) or (min_range[0] > cut_position + cut_minimum + 1)) and ((max_range[1] < cut_position + cut_maximum) or (max_range[0] > cut_position + cut_minimum + 1)):
-        return min_range, max_range, False
-    return min_range, max_range, True
+    elif ((min_range[1] < cut_position + cut_maximum) or (min_range[0] > cut_position + cut_minimum + 1)) and ((max_range[1] < cut_position + cut_maximum) or (max_range[0] > cut_position + cut_minimum + 1)):
+        around_cut = False
+    else:
+        around_cut = True
+    # If the most left or the most right placement of the DEL touches the edge of the analysed window, the DEL and its MH
+    # may continue beyond the window (unknown sequence) -> treat it as a gap spanning the analysed window
+    if min_range[0] == 1 or max_range[1] == len(reference):
+        return 'gap_span_analysed_window', 'gap_span_analysed_window', around_cut
+    return min_range, max_range, around_cut
 
 def find_DEL_around_cut_range(Gap_closest_to_cut_range, Gap_around_cut):
     """
@@ -333,7 +339,7 @@ def find_microhomology(gap_start, gap_end, gap_span_analysed_window, aligned, re
             # A -> NGC---NNNN (gap_start = 4, gap_end = 6, size_of_gap = 3)
             # R -> NGCAGCNNNN
             for s in range(size_of_gap):
-                if aligned[gap_start-2-s] == reference[gap_end-1-s]:
+                if gap_start-2-s >= 0 and aligned[gap_start-2-s] == reference[gap_end-1-s]:
                     microhomology_to_right_lenght += 1
                 else:
                     break
@@ -1053,7 +1059,7 @@ def process_table(table, gRNA_seq, sample, parameters_dic, original_seq):
     df['n_deleted_around_cut'] = df.apply(lambda row: size_of_del_around_the_cut(row['Gap_around_cut_starts'], row['Gap_around_cut_ends']), axis=1)
     df['Gap_span_analysed_window'] = df.apply(lambda row: gap_span_analysed_window(\
                                                     row['Gap_closest_to_cut_range']\
-                                                    , row['Aligned_Sequence']), axis=1)
+                                                    , row['Aligned_Sequence']) or row['Gap_min_max_ranges'][0] == 'gap_span_analysed_window', axis=1)
 
     def apply_find_microhomology(df, func, new_column_names):
         """Adds new columns into table based on the function find_microhomology."""
