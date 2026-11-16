@@ -25,6 +25,12 @@ import more_itertools as mit
 import numpy as np
 import pandas as pd
 import seaborn as sns
+
+# seaborn renamed violinplot(scale=...) to violinplot(density_norm=...) in 0.13 (the version in the README); the old
+# name is deprecated there and absent in 0.12. Pick the right keyword once, so every violin is normalised to equal width
+# on either version (in 0.12 an unknown 'density_norm' is silently ignored and the default 'area' draws thin slivers).
+_SNS_VERSION = tuple(int(x) for x in sns.__version__.split('.')[:2])
+VIOLIN_WIDTH_KW = {'density_norm': 'width'} if _SNS_VERSION >= (0, 13) else {'scale': 'width'}
 # TODO remove statannot once all works on statannotations bellow
 # from statannot import add_stat_annotation
 from statannotations.Annotator import Annotator
@@ -46,6 +52,20 @@ def save_stat(stat_info, name_to_save, project_output_dir):
         # write the full table, independent of terminal width and pandas display settings
         f.write(stat_info.to_string() if hasattr(stat_info, 'to_string') else str(stat_info))
     write_into_report(f'Statistic was saved as {name_to_save}_stat.txt', destination_folder=project_output_dir)
+
+def save_plot_data(data, name_to_save, project_output_dir):
+    """
+    Save the DataFrame used to generate a plot into a supporting *_data.tsv file.
+
+    Parameters:
+    data (DataFrame): the values plotted.
+    name_to_save (str): The base name for the output file. The function will append '_data.tsv' to this name.
+    project_output_dir (str): The directory where the output file will be saved.
+
+    Returns:
+    no value, the *_data.tsv file will be saved"""
+    data.to_csv(Path(project_output_dir, f'{name_to_save}_data.tsv'), sep='\t', index=False)
+    write_into_report(f'Plot data was saved as {name_to_save}_data.tsv', destination_folder=project_output_dir)
 
 def make_Ubuntu_mnt_path(path):
     """
@@ -398,8 +418,22 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         # Make Violinplot
         # Change color_dic keys to 'txt' as the violinplot bellow makes from True -> 'True'
         # and the plot does not work without the conversion -> ideas how to solve it?
-        color_dic_txt = {str(key): value for key, value in color_dic.items()}
-        sns.violinplot(data=data, x=x, y=y, hue=hue_violin, hue_order=hue_order, density_norm='width', palette=color_dic_txt, cut=0, inner=None, zorder=0)
+        # Keep BOTH the original-typed key and its str(...) form: seaborn looks up the
+        # palette using the column's native dtype (e.g. int, bool), not a stringified
+        # version, except for bool columns where it happens to stringify internally.
+        # Dropping the original-typed keys (as before) caused KeyError for int-valued
+        # x columns such as 'n_inserted'.
+        color_dic_txt = {}
+        for key, value in color_dic.items():
+            color_dic_txt[key] = value
+            color_dic_txt[str(key)] = value
+        # NOTE: installed seaborn is 0.12.2, which uses the 'scale' kwarg (not the
+        # seaborn>=0.13 'density_norm' kwarg). Passing density_norm='width' here was
+        # silently ignored (0.12.2 has no such parameter), so seaborn fell back to its
+        # default scale='area', which renders high-variance categories as razor-thin
+        # slivers (near-invisible violins) instead of normalizing every violin to the
+        # same max width.
+        sns.violinplot(data=data, x=x, y=y, hue=hue_violin, hue_order=hue_order, **VIOLIN_WIDTH_KW, palette=color_dic_txt, cut=0, inner=None, zorder=0)
         ## Set hatches if wanted
         if hatches is True:
             # changing hatches for if hatches_list is not None to be able to use predefined list
@@ -456,10 +490,15 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                     showcaps=False,
                     ax=stripplot)
         # Make inner boxplot with mean as 'x'
-        sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, width=width_list[0], showfliers=False, showmeans=True, meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black', markersize=5, linewidth=1.0, zorder=14), boxprops=dict(facecolor='gray', edgecolor='black', linewidth=1.5, alpha=1, zorder=10), whiskerprops=dict(color='black', linewidth=1.5, zorder=11), capprops=dict(color='black', linewidth=1.5, zorder=12), medianprops=dict(color='black', linewidth=1.5, zorder=13))
+        # facecolor alpha < 1 so a wide IQR (tall box) does not fully paint over
+        # the violin density curve underneath it (was alpha=1 -> hid the violin
+        # whenever a category's IQR spanned a large fraction of the y-axis).
+        sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, width=width_list[0], showfliers=False, showmeans=True, meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black', markersize=5, linewidth=1.0, zorder=14), boxprops=dict(facecolor='gray', edgecolor='black', linewidth=1.5, alpha=0.55, zorder=10), whiskerprops=dict(color='black', linewidth=1.5, zorder=11), capprops=dict(color='black', linewidth=1.5, zorder=12), medianprops=dict(color='black', linewidth=1.5, zorder=13))
     else:
         # Make Violinplot
-        sns.violinplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, density_norm='width', palette=color_dic, cut=0, inner=None, order=order, zorder=1)
+        # NOTE: see comment above the analogous call in the 'if order is None' branch:
+        # installed seaborn is 0.12.2, which uses 'scale' rather than 'density_norm'.
+        sns.violinplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data, **VIOLIN_WIDTH_KW, palette=color_dic, cut=0, inner=None, order=order, zorder=1)
         ## Set hatches if wanted
         if hatches is True:
             # changing hatches for if hatches_list is not None to be able to use predefined list
@@ -534,12 +573,15 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
                         line.set_mfc(col)  # facecolor of fliers
                         line.set_mec(col)  # edgecolor of fliers
         # Make inner boxplot with mean as 'x'
+        # facecolor alpha < 1 so a wide IQR (tall box) does not fully paint over
+        # the violin density curve underneath it (was alpha=1 -> hid the violin
+        # whenever a category's IQR spanned a large fraction of the y-axis).
         sns.boxplot(x=x, y=y, hue=hue_violin, hue_order=hue_order, data=data\
             , width=width_list[0]\
             , order=order, showfliers=False, showmeans=True\
             , meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black'\
                 , markersize=5, linewidth=1.0, zorder=14)\
-            , boxprops=dict(facecolor='gray', edgecolor='black', linewidth=1.5, alpha=1, zorder=10)\
+            , boxprops=dict(facecolor='gray', edgecolor='black', linewidth=1.5, alpha=0.55, zorder=10)\
             , whiskerprops=dict(color='black', linewidth=1.5, zorder=11)\
             , capprops=dict(color='black', linewidth=1.5, zorder=12)\
             , medianprops=dict(color='black', linewidth=1.5, zorder=13))
@@ -580,6 +622,10 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
         plt.axvline(x=middle_line_position-0.5, color='black', ls='--', label='blunt cut site')
 
     # Legend
+    # seaborn auto-adds a legend whenever hue is passed to stripplot/boxplot above,
+    # regardless of plot_legend; remove it here when the caller asked for no legend.
+    if plot_legend is False and ax.get_legend() is not None:
+        ax.get_legend().remove()
     if plot_legend is True:
         if show_datapoints is True:
             if show_hue_medians is True:
@@ -633,6 +679,7 @@ def plot_sns_violin_and_print(data, x, y, number_of_columns, project_output_dir\
 
     plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '.' + output_format), dpi=dpi, bbox_inches='tight')
     write_into_report(f'Violin plot {name_to_save} was created.', destination_folder=project_output_dir)
+    save_plot_data(data, name_to_save, project_output_dir)
     if show_plots is True:
         return plt.show()
     return plt.close()
@@ -808,6 +855,7 @@ def plot_general_stacked_horizontal_barchart(df, x, y, values, project_output_di
 
     plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '.' + output_format), dpi=dpi, bbox_inches='tight')
     write_into_report(f'Stacked horizontal barchart {name_to_save} was created.', destination_folder=project_output_dir)
+    save_plot_data(df_pivot, name_to_save, project_output_dir)
     if show_plots is True:
         return plt.show()
     return plt.close()
@@ -876,6 +924,7 @@ def plot_barplot(data, x, y, project_output_dir, name_to_save, data_source, hue=
     plt.text(0, -0.02, text_bellow_chart, fontsize=14, transform=plt.gcf().transFigure)
     plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '.' + output_format), dpi=dpi, bbox_inches='tight')
     write_into_report('Barplot {0} was created.'.format(name_to_save))
+    save_plot_data(data_filled, name_to_save, project_output_dir)
     if show_plots is True:
         return plt.show()
     return plt.close()
@@ -1056,6 +1105,7 @@ def plot_general_stacked_vertical_barchart(df, x, y, values, project_output_dir,
             # plt.text(0, -0.35, text_bellow_chart, fontsize=14, transform=plt.gcf().transFigure)
     plt.savefig(Path(str(project_output_dir) + '/' + name_to_save + '.' + output_format), dpi=dpi, bbox_inches='tight')
     write_into_report(f'Stacked vertical barchart {name_to_save} was created.')
+    save_plot_data(df_pivot, name_to_save, project_output_dir)
     if show_plots == True:
         return plt.show()
     return plt.close()

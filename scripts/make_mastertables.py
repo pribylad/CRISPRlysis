@@ -48,6 +48,8 @@ import more_itertools as mit
 import pandas as pd
 
 from .general_functions import write_into_report, find_files_paths_with_criteria
+from .cut_site import (detect_cut_position, cut_position_per_row,
+                       amplicon_reference, CutSiteError)
 
 def filter_out_values_from_df(df, dict_to_filter, project_output_dir='./report.txt'):
     """
@@ -484,6 +486,51 @@ def mutation_in_distance(cut_position, list_of_mutation_position, distance_from_
             return True
     return False
 
+def substitution_window_for_cut(cut, parameters_dic):
+    """1-based alignment columns in which a substitution counts as being 'at the cut', for one row.
+
+    'allowed_cut' -> [cut + cut_maximum, cut + cut_minimum + 1], the nucleotides whose deletion
+                     counts as at the cut (4 columns for -2,0). an int n -> cut-n+1 .. cut+n.
+    """
+    mode = parameters_dic.get('substitution_window', 3)
+    if mode == 'allowed_cut':
+        return range(int(cut) + parameters_dic['cut_maximum'], int(cut) + parameters_dic['cut_minimum'] + 2)
+    return range(int(cut) - int(mode) + 1, int(cut) + int(mode) + 1)
+
+
+def count_gap_runs(aligned, reference):
+    """Number of separate gap runs in either sequence; 2+ means the aligner may have split one event."""
+    cols = [i for i, (a, r) in enumerate(zip(aligned, reference), start=1) if a == '-' or r == '-']
+    return sum(1 for i, c in enumerate(cols) if i == 0 or c != cols[i - 1] + 1)
+
+
+def gap_adjacent_columns(aligned, reference, distance=1):
+    """1-based columns within `distance` of a gap run in either sequence (possible part of the indel)."""
+    cols = set()
+    n = len(aligned)
+    for i, (a, r) in enumerate(zip(aligned, reference), start=1):
+        if a == '-' or r == '-':
+            cols.update(p for p in range(i - distance, i + distance + 1) if 1 <= p <= n)
+    return cols
+
+
+def revert_substitutions_outside_window(aligned, reference, window, protect_distance=1):
+    """Replace substituted bases outside `window` by the reference base; keep those inside, and keep
+    any within `protect_distance` of a gap run. Gaps are never touched.
+    Returns (corrected_aligned, n_mutated_kept, n_reverted, n_protected)."""
+    protected = gap_adjacent_columns(aligned, reference, protect_distance) if protect_distance else set()
+    seq = list(aligned)
+    kept = reverted = guarded = 0
+    for pos in find_difference(aligned, reference)[1]:
+        if pos in window:
+            kept += 1
+        elif pos in protected:
+            kept += 1; guarded += 1
+        else:
+            seq[pos - 1] = reference[pos - 1]; reverted += 1
+    return ''.join(seq), kept, reverted, guarded
+
+
 def make_original_seq_dic(Reference_Sequence, Unedited, gRNA_seq):
     """
     Create a dictionary mapping gRNA sequences to their reference sequences from the given data.
@@ -534,28 +581,32 @@ def create_first_row_in_alleles_freq_table_with_wt_seq(df, project_output_dir, c
         # Search for row where Aligned_Sequence is the same as Reference_Sequence and both does not containg '-'
         wt_row = df[(df['Aligned_Sequence'] == df['Reference_Sequence']) & (~df['Aligned_Sequence'].str.contains('-')) & (~df['Reference_Sequence'].str.contains('-'))].iloc[0].copy()
     except IndexError:
-        # If no such row is found, use the most frequent Reference_Sequence as the wild-type sequence for Aligned_Sequence and Reference_Sequence. If there are more rows with the same most frequent Reference_Sequence, take the first one.
+        # No row is entirely gap-free -- happens when every read overhangs the
+        # amplicon (e.g. unremoved adapter read-through on both flanks), so
+        # Reference_Sequence is '-'-padded in every row. Falling back to the
+        # raw (still-padded) modal Reference_Sequence here would later break
+        # the PAM check in process_table(), which indexes Original_Sequence at
+        # the AMPLICON coordinate detect_cut_position() computed -- not the
+        # padded alignment coordinate. Recover the true de-gapped amplicon the
+        # same way detect_cut_position() does instead.
         # Make empty wt_row with the same columns as df
         wt_row = pd.Series({col: None for col in df.columns})
-        ref_nogap = df.loc[~df['Reference_Sequence'].str.contains('-'), 'Reference_Sequence']
-        if len(ref_nogap) > 0:
-            # the most frequent reference without insertion columns ('-') is the reference window
-            most_frequent_ref_seq = ref_nogap.mode()[0]
-        else:
-            # every row carries insertion columns: remove them separately on each side of the cut so that
-            # nt -1 stays at column cut_position (CRISPResso centres each window on the cut); pad with N
-            ref = df['Reference_Sequence'].mode()[0]
-            up = ref[:cut_position].replace('-', '')
-            down = ref[cut_position:].replace('-', '')
-            most_frequent_ref_seq = up.rjust(cut_position, 'N') + down.ljust(len(ref) - cut_position, 'N')
-        wt_row['Aligned_Sequence'] = most_frequent_ref_seq
-        wt_row['Reference_Sequence'] = most_frequent_ref_seq
+        amplicon, _ = amplicon_reference(df['Reference_Sequence'])
+        wt_row['Aligned_Sequence'] = amplicon
+        wt_row['Reference_Sequence'] = amplicon
     wt_row['Unedited'] = True
     wt_row['n_deleted'] = 0
     wt_row['n_inserted'] = 0
     wt_row['n_mutated'] = 0
     wt_row['#Reads'] = 0
     wt_row['%Reads'] = 0
+    # expand_allele_table.py adds whole-amplicon counterparts of the count
+    # columns; zero them too, otherwise this synthetic zero-read WT row would
+    # inherit whatever the donor row happened to carry.
+    for _extra in ('n_deleted_FullLength', 'n_inserted_FullLength',
+                   'n_mutated_FullLength', '%Reads_FullLength'):
+        if _extra in wt_row.index:
+            wt_row[_extra] = 0
     original_seq = wt_row['Reference_Sequence']
     # Add the wt_row to the top of the df
     df = pd.concat([pd.DataFrame([wt_row]), df], ignore_index=True)
@@ -1030,7 +1081,85 @@ def process_table(table, gRNA_seq, sample, parameters_dic, original_seq):
         df['sample'] = sample
     if gRNA_seq != False:
         df['gRNA_seq'] = gRNA_seq
-    df['Cut_position'] = parameters_dic['cut_position']
+    # ---- cut position -------------------------------------------------
+    # Detected from this table's own protospacer + PAM, so parameters.txt no
+    # longer needs a 'cut_position' key. See scripts/cut_site.py for why a
+    # single constant cannot be right for a pooled panel.
+    #
+    # Cut_position               amplicon coordinate. Indexes Original_Sequence
+    #                            (PAM, 3rd_nt, 4th_nt, ...). Same meaning and,
+    #                            for a correctly configured run, the same value
+    #                            the old parameters.txt key carried.
+    # Cut_position_in_alignment  alignment coordinate, per row. Indexes
+    #                            Aligned_Sequence / Reference_Sequence. Differs
+    #                            from Cut_position only for rows whose reference
+    #                            is a shorter slice of the amplicon, i.e. rows
+    #                            carrying an insertion or running past the
+    #                            window edge. Empty if the row does not span
+    #                            the cut at all.
+    cut_position, cut_info = detect_cut_position(
+        df['Reference_Sequence'], parameters_dic['nuclease'], gRNA_seq,
+        fallback=parameters_dic.get('cut_position'))
+    write_into_report(
+        f"Cut position for gRNA {gRNA_seq} in sample {sample}: {cut_position} "
+        f"({cut_info['source']}; {cut_info['amplicon_len']} bp amplicon; "
+        f"strand {cut_info['strand']}; protospacer at {cut_info['protospacer_start']}; "
+        f"PAM {cut_info['pam']}).",
+        destination_folder=parameters_dic.get('project_output_dir'))
+
+    df['Cut_position'] = cut_position
+    per_row = cut_position_per_row(df['Reference_Sequence'], cut_position,
+                                   parameters_dic.get('insertion_side', 'left'))
+    df['Cut_position_in_alignment'] = df['Reference_Sequence'].map(per_row)
+    n_uncovered = int(df['Cut_position_in_alignment'].isna().sum())
+    if n_uncovered:
+        write_into_report(
+            f"{n_uncovered} row(s) in sample {sample} have a reference that does not "
+            "span the cut; Cut_position_in_alignment is empty for them.",
+            destination_folder=parameters_dic.get('project_output_dir'))
+
+    # 'use_per_row_cut': False (default) reproduces the historical behaviour --
+    # every row is analysed at the same alignment column. True analyses each row
+    # at its own projected column, which is correct for rows with insertions but
+    # DOES change results for those rows, so it is opt-in.
+    if parameters_dic.get('use_per_row_cut', False):
+        row_cut = df['Cut_position_in_alignment'].fillna(cut_position).astype(int)
+    else:
+        row_cut = pd.Series(cut_position, index=df.index)
+    # helper column so the per-row value is reachable inside df.apply; dropped
+    # again at the end of process_table so the output schema is unchanged
+    df['_row_cut'] = row_cut
+
+    # --- substitution correction, added 2026-10-31 (see 05_decisions_log) --------------------
+    revert_mode = parameters_dic.get('revert_substitutions_outside_window', False)
+    if revert_mode:
+        revert_mode = 'all' if revert_mode is True else str(revert_mode)
+        if revert_mode not in ('all', 'pure_sub'):
+            raise ValueError("revert_substitutions_outside_window must be False, True, 'all' or 'pure_sub'")
+        protect = int(parameters_dic.get('protect_substitutions_adjacent_to_indel', 1))
+        skip_multi = parameters_dic.get('skip_multi_gap_run_alleles', True)
+        reverted_n, protected_n, new_seq, new_nmut = [], [], [], []
+        for _, row in df.iterrows():
+            a, r = row['Aligned_Sequence'], row['Reference_Sequence']
+            eligible = True
+            if revert_mode == 'pure_sub' and (row['n_deleted'] != 0 or row['n_inserted'] != 0):
+                eligible = False
+            if skip_multi and count_gap_runs(a, r) >= 2:
+                eligible = False
+            if not eligible:
+                new_seq.append(a); new_nmut.append(row['n_mutated']); reverted_n.append(0); protected_n.append(0)
+                continue
+            win = set(substitution_window_for_cut(row['_row_cut'], parameters_dic))
+            seq, kept, rev, guard = revert_substitutions_outside_window(a, r, win, protect)
+            new_seq.append(seq); new_nmut.append(kept); reverted_n.append(rev); protected_n.append(guard)
+        df['Aligned_Sequence'] = new_seq
+        df['n_mutated'] = new_nmut
+        df['n_substitutions_reverted'] = reverted_n
+        df['n_substitutions_protected'] = protected_n
+        df['Unedited'] = (df['n_deleted'] == 0) & (df['n_inserted'] == 0) & (df['n_mutated'] == 0)
+        mutation_diff = df.apply(lambda row: find_difference(row["Aligned_Sequence"], row["Reference_Sequence"]), axis=1)
+    # -----------------------------------------------------------------------------------------
+
     df['Nuclease'] = parameters_dic['nuclease']
     # make dictionary with original sequences according to the gRNA_seq
     original_seq_dic = make_original_seq_dic(df['Reference_Sequence'], df['Unedited'], df['gRNA_seq'])
@@ -1040,34 +1169,34 @@ def process_table(table, gRNA_seq, sample, parameters_dic, original_seq):
         df['Original_Sequence'] = df['Reference_Sequence']
     else:
         df['Original_Sequence'] = original_seq
-    df['Original_Sequence_around_cut'] = df.apply(lambda row: make_seq_around_optimum_cut(row['Original_Sequence'], parameters_dic['cut_position'], 20), axis=1)
-    df['Aligned_Sequence_around_cut'] = df.apply(lambda row: make_seq_around_optimum_cut(row['Aligned_Sequence'], parameters_dic['cut_position'], 20), axis=1)
-    df['nt_around_cut'] = df.apply(lambda row: row['Original_Sequence'][parameters_dic['cut_position']-1:parameters_dic['cut_position']+1], axis=1)
+    df['Original_Sequence_around_cut'] = df.apply(lambda row: make_seq_around_optimum_cut(row['Original_Sequence'], cut_position, 20), axis=1)
+    df['Aligned_Sequence_around_cut'] = df.apply(lambda row: make_seq_around_optimum_cut(row['Aligned_Sequence'], row['_row_cut'], 20), axis=1)
+    df['nt_around_cut'] = df.apply(lambda row: row['Original_Sequence'][cut_position-1:cut_position+1], axis=1)
     if parameters_dic['nuclease'] == 'SpCas9':
-        df['PAM'] = df.apply(lambda row: row['Original_Sequence'][parameters_dic['cut_position']+3:parameters_dic['cut_position']+6], axis=1)
+        df['PAM'] = df.apply(lambda row: row['Original_Sequence'][cut_position+3:cut_position+6], axis=1)
         # Check if 2nd and 3rd nt of PAM are 'GG' and if not, rise an error as the PAM is not correct for SpCas9
         if not all(df['PAM'].apply(lambda x: x[1:] == 'GG')):
             raise ValueError('The PAM sequence is not correct for SpCas9. Please check the Original_Sequence and cut_position in the parameters_dic.')
     elif parameters_dic['nuclease'] == 'LbCas12a':
-        df['PAM'] = df.apply(lambda row: row['Original_Sequence'][parameters_dic['cut_position']-27:parameters_dic['cut_position']-23], axis=1)
+        df['PAM'] = df.apply(lambda row: row['Original_Sequence'][cut_position-27:cut_position-23], axis=1)
     else:
         df['PAM'] = f'Unknown nuclease - {parameters_dic["nuclease"]}'
-    df['3rd_nt'] = df.apply(lambda row: row['Original_Sequence'][parameters_dic['cut_position']], axis=1)
-    df['4th_nt'] = df.apply(lambda row: row['Original_Sequence'][parameters_dic['cut_position']-1], axis=1)
-    df['5th_and_4th'] = df.apply(lambda row: row['Original_Sequence'][parameters_dic['cut_position']-2:parameters_dic['cut_position']], axis=1)
+    df['3rd_nt'] = df.apply(lambda row: row['Original_Sequence'][cut_position], axis=1)
+    df['4th_nt'] = df.apply(lambda row: row['Original_Sequence'][cut_position-1], axis=1)
+    df['5th_and_4th'] = df.apply(lambda row: row['Original_Sequence'][cut_position-2:cut_position], axis=1)
     df['No_of_gaps'] = df.apply(lambda row: count_no_of_gaps(row['Aligned_Sequence'])[0], axis=1)
     df['Gap_ranges'] = df.apply(lambda row: count_no_of_gaps(row['Aligned_Sequence'])[1], axis=1)
-    df['Gap_closest_to_cut_range'] = df.apply(lambda row: find_DEL_closest_to_cut(row['Aligned_Sequence'], parameters_dic['cut_position']), axis=1)
+    df['Gap_closest_to_cut_range'] = df.apply(lambda row: find_DEL_closest_to_cut(row['Aligned_Sequence'], row['_row_cut']), axis=1)
     df['Gap_min_max_ranges'] = df.apply(lambda row: find_min_and_max_gap_ranges(\
                                                     reference = row['Reference_Sequence']\
                                                     ,aligned=row['Aligned_Sequence']\
                                                     ,original_gap_start=row['Gap_closest_to_cut_range'][0]\
-                                                    ,original_gap_end=row['Gap_closest_to_cut_range'][1], cut_position=parameters_dic['cut_position'], cut_maximum=parameters_dic['cut_maximum'], cut_minimum=parameters_dic['cut_minimum'])[0:2], axis=1)
+                                                    ,original_gap_end=row['Gap_closest_to_cut_range'][1], cut_position=row['_row_cut'], cut_maximum=parameters_dic['cut_maximum'], cut_minimum=parameters_dic['cut_minimum'])[0:2], axis=1)
     df['Gap_around_cut'] = df.apply(lambda row: find_min_and_max_gap_ranges(\
                                                     reference = row['Reference_Sequence']\
                                                     ,aligned=row['Aligned_Sequence']\
                                                     ,original_gap_start=row['Gap_closest_to_cut_range'][0]\
-                                                    ,original_gap_end=row['Gap_closest_to_cut_range'][1], cut_position=parameters_dic['cut_position'], cut_maximum=parameters_dic['cut_maximum'], cut_minimum=parameters_dic['cut_minimum'])[2], axis=1)
+                                                    ,original_gap_end=row['Gap_closest_to_cut_range'][1], cut_position=row['_row_cut'], cut_maximum=parameters_dic['cut_maximum'], cut_minimum=parameters_dic['cut_minimum'])[2], axis=1)
     df['Gap_around_cut_starts'] = df.apply(lambda row: find_DEL_around_cut_range(row['Gap_closest_to_cut_range'], row['Gap_around_cut'])[0], axis=1)
     df['Gap_around_cut_ends'] = df.apply(lambda row: find_DEL_around_cut_range(row['Gap_closest_to_cut_range'], row['Gap_around_cut'])[1], axis=1)
     df['n_deleted_around_cut'] = df.apply(lambda row: size_of_del_around_the_cut(row['Gap_around_cut_starts'], row['Gap_around_cut_ends']), axis=1)
@@ -1088,38 +1217,39 @@ def process_table(table, gRNA_seq, sample, parameters_dic, original_seq):
     # Call the above function to add columns based on the function find_microhomology
     apply_find_microhomology(df, find_microhomology, ['MH_to_proximal_len', 'MH_to_distal_len', 'Maximal_MH_len', 'Maximal_MH'])
 
-    df['blunt_cut_with_MH_possible'] = df.apply(lambda row: blunt_cut_with_MH_possible(row['Gap_min_max_ranges'], parameters_dic['cut_position']), axis=1)
+    df['blunt_cut_with_MH_possible'] = df.apply(lambda row: blunt_cut_with_MH_possible(row['Gap_min_max_ranges'], row['_row_cut']), axis=1)
 
     def apply_return_cut_type_based_on_cut_categories(df, func, new_column_names):
         """Adds new columns into table based on the function return_cut_type_based_on_cut_categories."""
         results = df.apply(lambda row: func(\
-        return_category_of_DEL(parameters_dic['cut_position'], parameters_dic['cut_maximum'], parameters_dic['cut_minimum'], row['Gap_min_max_ranges'][0])[0],\
-        return_shifted_DEL_range(parameters_dic['cut_position'], row['Gap_min_max_ranges'][0]),\
-        return_category_of_DEL(parameters_dic['cut_position'], parameters_dic['cut_maximum'], parameters_dic['cut_minimum'], row['Gap_min_max_ranges'][1])[0],\
-        return_shifted_DEL_range(parameters_dic['cut_position'], row['Gap_min_max_ranges'][1]),\
+        return_category_of_DEL(row['_row_cut'], parameters_dic['cut_maximum'], parameters_dic['cut_minimum'], row['Gap_min_max_ranges'][0])[0],\
+        return_shifted_DEL_range(row['_row_cut'], row['Gap_min_max_ranges'][0]),\
+        return_category_of_DEL(row['_row_cut'], parameters_dic['cut_maximum'], parameters_dic['cut_minimum'], row['Gap_min_max_ranges'][1])[0],\
+        return_shifted_DEL_range(row['_row_cut'], row['Gap_min_max_ranges'][1]),\
         parameters_dic['cut_maximum'],\
         parameters_dic['cut_minimum']), axis=1)
         # Unpack results into separate columns
         for i, col_name in enumerate(new_column_names):
             df[col_name] = [result[i] for result in results]
 
-    df['Gap_category_1'] = df.apply(lambda row: return_category_of_DEL(parameters_dic['cut_position'], parameters_dic['cut_maximum'], parameters_dic['cut_minimum'], row['Gap_min_max_ranges'][0])[0], axis=1)
-    df['Gap_category_2'] = df.apply(lambda row: return_category_of_DEL(parameters_dic['cut_position'], parameters_dic['cut_maximum'], parameters_dic['cut_minimum'], row['Gap_min_max_ranges'][1])[0], axis=1)
+    df['Gap_category_1'] = df.apply(lambda row: return_category_of_DEL(row['_row_cut'], parameters_dic['cut_maximum'], parameters_dic['cut_minimum'], row['Gap_min_max_ranges'][0])[0], axis=1)
+    df['Gap_category_2'] = df.apply(lambda row: return_category_of_DEL(row['_row_cut'], parameters_dic['cut_maximum'], parameters_dic['cut_minimum'], row['Gap_min_max_ranges'][1])[0], axis=1)
 
     # Call the above function to add columns based on the function find_microhomology
     apply_return_cut_type_based_on_cut_categories(df, return_cut_type_based_on_cut_categories, ['Cut_type', 'End_participating_on_MH', 'DEL_orientation', 'End_3_5', 'Likely_cut_type'])
 
-    # locate nt -1 in each row by matching the row's reference to the original window (robust to the window start)
-    ins_at_cut = df.apply(lambda row: insertion_at_cut(row['Reference_Sequence'], row['Aligned_Sequence'], row['Original_Sequence'], parameters_dic['cut_position']), axis=1)
+    # locate nt -1 in each row by matching the row's reference to the original window (robust to the window start);
+    # cut_position here is the AMPLICON coordinate detected above (same meaning as the old parameters key)
+    ins_at_cut = df.apply(lambda row: insertion_at_cut(row['Reference_Sequence'], row['Aligned_Sequence'], row['Original_Sequence'], cut_position), axis=1)
     df['Ref_seq_has_PAM_proximal_gap_next_to_cut_site'] = [r[0] for r in ins_at_cut]
     df['Insertion_event'] = [r[1] for r in ins_at_cut]
     df['4th_nt_inserted'] = df.apply(lambda row: row['Insertion_event'] == row['4th_nt'], axis=1)
     df['5th_and_4th_nt_inserted'] = df.apply(lambda row: row['Insertion_event'] == row['5th_and_4th'], axis=1)
-    df['Aligned_nt_cut_upstream'] = df.apply(lambda row:  row['Aligned_Sequence'][parameters_dic['cut_position']-1], axis=1)
+    df['Aligned_nt_cut_upstream'] = df.apply(lambda row:  row['Aligned_Sequence'][cut_position-1], axis=1)
 
     # it is around middle, which does not means that it is around the cut, as for sequences with insertions there is nt shift
-    df['Aligned_2nt_mid'] = df.apply(lambda row:  row['Aligned_Sequence'][parameters_dic['cut_position']-1:parameters_dic['cut_position']+1], axis=1)
-    df['Reference_2nt_mid'] = df.apply(lambda row:  row['Reference_Sequence'][parameters_dic['cut_position']-1:parameters_dic['cut_position']+1], axis=1)
+    df['Aligned_2nt_mid'] = df.apply(lambda row:  row['Aligned_Sequence'][cut_position-1:cut_position+1], axis=1)
+    df['Reference_2nt_mid'] = df.apply(lambda row:  row['Reference_Sequence'][cut_position-1:cut_position+1], axis=1)
     df['Same_2nt_mid'] = df.apply(lambda row:  row['Aligned_2nt_mid'] == row['Reference_2nt_mid'], axis=1)
 
     df['Referene_sequence_contain_gap'] = df.apply(lambda row: '-' in row['Reference_Sequence'], axis=1)
@@ -1129,10 +1259,23 @@ def process_table(table, gRNA_seq, sample, parameters_dic, original_seq):
     # # to know the position of the mutation
     df['mutation_pos'] = mutation_diff.apply(lambda row: row[1])
     # # to know, if the mutation is in given distance from the cut -> now it is 3, but play with the number to see if it works
-    df['mutation_around_cut'] = df.apply(lambda row:  mutation_in_distance(parameters_dic['cut_position'], row['mutation_pos'], 3), axis=1)
+    df['mutation_around_cut'] = df.apply(
+        lambda row: any(p in set(substitution_window_for_cut(row['_row_cut'], parameters_dic))
+                        for p in row['mutation_pos']), axis=1)
+    # candidate 1-nt delins events: substitution inside the allowed cut window, no indel in the read
+    df['sub_at_cut_pos'] = df.apply(
+        lambda row: [p for p in row['mutation_pos']
+                     if p in set(substitution_window_for_cut(row['_row_cut'], parameters_dic))], axis=1)
+    df['sub_at_cut_nt'] = df.apply(
+        lambda row: [p - int(row['_row_cut']) - 1 if p <= int(row['_row_cut']) else p - int(row['_row_cut'])
+                     for p in row['sub_at_cut_pos']], axis=1)
+    df['sub_at_cut_read_nt'] = df.apply(lambda row: ''.join(row['Aligned_Sequence'][p - 1] for p in row['sub_at_cut_pos']), axis=1)
+    df['sub_at_cut_ref_nt'] = df.apply(lambda row: ''.join(row['Reference_Sequence'][p - 1] for p in row['sub_at_cut_pos']), axis=1)
+    df['delins_candidate_at_cut'] = (df['n_deleted'] == 0) & (df['n_inserted'] == 0) & (df['sub_at_cut_pos'].str.len() > 0)
     # Add column with edited event format -> if the mutation in not around the cut. Use for example IN instead of INSUB.
     df['Event'] = df.apply(lambda row: clasify_INDELSUB_from_columns(row), axis=1)
     df['Event_around_cut'] = df.apply(lambda row: change_Event_based_on_mut_position(row['Event'], row['mutation_around_cut']), axis=1 )
+    df = df.drop(columns=['_row_cut'])
     return df
 
 def create_mastertable (project_dir, project_output_dir, parameters_dic, random_gen_data=False):
@@ -1169,15 +1312,44 @@ def create_mastertable (project_dir, project_output_dir, parameters_dic, random_
         # nuclease = filepath.split('/')[-2].split('_')[3]
         table = pd.read_csv(filepath, sep='\t')
         # Add first row to the table by create_first_row_in_alleles_freq_table_with_wt_seq 
-        table, original_seq = create_first_row_in_alleles_freq_table_with_wt_seq(table, project_output_dir, parameters_dic['cut_position'])
-        table = process_table(table, filepath[-24:-4], sample_name, parameters_dic, original_seq)
+        table, original_seq = create_first_row_in_alleles_freq_table_with_wt_seq(table, project_output_dir)
+        # Validate that every row's reference is a slice of ONE amplicon. This
+        # replaces a plain 'all Reference_Sequence have equal length' check,
+        # which is false for full-amplicon tables: there the alignment width
+        # grows with the size of the insertion a row carries, so widths legally
+        # differ between rows. What must hold is that the references all
+        # describe the same amplicon.
+        try:
+            amplicon, _ = amplicon_reference(table['Reference_Sequence'])
+            write_into_report(
+                f'{basename(filepath)}: {len(table)} alleles over a {len(amplicon)} bp '
+                f'amplicon, alignment width {table["Reference_Sequence"].str.len().min()}-'
+                f'{table["Reference_Sequence"].str.len().max()} columns.',
+                destination_folder=project_output_dir)
+        except CutSiteError as err:
+            raise CutSiteError(f'{filepath}: {err}') from err
+        # PATCH 2026-11-13 (preprint rerun): a stray duplicate file (e.g. '... copy.txt' in the
+        # Weiss 2022 folder) yields a gRNA string that is not DNA. Skip it with a report line
+        # instead of aborting the whole dataset.
+        gRNA_from_name = filepath[-24:-4]
+        if not set(gRNA_from_name.upper()) <= set('ACGTN'):
+            write_into_report(f'SKIPPED {filepath}: file name does not end in a plain DNA gRNA '
+                              f'({gRNA_from_name!r}); it looks like a duplicate or renamed file.',
+                              destination_folder=parameters_dic.get('project_output_dir'))
+            continue
+        table = process_table(table, gRNA_from_name, sample_name, parameters_dic, original_seq)
         # the name of the Allels_frequency_table_* must have sequence of the gRNA at the end of the name
         # it is there automatically if the name of the gRNA is not given into CRISPResso2 tool
         # example, where I added the sequence post analysis via search in totalcommander -> Alleles_frequency_table_around_gRNA10_GTAAAGTTTTCTGGTTAATT.txt
-        table_folder_path = dirname(os.path.normpath(filepath))
+        # Per-amplicon intermediates go into THIS RUN's output directory, not next to the input.
+        # Writing them beside the input (the historical behaviour) means two runs that share a
+        # source_dir overwrite each other's intermediates, and the concatenated 00 mastertable
+        # silently mixes column sets from both runs. Measured 2026-10-31; see the comparison note.
+        table_folder_path = Path(project_output_dir) / '00_per_amplicon'
+        table_folder_path.mkdir(parents=True, exist_ok=True)
         table_name = f'00_mastertable_{folder_name[14:]}.tsv'
-        table.to_csv(Path(str(table_folder_path) + '/' + table_name), sep='\t', index=False)
-        list_of_edited_tables.append(table_folder_path + '/' + table_name)
+        table.to_csv(table_folder_path / table_name, sep='\t', index=False)
+        list_of_edited_tables.append(str(table_folder_path / table_name))
         write_into_report(f'{table_name} with shape {table.shape} was created, no filter was used.', destination_folder=project_output_dir)
 
     write_into_report('Start to make mastertable from individual sample tables.', destination_folder=project_output_dir)
@@ -1211,6 +1383,16 @@ def add_columns_to_df(df, project_output_dir, parameters_dic, date, sort_alphabe
     """Adds columns to the mastertable based on the given parameters and filters for #Reads column higher than minimum_Reads. 
     The initial names of the source files from CRISPREsso2 must follow exact orders: Order_CasVariant_Gene_gRNAnum_Mutant_NoOfTargets_Overhangs_Replicate. If not, list of columns can be given.
     Saves the updated mastertable as a TSV file."""
+    # collapse alleles made identical by the substitution correction, before the read filter
+    if parameters_dic.get('collapse_identical_alleles', False):
+        key = ['sample', 'gRNA_seq', 'Aligned_Sequence', 'Reference_Sequence', 'n_deleted', 'n_inserted', 'n_mutated']
+        key = [k for k in key if k in df.columns]
+        sums = {c: 'sum' for c in ['#Reads', '%Reads'] if c in df.columns}
+        agg = {c: sums.get(c, 'first') for c in df.columns if c not in key}
+        rows_before, reads_before = len(df), int(df['#Reads'].sum())
+        df = df.groupby(key, as_index=False, sort=False).agg(agg)
+        write_into_report(f'collapse_identical_alleles: {rows_before} -> {len(df)} allele rows, '
+                          f'{reads_before} reads unchanged.\n', destination_folder=project_output_dir)
     # filter out #Reads<minimum_Reads
     df = df[df['#Reads'] >= int(parameters_dic['minimum_Reads'])].copy()
     if list_of_columns is None:

@@ -83,7 +83,10 @@ def find_files_paths_with_criteria(directory, file_prefix, file_suffix):
         for filename in files:
             if filename.startswith(file_prefix) and filename.endswith(file_suffix):
                 matching_files.append(os.path.join(root, filename))
-    return matching_files
+    # os.walk yields directory entries in filesystem order, which differs
+    # between machines and even between runs. Sorting makes the row order of
+    # the mastertables reproducible.
+    return sorted(matching_files)
 
 def check_if_path_exist_create_if_not(project_output_dir):
     """

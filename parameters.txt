@@ -34,6 +34,13 @@
 # plot_MH_dinochart (boolean): controls if related charts will be made
 # IN_greater_than (int): for IN analysis, what is the border for sum up n_inserted, max is 7
 # sort_alphabetically (boolean): True will sort samples in mastertable_01 by name before plotting
+# list_of_columns (list, optional): column names for folder names that do not follow Order_Nuclease_Gene_gRNAnum_Mutant_NoOfTargets_Overhangs_Replicate. MUST be kept when such a dataset is re-run.
+# cut_position (int, optional): fallback only, the cut is detected per sample from gRNA + PAM
+# OPTIONAL (defaults reproduce the previous release; see README 'Optional parameters'):
+# use_per_row_cut (bool, False), insertion_side ('left'), substitution_window (3 or 'allowed_cut'),
+# revert_substitutions_outside_window (False / True / 'all' / 'pure_sub'), protect_substitutions_adjacent_to_indel (1),
+# skip_multi_gap_run_alleles (True), collapse_identical_alleles (False),
+# plot_INDEL_horizontal_barcharts / plot_IN_horizontal_barcharts / plot_DEL_horizontal_barcharts / plot_participating_end_horizontal_barcharts (True)
 
 #############################################
 #                 DICTIONARY                #

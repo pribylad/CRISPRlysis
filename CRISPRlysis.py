@@ -64,7 +64,7 @@ source_dir = parameters['source_dir']
 project_output_dir = parameters['project_output_dir']
 add_columns = parameters['add_columns']
 data_source_original = parameters['data_source_original']
-cut_position = parameters['cut_position']
+cut_position = parameters.get('cut_position')   # optional: only a fallback for nucleases without a PAM rule
 cut_maximum = parameters['cut_maximum']
 cut_minimum = parameters['cut_minimum']
 nuclease = parameters['nuclease']
@@ -86,6 +86,14 @@ show_plots = parameters['show_plots']
 plot_INDELs = parameters['plot_INDELs']
 plot_INs = parameters['plot_INs']
 plot_DELs = parameters['plot_DELs']
+# Horizontal bar charts draw one bar per sample/gRNA and split into files of
+# 40. Fine for a handful of guides; for a pooled panel of 5,583 targets each
+# becomes ~140 PNGs. Default True, so existing parameters.txt files are
+# unaffected.
+plot_INDEL_horizontal_barcharts = parameters.get('plot_INDEL_horizontal_barcharts', True)
+plot_IN_horizontal_barcharts = parameters.get('plot_IN_horizontal_barcharts', True)
+plot_DEL_horizontal_barcharts = parameters.get('plot_DEL_horizontal_barcharts', True)
+plot_participating_end_horizontal_barcharts = parameters.get('plot_participating_end_horizontal_barcharts', True)
 plot_DEL_individual_gRNAs = parameters['plot_DEL_individual_gRNAs']
 plot_DEL_dinochart = parameters['plot_DEL_dinochart']
 plot_participating_end = parameters['plot_participating_end']
@@ -272,6 +280,8 @@ for key, value in tables_dic.items():
             sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
         else:
             sample_lists = [unique_samples]
+        if plot_INDEL_horizontal_barcharts is not True:
+            sample_lists = []   # horizontal bar charts disabled
         i=1
         for sample_list in sample_lists:
             df_INDELSUB_summ_sample = df_INDELSUB_summ[df_INDELSUB_summ['sample'].isin(sample_list)]
@@ -395,6 +405,8 @@ for key, value in tables_dic.items():
             sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
         else:
             sample_lists = [unique_samples]
+        if plot_IN_horizontal_barcharts is not True:
+            sample_lists = []   # horizontal bar charts disabled
         i=1
         for sample_list in sample_lists:
             df_pivot_sample = df_pivot[df_pivot['sample'].isin(sample_list)]
@@ -722,6 +734,8 @@ for key, value in tables_dic.items():
                     sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
                 else:
                     sample_lists = [unique_samples]
+                if plot_DEL_horizontal_barcharts is not True:
+                    sample_lists = []   # horizontal bar charts disabled
                 i=1
                 for sample_list in sample_lists:
                     df_Blunt_Stagg_samples_norm_sample = df_Blunt_Stagg_samples_norm[df_Blunt_Stagg_samples_norm['name'].isin(sample_list)]
@@ -1206,6 +1220,8 @@ for key, value in tables_dic.items():
                 sample_lists = [unique_samples[i:i+40] for i in range(0, len(unique_samples), 40)]
             else:
                 sample_lists = [unique_samples]
+            if plot_participating_end_horizontal_barcharts is not True:
+                sample_lists = []   # horizontal bar charts disabled
             i=1
             for sample_list in sample_lists:
                 df_end_samples_norm_part = df_end_samples_norm[df_end_samples_norm['name'].isin(sample_list)]
@@ -1286,6 +1302,13 @@ for key, value in tables_dic.items():
             text_bellow_chart = f'Only DELs with complementarity are plotted.\
                                 \n{no_of_gRNA_samples}'
             name_to_save = f'04_04_DEL_end_summary_NOTnorm_violinplot'
+            # y_max is not fixed (unlike other violin plots, e.g. 0-1/0-100 normalised
+            # scales), so compute it from the actual data: the stripplot's offset
+            # transform makes seaborn/matplotlib's y-autoscale unreliable here (it can
+            # end up smaller than the real data range), which silently clipped the
+            # violin/boxplot for high-variance categories and blew up the saved PNG's
+            # canvas via bbox_inches='tight' padding around the clipped-off whiskers.
+            y_max_notnorm = df_end_samples_NOTnorm['value'].max() * 1.05
             plot = plot_sns_violin_and_print(data=df_end_samples_NOTnorm, x='variable', y='value'\
                 , number_of_columns=3\
                 , show_datapoints=True, jitter=0.1, stripplot_offset=10, dodge=False\
@@ -1304,7 +1327,7 @@ for key, value in tables_dic.items():
                 , name_to_save=name_to_save\
                 , project_output_dir=project_output_subdir\
                 , data_source=data_source, output_format=output_format\
-                , dpi=200, y_min=0, show_plots=show_plots)
+                , dpi=200, y_min=0, y_max=y_max_notnorm, show_plots=show_plots)
             stat_info = df_end_samples_NOTnorm.groupby('variable').value.describe()
             save_stat(stat_info, name_to_save, project_output_subdir)
         ##########################################################################################

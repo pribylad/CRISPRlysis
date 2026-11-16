@@ -66,7 +66,7 @@ The dictionary in `parameters.txt` is documented inline; the entries that matter
 | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `source_dir`                                 | Folder searched recursively for`Alleles_frequency_table_around*.txt`                                      |
 | `project_output_dir`                         | Where tables, charts and`report.txt` are written                                                          |
-| `cut_position`                               | The`offset_around_cut_to_plot` value used in the CRISPResso2 run                                          |
+| `cut_position`                               | Optional. The cut is detected for every sample from the gRNA and the PAM; this value (the`offset_around_cut_to_plot` of the CRISPResso2 run) is used only as a fallback for nucleases without a PAM rule |
 | `cut_maximum`                                | Most 5′ cleavage position relative to the optimum (e.g.`-2` for *Sp*Cas9)                              |
 | `cut_minimum`                                | Most 3′ cleavage position relative to the optimum (e.g.`0` for *Sp*Cas9)                               |
 | `nuclease`                                   | `SpCas9` or `LbCas12a`or yours                                                                          |
@@ -79,6 +79,24 @@ The dictionary in `parameters.txt` is documented inline; the entries that matter
 | `IN_greater_than`                            | Insertion sizes above this are pooled into a single category (max 7)                                        |
 | `output_format`                              | `png`, `svg`, or any matplotlib-supported format                                                        |
 | `make_mastertable_00/01`, `make_subtables` | Set to`False` to reuse an existing table via the matching `path_to_existing_*` key                      |
+
+### Optional parameters (added 2026-11)
+
+Every key below is optional. **With none of them set, the tables are those of the previous release** (plus a few extra columns written by the automatic cut detection, e.g. `Cut_position`, `Cut_position_in_alignment`, and a cut-detection line per sample in `report.txt`). The audited analyses of Pallaseni et al. 2024 and of the bioRxiv meta-analysis used the values in the right-hand column.
+
+| Key | Default | Used in the audited runs | Meaning |
+| --- | --- | --- | --- |
+| `use_per_row_cut` | `False` | `True` | Analyse every allele at its own cut column. Needed when a read carries an insertion, because CRISPResso2's fixed-width window then shifts the reference. Changes results for those rows. |
+| `insertion_side` | `'left'` | `'left'` | On which side of an aligned insertion the cut column is counted. |
+| `substitution_window` | `3` | `'allowed_cut'` | Which columns count as "at the cut" for substitutions: an integer *n* (cut-*n*+1 … cut+*n*), or `'allowed_cut'` (the nucleotides whose deletion counts as at the cut, 4 columns for −2,0). |
+| `revert_substitutions_outside_window` | `False` | `'all'` | Substitutions outside the window are treated as sequencing noise and reverted to the reference, so a read whose only difference is a distant substitution counts as unedited. `'all'` applies it to every allele, `'pure_sub'` only to alleles without an indel. |
+| `protect_substitutions_adjacent_to_indel` | `1` | `3` | Substitutions within this many columns of a gap run are kept (they may be part of the indel). |
+| `skip_multi_gap_run_alleles` | `True` | `True` | Alleles with two or more separate gap runs (an aligner-split event) are not corrected. |
+| `collapse_identical_alleles` | `False` | `True` | After the correction, alleles that became identical are merged (reads summed) before the `minimum_Reads` filter. |
+| `plot_INDEL_horizontal_barcharts`, `plot_IN_…`, `plot_DEL_…`, `plot_participating_end_horizontal_barcharts` | `True` | `False` | One bar per sample in files of 40; switch off for pooled panels with thousands of targets. |
+| `list_of_columns` | not set | Cucuy 2026, Weiss 2022 | Column names for folder names that do not follow the naming convention below. **It must be carried over every time such a dataset is re-run**: without it the folder names are split with the default scheme, the columns that `subtables_param` refers to do not exist and the run stops with a `KeyError` (e.g. `'generation'`). |
+
+The cut detection (`scripts/cut_site.py`) tolerates reference variants that overhang the amplicon (CRISPResso2 can shift the quantification window by a few bp between alleles): the amplicon is assembled from overlapping variants (at least 20 bp overlap) before the consistency check.
 
 For *Sp*Cas9 the code checks that positions 2–3 of the inferred PAM are `GG` and raises a `ValueError` if not — this catches a misspecified `cut_position` before it silently propagates into every downstream column. We recommend to check 03_07_*.png files if the sequence is correct.
 
