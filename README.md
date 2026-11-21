@@ -2,9 +2,9 @@
 
 **Annotation of CRISPR–Cas repair outcome — estimating cut type (blunt vs staggered), deletion orientation, and the DNA end participating in repair.**
 
-This code is part of the publication Přibylová et al., 2026 - 5′ Complementarity-Mediated End Joining (5′CMEJ) DNA repair; author's manusritp [doi.org/10.64898/2026.07.23.740330](https://doi.org/10.64898/2026.07.23.740330).
+This code is part of the publication Přibylová et al., 2026 - 5′ Complementarity-Mediated End Joining (5′CMEJ) DNA repair; author's manuscript [doi.org/10.64898/2026.07.23.740330](https://doi.org/10.64898/2026.07.23.740330).
 
-**CRISPRlysis** takes the allele frequency tables produced by CRISPResso2* from amplicon Next Generation Sequencing (NGS) data and turns them into a fully annotated table of repair events, in which every read is classified by the position, orientation and complementarity context of its deletion relative to the predicted cleavage site. (Any table which has the same column system as CRISPResso2 can be used.) It is potimised for *Sp*Cas9, but also should work for Cas12a and any other endonuclease, just the parameters must be adjusted. It then produces a standard set of publication-ready charts and accompanying descriptive statistics for each analysis.
+**CRISPRlysis** takes the allele frequency tables produced by CRISPResso2* from amplicon Next Generation Sequencing (NGS) data and turns them into a fully annotated table of repair events, in which every read is classified by the position, orientation and complementarity context of its deletion relative to the predicted cleavage site. (Any table which has the same column system as CRISPResso2 can be used.) It is optimised for *Sp*Cas9, but also should work for Cas12a and any other endonuclease, just the parameters must be adjusted. It then produces a standard set of publication-ready charts and accompanying descriptive statistics for each analysis.
 
 *Clement, K., H. Rees, M.C. Canver, J.M. Gehrke, R. Farouni, J.Y. Hsu, M.A. Cole, D.R. Liu, J.K. Joung, D.E. Bauer, and L. Pinello. 2019. CRISPResso2 provides accurate and rapid genome editing sequence analysis. *Nat. Biotechnol.* 37:224–226. doi:[10.1038/s41587-019-0032-3](https://doi.org/10.1038/s41587-019-0032-3).
 
@@ -21,7 +21,7 @@ In brief, CRISPRlysis performs a complex analysis of mutation events, covering:
 - **End participation** — which 5′/3′ DNA end is likely to participate in the repair.
 
 Examples of every output are shown [below](#graphical-outputs) and in the
-[example analysis](CRISPRlysis_outputs/Pribylova_et_al_2022/TRVWT) included in this repository.
+[example analysis](CRISPRlysis_outputs/Pribylova_et_al_2022/WT) included in this repository.
 
 ## Scope
 
@@ -38,9 +38,9 @@ cd CRISPRlysis
 python CRISPRlysis.py
 ```
 
-`CRISPRlysis.py` reads **`parameters.txt`** from the same folder. That file is a commented Python dictionary; edit it and re-run with you datasets. No command-line arguments are used.
+`CRISPRlysis.py` reads **`parameters.txt`** from the same folder. That file is a commented Python dictionary; edit it and re-run with your datasets. **Run the script from inside the repository folder**: `parameters.txt` is opened as `./parameters.txt`, i.e. relative to the current working directory. No command-line arguments are used.
 
-The repository ships with a working example: `parameters.txt` as committed points at`./testing_dataset` and reproduces everything under`CRISPRlysis_outputs/Pribylova_et_al_2022/TRVWT/`.
+The repository ships with a working example: `parameters.txt` as committed points at `./testing_dataset` and reproduces the outputs under `CRISPRlysis_outputs/Pribylova_et_al_2022/WT/` (the date in the file and folder names is the date of the run).
 
 ### Repository layout
 
@@ -75,10 +75,12 @@ The dictionary in `parameters.txt` is documented inline; the entries that matter
 | `add_columns`                                | Constant metadata columns — organism, delivery, cell-cycle status, cell line, hpi, ...                     |
 | `filter_out_values`                          | `{column: [values to drop]}`; `{}` disables filtering                                                   |
 | `subtables_param`                            | Columns to split on - separate analysis will be done on each unique combination, e.g.`['gene', 'mutant']` |
-| `plot_*`                                     | Per-series switches for the four chart families described below                                             |
+| `plot_INDELs`, `plot_INs`, `plot_DELs`, `plot_DEL_individual_gRNAs`, `plot_DEL_dinochart`, `plot_participating_end`, `plot_participating_end_dinochart` | Switches (`True`/`False`) for the chart families described below; all are required in `parameters.txt`. `plot_MH` and `plot_MH_dinochart` may still be present in older files but are **not read** by the code |
+| `show_plots`                                 | `True` shows each chart on screen while the script runs (keep `False` for batch runs)                       |
+| `sort_alphabetically`                        | `True` sorts the samples of `01_mastertable` by name before plotting                                        |
 | `IN_greater_than`                            | Insertion sizes above this are pooled into a single category (max 7)                                        |
 | `output_format`                              | `png`, `svg`, or any matplotlib-supported format                                                        |
-| `make_mastertable_00/01`, `make_subtables` | Set to`False` to reuse an existing table via the matching `path_to_existing_*` key                      |
+| `make_mastertable_00/01`, `make_subtables` | Set to `False` to reuse an existing table via the matching `path_to_existing_mastertable_00`, `path_to_existing_mastertable_01` or `path_to_existing_subtable_02` key (keep the key, `''` if unused) |
 
 ### Optional parameters (added 2026-11)
 
@@ -87,13 +89,14 @@ Every key below is optional. **With none of them set, the tables are those of th
 | Key | Default | Used in the audited runs | Meaning |
 | --- | --- | --- | --- |
 | `use_per_row_cut` | `False` | `True` | Analyse every allele at its own cut column. Needed when a read carries an insertion, because CRISPResso2's fixed-width window then shifts the reference. Changes results for those rows. |
-| `insertion_side` | `'left'` | `'left'` | On which side of an aligned insertion the cut column is counted. |
+| `insertion_side` | `'left'` | `'left'` | On which side of an aligned insertion the cut column is counted: `'left'` (the inserted bases read as downstream of the cut) or `'right'`. |
 | `substitution_window` | `3` | `'allowed_cut'` | Which columns count as "at the cut" for substitutions: an integer *n* (cut-*n*+1 … cut+*n*), or `'allowed_cut'` (the nucleotides whose deletion counts as at the cut, 4 columns for −2,0). |
 | `revert_substitutions_outside_window` | `False` | `'all'` | Substitutions outside the window are treated as sequencing noise and reverted to the reference, so a read whose only difference is a distant substitution counts as unedited. `'all'` applies it to every allele, `'pure_sub'` only to alleles without an indel. |
 | `protect_substitutions_adjacent_to_indel` | `1` | `3` | Substitutions within this many columns of a gap run are kept (they may be part of the indel). |
 | `skip_multi_gap_run_alleles` | `True` | `True` | Alleles with two or more separate gap runs (an aligner-split event) are not corrected. |
 | `collapse_identical_alleles` | `False` | `True` | After the correction, alleles that became identical are merged (reads summed) before the `minimum_Reads` filter. |
 | `plot_INDEL_horizontal_barcharts`, `plot_IN_…`, `plot_DEL_…`, `plot_participating_end_horizontal_barcharts` | `True` | `False` | One bar per sample in files of 40; switch off for pooled panels with thousands of targets. |
+| `random_gen_data` | `False` | `False` | Only for the randomised validation datasets (one row = one unique random target): the original sequence is taken from `Reference_Sequence` of each row. Leave unset for CRISPResso2 data. |
 | `list_of_columns` | not set | Cucuy 2026, Weiss 2022 | Column names for folder names that do not follow the naming convention below. **It must be carried over every time such a dataset is re-run**: without it the folder names are split with the default scheme, the columns that `subtables_param` refers to do not exist and the run stops with a `KeyError` (e.g. `'generation'`). |
 
 The cut detection (`scripts/cut_site.py`) tolerates reference variants that overhang the amplicon (CRISPResso2 can shift the quantification window by a few bp between alleles): the amplicon is assembled from overlapping variants (at least 20 bp overlap) before the consistency check.
@@ -102,7 +105,25 @@ For *Sp*Cas9 the code checks that positions 2–3 of the inferred PAM are `GG` a
 
 ### Input naming convention
 
-Sample metadata is parsed from the CRISPResso2 folder name, which must follow`Order_Nuclease_targetedGene_TargetNum_Mutant_NoOfTargets_Overhangs_Replicate` (e.g. `CRISPResso_on_1_SpCas9_P35S_1_WT_1_0_1`). Any other scheme can be supplied through the optional `list_of_columns` parameter. The gRNA sequence must be the final element of the allele table filename, e.g. `Alleles_frequency_table_around_sgRNA_ACAGAACTCGCCGTAAAGAC.txt`, which CRISPResso2 does automatically when no gRNA name is given.
+Two names are read from the CRISPResso2 output:
+
+- the **folder name** of each run, which must start with a 14-character prefix (`CRISPResso_on_`, as written by CRISPResso2); the code drops these first 14 characters and splits the rest at `_`;
+- the **file name** `Alleles_frequency_table_around_sgRNA_<gRNA sequence>.txt` (the gRNA sequence is the last element; CRISPResso2 writes this name when no gRNA name is given).
+
+The sample name is built as `sgRNA_` + folder name without the prefix. The default scheme expects eight `_`-separated fields after the prefix:
+
+| Position | Field in the folder name | Column in the tables | Example |
+| --- | --- | --- | --- |
+| 1 | Order | `order` | `1` |
+| 2 | Nuclease (Cas variant) | `Cas_variant` | `SpCas9` |
+| 3 | Targeted gene | `gene` | `P35S` |
+| 4 | gRNA / target number | `gRNA_num` | `1` |
+| 5 | Mutant (genotype) | `mutant` | `WT` |
+| 6 | Number of targets | `no_of_targets` | `1` |
+| 7 | Overhangs | `overhang` | `0` |
+| 8 | Replicate | `replicate` | `1` |
+
+Example: the folder `CRISPResso_on_1_SpCas9_P35S_1_WT_1_0_1` gives the sample `sgRNA_1_SpCas9_P35S_1_WT_1_0_1`. These column names are the ones to use in `subtables_param` (e.g. `['gene', 'mutant']`) and in `filter_out_values`. Any other scheme can be supplied through the optional `list_of_columns` parameter (the names are assigned to the fields after the prefix in the given order).
 
 ---
 
@@ -110,12 +131,12 @@ Sample metadata is parsed from the CRISPResso2 folder name, which must follow`Or
 
 | File                                   | Content                                                                                     |
 | -------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `00_mastertable_<date>.tsv`          | Every allele from every input file, annotated — 70 columns                                 |
-| `01_mastertable_<date>.tsv`          | Read-depth filtered, sample metadata split into columns, sorted                             |
+| `00_mastertable_<date>.tsv`          | Every allele from every input file, annotated — 62 columns (64 with the optional substitution correction) |
+| `01_mastertable_<date>.tsv`          | Read-depth filtered, sample metadata split into columns (the fields of the folder name and the `add_columns` entries), sorted — 76 columns (78 with the optional substitution correction) |
 | `02_mastertable_<subset>_<date>.tsv` | One table per unique combination of`subtables_param`                                      |
 | `report.txt`                         | Full run log: files read, filters applied, table shapes, every chart written, total runtime |
 
-Per-sample annotated tables are also written next to their source CRISPResso2 output, so any anomaly in the mastertable can be traced back to a single input file.
+Per-amplicon annotated tables (`00_mastertable_<sample>.tsv`) are written to the subfolder `00_per_amplicon/` of the output folder (nothing is written next to the CRISPResso2 input), so any anomaly in the mastertable can be traced back to a single input file.
 
 ### Key annotation columns
 
@@ -125,13 +146,13 @@ Per-sample annotated tables are also written next to their source CRISPResso2 ou
 | `Gap_around_cut`                                                               | Whether the deletion falls within the permissible cleavage window                                                                           |
 | `n_deleted_around_cut`                                                         | Size of the deletion around the cut (independent of CRISPResso2's`n_deleted`)                                                             |
 | `MH_to_proximal_len`, `MH_to_distal_len`, `Maximal_MH_len`, `Maximal_MH` | Complementarity on each side of the junction, its maximum, and its sequence                                                                 |
-| `Gap_category_1`, `Gap_category_2`                                           | Deletion category (1–12) for each extreme placement                                                                                        |
+| `Gap_category_1`, `Gap_category_2`                                           | Deletion category (1–12) for each extreme placement; `97` = no deletion (the coordinates are not numbers), `98` = the range of the deletion could not be determined |
 | `Cut_type`                                                                     | `0` blunt, negative = staggered upstream, positive = staggered downstream,`C` undetermined, `O` outside the window, `X` no deletion |
-| `DEL_orientation`                                                              | `U` upstream, `D` downstream, `B` bidirectional, `C` undetermined                                                                   |
+| `DEL_orientation`                                                              | `U` upstream, `D` downstream, `B` bidirectional, `C` undetermined, `X` no deletion                                                  |
 | `End_participating_on_MH`                                                      | Which end carries the complementarity:`U`, `D`, `C`, `X`                                                                            |
 | `End_3_5`                                                                      | DNA end participating in repair:`3`, `5`, or `0` (either or cannot be determined)                                                     |
 | `Likely_cut_type`                                                              | `0` if the geometry is unambiguous, `1` if inferred from complementarity length                                                         |
-| `Event`, `Event_around_cut`                                                  | `DEL`/`IN`/`SUB`/`INDEL`/… before and after discarding substitutions distant from the cut                                          |
+| `Event`, `Event_around_cut`                                                  | `DEL`/`IN`/`SUB`/`INDEL`/`DELSUB`/`INSUB`/… or `no_mutation`, before and after discarding substitutions distant from the cut        |
 
 The `Likely_cut_type` flag is deliberate: it lets any downstream analysis be repeated on the confidently assigned subset alone as a sensitivity check.
 
@@ -139,9 +160,11 @@ The `Likely_cut_type` flag is deliberate: it lets any downstream analysis be rep
 
 ## Graphical outputs
 
-Charts are written to a dated subfolder named after the subtable, e.g. `CRISPRlysis_outputs/Pribylova_et_al_2022/TRVWT/P35S_WT_260727/`. **Every chart is accompanied by a `<name>_stat.txt` file** containing count, mean, standard deviation, minimum, quartiles, median and maximum for each plotted category, so the numbers behind a figure are always available without re-running the analysis. Charts carry the data source, the number of gRNAs and replicates, and a footnote stating exactly what was filtered and how it was normalised — the figure is self-documenting.
+The charts shown below are the output of the shipped example (code of commit `6f6edce`, `parameters.txt` as committed, run of 2026-11-21; the date in the chart titles is the date of the run). They are stored in `image/example_outputs/`.
 
-Files are numbered `NN_MM_…` so that they sort into the four analysis families below. Where more
+Charts are written to a dated subfolder named after the subtable, e.g. `CRISPRlysis_outputs/Pribylova_et_al_2022/WT/P35S_WT_261121/`. **Every chart is accompanied by a `<name>_stat.txt` file** containing count, mean, standard deviation, minimum, quartiles, median and maximum for each plotted category, so the numbers behind a figure are always available without re-running the analysis. Charts carry the data source, the number of gRNAs and replicates, and a footnote stating exactly what was filtered and how it was normalised — the figure is self-documenting.
+
+Next to each chart (`.png`) the plotted numbers are saved as `<name>_data.tsv` (the violin chart `01_01` also as `<name>_<date>.tsv`). Files are numbered `NN_MM_…` so that they sort into the four analysis families below. Where more
 than 40 samples are present, per-sample charts are automatically split across several files
 (`_1`, `_2`, …).
 
@@ -155,9 +178,11 @@ than 40 samples are present, per-sample charts are automatically split across se
 
 `OTHERS` pools the compound events (INDEL, INSUB, DELSUB, INDELSUB). All categories are classified only for events falling around the cut.
 
-![INDELSUB summary violin plot](CRISPRlysis_outputs/Pribylova_et_al_2022/TRVWT/P35S_WT_260727/01_01_INDELSUB_summary_violinplot.png)
+![INDEL/SUB summary violin plot](image/example_outputs/01_01_INDELSUB_summary_violinplot.png)
 
-![1785156826646](image/README/1785156826646.png)![1785156831428](image/README/1785156831428.png)
+![INDELSUB horizontal barchart, not normalised](image/example_outputs/01_02_1_INDELSUB_horizontal_barchart_all_samples_not_normalised.png)
+
+![INDELSUB horizontal barchart, normalised](image/example_outputs/01_03_1_INDELSUB_horizontal_barchart_all_samples_normalised.png)
 
 ### 02 — Insertions
 
@@ -172,17 +197,17 @@ than 40 samples are present, per-sample charts are automatically split across se
 
 The 02_03–02_06 series is restricted to 1 nt insertions around the cut in sequences with no deletion or substitution around the cut, which is what makes the templated-insertion signal interpretable.
 
-![1785156856405](image/README/1785156856405.png)
+![Insertion size, violin plot](image/example_outputs/02_01_IN_no_of_IN_nucleotides_summary_violinplot.png)
 
-![1785156869522](image/README/1785156869522.png)
+![Insertion size, stacked barchart per sample](image/example_outputs/02_02_IN_no_of_IN_nucleotides_stacked_barchart_name.png)
 
-![1785156881909](image/README/1785156881909.png)
+![4th nucleotide inserted, not normalised](image/example_outputs/02_03_1_4th_nt_inserted_not_normalised.png)
 
-![1785156885487](image/README/1785156885487.png)
+![4th nucleotide inserted, normalised](image/example_outputs/02_04_1_4th_nt_inserted_normalised.png)
 
-![1785156890730](image/README/1785156890730.png)
+![4th nucleotide inserted, violin plot](image/example_outputs/02_05_IN_4th_nt_inserted_normalised_violinplot.png)
 
-![1785156893942](image/README/1785156893942.png)
+![4th nucleotide inserted, violin plot with medians per nucleotide](image/example_outputs/02_06_IN_4th_nt_inserted_normalised_violinplot.png)
 
 ### 03 — Deletions, cut type and orientation
 
@@ -196,23 +221,23 @@ The 02_03–02_06 series is restricted to 1 nt insertions around the cut in sequ
 | `03_08_DEL_Stagg_blunt_summary_barchart_4th_nt`                 | Cut-type composition grouped by the 4th nucleotide upstream of the PAM                                                                                                                                                                                                            |
 | `03_09` / `03_10_DEL_Stagg_blunt_summary_violinplot_4th_nt`   | The same relationship as in 03_08* as violin plots, keyed by nucleotide and by cut type respectively                                                                                                                                                                              |
 
-![1785156908691](image/README/1785156908691.png)
+![Deletion orientation, not normalised](image/example_outputs/03_01_DEL_orientation_summary_violinplot.png)
 
-![1785156913543](image/README/1785156913543.png)
+![Deletion orientation, normalised](image/example_outputs/03_02_DEL_orientation_summary_violinplot.png)
 
-![1785156918238](image/README/1785156918238.png)
+![Cut-type spectrum per sample](image/example_outputs/03_03_1_Stagg_blunt_ratio_all_samples.png)
 
-![1785156923746](image/README/1785156923746.png)
+![Cut-type spectrum, violin plot](image/example_outputs/03_04_DEL_Stagg_blunt_summary_violinplot.png)
 
-![1785156928398](image/README/1785156928398.png)
+![Cut-type spectrum by orientation, not normalised](image/example_outputs/03_05_DEL_Stagg_blunt_oriented_summary_violinplot.png)
 
-![1785156933251](image/README/1785156933251.png)
+![Cut-type spectrum by orientation, normalised](image/example_outputs/03_06_DEL_Stagg_blunt_oriented_summary_violinplot_normalised.png)
 
-![1785156974278](image/README/1785156974278.png)![1785156983642](image/README/1785156983642.png)
+![Cut type by 4th nucleotide, barchart](image/example_outputs/03_08_DEL_Stagg_blunt_summary_barchart_4th_nt.png)
 
-![1785156997545](image/README/1785156997545.png)
+![Cut type by 4th nucleotide, violin plot (nucleotide)](image/example_outputs/03_09_DEL_Stagg_blunt_summary_violinplot_4th_nt.png)
 
-![1785157008246](image/README/1785157008246.png)
+![Cut type by 4th nucleotide, violin plot (cut type)](image/example_outputs/03_10_DEL_Stagg_blunt_summary_violinplot_4th_nt.png)
 
 ### 04 — DNA end participating in repair
 
@@ -224,15 +249,13 @@ The 02_03–02_06 series is restricted to 1 nt insertions around the cut in sequ
 
 Restricted to deletions that carry complementarity, since the participating end is undefined without it.
 
-![1785157038124](image/README/1785157038124.png)
+![Participating end, normalised barchart](image/example_outputs/04_01_1_DEL_end_summary_norm_horizontal_barchart.png)
 
-![1785157041130](image/README/1785157041130.png)
+![Participating end, not normalised barchart](image/example_outputs/04_02_1_DEL_end_summary_NOTnorm_horizontal_barchart.png)
 
-![1785157046300](image/README/1785157046300.png)
+![Participating end, normalised violin plot](image/example_outputs/04_03_DEL_end_summary_norm_violinplot.png)
 
-![1785157056368](image/README/1785157056368.png)
-
-![1785157063647](image/README/1785157063647.png)
+![Participating end, not normalised violin plot](image/example_outputs/04_04_DEL_end_summary_NOTnorm_violinplot.png)
 
 ### The per-sample deletion-spectrum chart
 
@@ -245,15 +268,17 @@ The `03_07` and `04_05` series are the most information-dense output. Each is a 
 
 Bidirectional deletions are excluded and orientation-undetermined deletions are split between upstream and downstream, so the upstream/downstream asymmetry of the plot reads directly as the asymmetry of end processing at that target. One file is produced per sample, numbered sequentially.
 
-![1785157233181](image/README/1785157233181.png)
+![Deletion-spectrum chart of one sample (03_07)](image/example_outputs/03_07_example_sample_1.png)
 
-![1785157219666](image/README/1785157219666.png)
+![Deletion-spectrum chart of one sample coloured by the participating end (04_05)](image/example_outputs/04_05_example_sample_1.png)
 
 ---
 
 ## Worked example
 
-`CRISPRlysis_outputs/Pribylova_et_al_2022/TRVWT/` contains a complete run over the shipped `testing_dataset`: 8 sgRNAs × 4 replicates targeting *P35S* in *Nicotiana benthamiana*, *Sp*Cas9 delivered by agroinfiltration, sampled 120 h post-inoculation in non-dividing tissue, with `cut_position = 120`, `cut_maximum = -2`, `cut_minimum = 0`. It is the fastest way to see the shape of every output before running your own data.
+`CRISPRlysis_outputs/Pribylova_et_al_2022/WT/` contains a complete run over the shipped `testing_dataset`: 8 sgRNAs × 4 replicates targeting *P35S* in *Nicotiana benthamiana*, *Sp*Cas9 delivered by agroinfiltration, sampled 120 h post-inoculation in non-dividing tissue, with `cut_position = 120`, `cut_maximum = -2`, `cut_minimum = 0`. It is the fastest way to see the shape of every output before running your own data.
+
+*Note on the stored example:* the example was produced on 2026-11-21 with the code of the commit `6f6edce` and `parameters.txt` as committed (default settings of the optional parameters). The analyses of the manuscript used the optional parameters listed above (right-hand column of the table); with them the absolute percentages of reads are about 10 % higher than in the example (e.g. mean insertions 12.1 % → 13.2 % of reads, deletions 8.8 % → 9.9 %), the shape of the charts is the same.
 
 ---
 

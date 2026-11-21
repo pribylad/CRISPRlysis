@@ -3,12 +3,11 @@
 #############################################
 # source_dir (str): Unix path format to a folder where the code will recursively search the path for 'Alleles_frequency_table_around*.txt' files which will be used to make mastertable_00
 ## Unix path format -> /path/to/folder/with/CRISPRessoBatch_on_batch/data
-# project_output_dir (str): Unix path to the location where the outputs should be saved in subfolder ADELysis_output_YYMMDD
+# project_output_dir (str): Unix path to the folder where the tables and report.txt are written; the charts go to a subfolder named after the subtable and the date, the per-amplicon tables to the subfolder 00_per_amplicon
 # add_columns (dic): has nested dictionary, where each key will create new column to the created mastertable and filled with the value
 # data_source_original (str): source of the analysed data 
-# cut_position (int): value set as a 'offset_around_cut_to_plot' in CRISPResso2 analysis
-# MAXIMUM (int):  No of nucleotides upstream from cut_position - the most 5' end cut site. Example -2 for SpCas9.
-# MINIMUM (int): No of nucleotides upstream from cut_position - the most 3' end cut site. Example 0 for SpCas9.
+# cut_maximum (int): relative position of the most 5' cleavage site (nucleotides from the optimum cut). Example -2 for SpCas9.
+# cut_minimum (int): relative position of the most 3' cleavage site. Example 0 for SpCas9.
 # nuclease (str): 'SpCas9' or 'LbCas12a'
 # minimum_Reads (int): set the limit for minimum occurance of #Reads for individual mutation output for mastertable_01 (usually set to 5)
 # output_format (str): 'png', 'svg', 'any_supported_matplotlib_format'
@@ -29,24 +28,25 @@
 # plot_DELs (boolean): controls if related charts will be made
 # plot_DEL_dinochart (boolean): controls if related charts will be made
 # plot_participating_end (boolean): controls if related charts will be made
-# TODO !!! The plot MH does not work as the mastertable does not have the valid columns for that, is it needed in the end? Maybe plot_participating_end is better
-# plot_MH (boolean): controls if related charts will be made
-# plot_MH_dinochart (boolean): controls if related charts will be made
+# plot_DEL_individual_gRNAs (boolean, required): controls if related charts will be made
+# plot_participating_end_dinochart (boolean, required): controls if related charts will be made
+# (plot_MH and plot_MH_dinochart are not read by the code any more and were removed from the dictionary)
 # IN_greater_than (int): for IN analysis, what is the border for sum up n_inserted, max is 7
 # sort_alphabetically (boolean): True will sort samples in mastertable_01 by name before plotting
 # list_of_columns (list, optional): column names for folder names that do not follow Order_Nuclease_Gene_gRNAnum_Mutant_NoOfTargets_Overhangs_Replicate. MUST be kept when such a dataset is re-run.
-# cut_position (int, optional): fallback only, the cut is detected per sample from gRNA + PAM
+# cut_position (int, optional): value set as 'offset_around_cut_to_plot' in the CRISPResso2 analysis; fallback only, the cut is detected per sample from gRNA + PAM
 # OPTIONAL (defaults reproduce the previous release; see README 'Optional parameters'):
 # use_per_row_cut (bool, False), insertion_side ('left'), substitution_window (3 or 'allowed_cut'),
 # revert_substitutions_outside_window (False / True / 'all' / 'pure_sub'), protect_substitutions_adjacent_to_indel (1),
 # skip_multi_gap_run_alleles (True), collapse_identical_alleles (False),
-# plot_INDEL_horizontal_barcharts / plot_IN_horizontal_barcharts / plot_DEL_horizontal_barcharts / plot_participating_end_horizontal_barcharts (True)
+# plot_INDEL_horizontal_barcharts / plot_IN_horizontal_barcharts / plot_DEL_horizontal_barcharts / plot_participating_end_horizontal_barcharts (True),
+# random_gen_data (False; only for the randomised validation datasets)
 
 #############################################
 #                 DICTIONARY                #
 #############################################
 {'source_dir':'./testing_dataset',
-   'project_output_dir':'./CRISPRlysis_outputs/Pribylova_et_al_2022/TRVWT',
+   'project_output_dir':'./CRISPRlysis_outputs/Pribylova_et_al_2022/WT',
    'add_columns':{'organism':'Nicotiana benthamiana',
       'hours_post_inoculation':'120',
       'deliver_of_nuclease':'Agroinfiltration',
@@ -61,10 +61,10 @@
    'minimum_Reads':5,
    'output_format':'png',
    'make_mastertable_00':True,
-   'path_to_existing_mastertable_00':'./CRISPRlysis_outputs/Pribylova_et_al_2022/00_mastertable_260727.tsv',
+   'path_to_existing_mastertable_00':'./CRISPRlysis_outputs/Pribylova_et_al_2022/WT/00_mastertable_261121.tsv',
    'filter_out_values':{},
    'make_mastertable_01':True,
-   'path_to_existing_mastertable_01':'./CRISPRlysis_outputs/Pribylova_et_al_2022/01_mastertable_260727.tsv',
+   'path_to_existing_mastertable_01':'./CRISPRlysis_outputs/Pribylova_et_al_2022/WT/01_mastertable_261121.tsv',
    'make_subtables':True,
    'path_to_existing_subtable_02':'',
    'subtables_param':['gene', 'mutant'],
@@ -76,8 +76,6 @@
    'plot_DEL_dinochart':True,
    'plot_participating_end':True,
    'plot_participating_end_dinochart':True,
-   'plot_MH':True,
-   'plot_MH_dinochart':True,
    'IN_greater_than':6,
    'sort_alphabetically':True
    }

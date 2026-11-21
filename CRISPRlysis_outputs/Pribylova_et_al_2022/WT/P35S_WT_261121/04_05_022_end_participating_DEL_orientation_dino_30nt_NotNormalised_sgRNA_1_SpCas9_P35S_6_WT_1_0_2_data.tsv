@@ -1,0 +1,15 @@
+n_deleted_around_cut	upstream no MH from predicted cut sites	upstream either 5' or 3' possible blunt	upstream cannot be determined blunt cut with complementarity	upstream 5' NOT blunt	downstream cannot be determined blunt cut with complementarity
+-13	0.0	0.0412163399890089	0.0	0.0	0.0
+-12	0.0	0.0	0.0	0.0	0.0
+-11	0.0	0.0	0.0	0.0	0.0
+-10	0.0	0.0503755266532331	0.0	0.0	0.0
+-9	0.0	0.0	0.0	0.0	0.0
+-8	0.0	0.0	0.0	0.0	0.0
+-7	0.0	0.0	0.0	0.0	0.0
+-6	0.0	0.0	0.0	0.0	0.0
+-5	0.045795933321121	0.0	0.0	0.0	0.0
+-4	0.0732734933137937	0.0	0.0	0.0	0.0
+-3	0.0	0.2564572265982781	0.0	0.0	0.0
+-2	0.0	0.0	0.0	0.0228979666605605	0.0
+-1	0.0	0.0	0.1350980032973072	0.0	0.0
+1	0.0	0.0	0.0	0.0	0.1350980032973072
